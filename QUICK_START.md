@@ -24,9 +24,9 @@ brew install aiken-lang/tap/aiken
 ```
 
 ### **Linux/Windows (using curl)**
-
+ 
 ```bash
-curl -sSL https://aiken-lang.org/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/aiken-lang/aiken/main/install.sh | bash
 ```
 
 ### **Verify Installation**
@@ -176,10 +176,10 @@ You've successfully:
 ## 🔧 **Troubleshooting**
 
 ### **Installation Issues**
-
+ 
 ```bash
 # If curl install fails, try:
-wget -O - https://aiken-lang.org/install.sh | bash
+wget -O - https://raw.githubusercontent.com/aiken-lang/aiken/main/install.sh | bash
 
 # Or download manually from:
 # https://github.com/aiken-lang/aiken/releases

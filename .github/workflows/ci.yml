@@ -16,7 +16,8 @@ jobs:
 
       - name: Setup Aiken
         run: |
-          curl -sSL https://aiken-lang.org/install.sh | bash
+          # Install Aiken using the official installation method
+          curl -sSL https://raw.githubusercontent.com/aiken-lang/aiken/main/install.sh | bash
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Verify Aiken installation
