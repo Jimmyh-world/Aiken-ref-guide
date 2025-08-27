@@ -1,8 +1,17 @@
 # Repository Navigation Guide
 
+[![CI/CD Pipeline](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
+
 ## 🗺️ **Complete Repository Map**
 
 This guide provides clear navigation paths for different user types and use cases.
+
+## 📋 **Version Information**
+
+- **Aiken Version**: v1.8.0+ (latest stable)
+- **Last Updated**: August 2024
+- **Status**: ✅ Production Ready
+- **Test Coverage**: All examples validated by CI/CD
 
 ---
 

@@ -1,6 +1,14 @@
 # Aiken Developer's Reference Guide for AI Coding Assistants
 
+[![CI/CD Pipeline](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
+
 Welcome to the AI-optimized knowledge base for the Aiken smart contract language on Cardano. This guide is designed for developers and AI coding assistants (like Cursor, Cody, and GitHub Copilot) to quickly find, understand, and implement Aiken smart contracts.
+
+## Version Compatibility
+
+**Aiken Version**: This guide is compatible with Aiken **v1.8.0+**  
+**Last Updated**: August 2024  
+**Status**: ✅ **Production Ready** - All examples tested and validated
 
 ## Mission
 

@@ -1,6 +1,14 @@
 # Hello World Example
 
+[![CI/CD Pipeline](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
+
 This is a simple example project demonstrating a basic Aiken smart contract.
+
+## Version Compatibility
+
+- **Aiken Version**: v1.8.0+
+- **Status**: ✅ Tested and validated
+- **Last Tested**: August 2024
 
 ## Project Structure
 

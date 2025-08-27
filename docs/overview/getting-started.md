@@ -14,6 +14,8 @@ This guide provides the steps to install Aiken, create a new project, and run th
 
 ## Installation
 
+**Version Note**: This guide is compatible with Aiken v1.8.0+. For the latest version, use `aikup` to install the most recent stable release.
+
 `aikup` is a cross-platform utility to download and manage Aiken versions.
 
 ### Recommended Installation
