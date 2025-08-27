@@ -64,6 +64,19 @@ let validator = fungible_token_validator(admin_pkh)
 
 ## Usage Examples
 
+### Running Tests
+
+```bash
+# Check the project
+aiken check
+
+# Run tests with performance metrics
+aiken check --trace-level verbose
+
+# Build the project
+aiken build
+```
+
 ### Admin Minting Tokens
 
 ```aiken
