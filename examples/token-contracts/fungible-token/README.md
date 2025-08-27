@@ -33,6 +33,22 @@ type Action {
 }
 ```
 
+## Admin Setup
+
+### Initial Configuration
+The contract requires an admin public key hash to be set during deployment:
+
+```aiken
+// Deploy with admin public key hash
+let admin_pkh = #"your_admin_public_key_hash_here"
+let validator = fungible_token_validator(admin_pkh)
+```
+
+### Admin Requirements
+- **Public Key Hash**: Must be a valid Cardano public key hash
+- **Signature Validation**: Admin must sign all minting transactions
+- **Access Control**: Only the designated admin can mint new tokens
+
 ## Security Model
 
 ### Access Control
