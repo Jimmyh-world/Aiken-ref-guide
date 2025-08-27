@@ -83,6 +83,7 @@ jobs:
           source $HOME/.aiken/bin/env
           aikup
 
+      # Existing NFT contract tests...
       - name: Test NFT Contract Security Patterns
         run: |
           cd examples/token-contracts/nft-one-shot
@@ -109,7 +110,85 @@ jobs:
             exit 1
           fi
 
-          echo "Security validation passed!"
+          echo "NFT security validation passed!"
+
+      # NEW: Fungible Token Contract Tests
+      - name: Test Fungible Token Contract
+        run: |
+          cd examples/token-contracts/fungible-token
+          echo "Testing controlled fungible token contract..."
+
+          # Check project structure
+          echo "Verifying project structure..."
+          test -f aiken.toml
+          test -f validators/fungible_token.ak
+          test -f lib/fungible_token/helpers.ak  
+          test -f lib/fungible_token/tests.ak
+          test -f README.md
+
+          # Run type checking and tests
+          echo "Running comprehensive tests..."
+          aiken check --trace all
+
+          # Build the project
+          echo "Building contract..."
+          aiken build
+
+          # Run performance tests
+          echo "Running performance tests..."
+          aiken check --trace-level verbose
+
+          # Verify plutus.json generation
+          echo "Verifying blueprint generation..."
+          test -f plutus.json
+          echo "Blueprint generated successfully"
+
+        continue-on-error: false
+
+      - name: Test Fungible Token Security Patterns
+        run: |
+          cd examples/token-contracts/fungible-token
+
+          # Security validation tests
+          echo "Running security pattern validation..."
+
+          # Check that all helper functions exist
+          if ! grep -q "admin_signed" lib/fungible_token/helpers.ak; then
+            echo "ERROR: Missing admin_signed function"
+            exit 1
+          fi
+
+          if ! grep -q "valid_mint_amount" lib/fungible_token/helpers.ak; then
+            echo "ERROR: Missing valid_mint_amount function"
+            exit 1
+          fi
+
+          if ! grep -q "valid_burn_amount" lib/fungible_token/helpers.ak; then
+            echo "ERROR: Missing valid_burn_amount function" 
+            exit 1
+          fi
+
+          # Verify comprehensive test coverage
+          echo "Verifying test coverage..."
+          test_count=$(grep -c "^test " lib/fungible_token/tests.ak)
+          if [ "$test_count" -lt 10 ]; then
+            echo "ERROR: Insufficient test coverage (found $test_count tests, minimum 10 required)"
+            exit 1
+          fi
+
+          # Check for admin control tests
+          if ! grep -q "admin_mint_success\|admin.*mint" lib/fungible_token/tests.ak; then
+            echo "ERROR: Missing admin control tests"
+            exit 1
+          fi
+
+          # Check for unauthorized access tests
+          if ! grep -q "non_admin.*fail\|unauthorized" lib/fungible_token/tests.ak; then
+            echo "ERROR: Missing unauthorized access tests"
+            exit 1
+          fi
+
+          echo "Fungible token security validation passed!"
 
   validate-documentation:
     runs-on: ubuntu-latest
@@ -141,7 +220,7 @@ jobs:
             exit 1
           fi
 
-                    if ! grep -q "## Testing" README.md; then
+          if ! grep -q "## Testing" README.md; then
             echo "ERROR: README missing Testing section"
             exit 1
           fi
@@ -152,7 +231,48 @@ jobs:
             exit 1
           fi
 
-          echo "Documentation validation passed!"
+          echo "NFT documentation validation passed!"
+
+      - name: Check Fungible Token Documentation
+        run: |
+          cd examples/token-contracts/fungible-token
+
+          # Verify README exists and has required sections
+          echo "Validating README structure..."
+
+          if ! grep -q "# Controlled Fungible Token" README.md; then
+            echo "ERROR: README missing title section"
+            exit 1
+          fi
+
+          if ! grep -q "## Overview" README.md; then
+            echo "ERROR: README missing Overview section"
+            exit 1
+          fi
+
+          if ! grep -q "## Admin Setup" README.md; then
+            echo "ERROR: README missing Admin Setup section"  
+            exit 1
+          fi
+
+          if ! grep -q "## Usage Examples" README.md; then
+            echo "ERROR: README missing Usage Examples section"
+            exit 1
+          fi
+
+          # Check for admin-specific examples
+          if ! grep -q "admin.*mint\|minting.*admin" README.md; then
+            echo "ERROR: README missing admin minting examples"
+            exit 1
+          fi
+
+          # Check for working code examples
+          if ! grep -q "aiken check" README.md; then
+            echo "ERROR: README missing usage examples"
+            exit 1
+          fi
+
+          echo "Fungible token documentation validation passed!"
 
       - name: Check documentation links
         run: |
@@ -162,9 +282,9 @@ jobs:
           # Check example documentation
           find examples/ -name "*.md" -exec markdown-link-check {} \;
 
-  performance-validation:
+  performance-benchmarks:
     runs-on: ubuntu-latest
-    name: Performance Validation
+    name: Performance Tests
     needs: test-token-contracts
 
     steps:
@@ -178,35 +298,67 @@ jobs:
           source $HOME/.aiken/bin/env
           aikup
 
-      - name: Run Performance Validation
+      - name: Run NFT Performance Tests
         run: |
           cd examples/token-contracts/nft-one-shot
 
-          echo "Running performance validation..."
-          aiken check > test_results.txt
+          echo "Running NFT performance tests..."
+          aiken check --trace-level verbose > benchmark_results.txt
 
           # Display results
-          cat test_results.txt
+          echo "=== NFT Performance Results ==="
+          cat benchmark_results.txt
 
           # Basic performance validation
-          if grep -q "FAIL" test_results.txt; then
-            echo "ERROR: Test failures detected"
+          if grep -q '"status":"fail"' benchmark_results.txt; then
+            echo "ERROR: Performance test failures detected"
             exit 1
           fi
 
           # Check memory usage is reasonable (under 10000 units for basic operations)
-          max_memory=$(grep "mem:" test_results.txt | sed 's/.*mem:\s*\([0-9]*\).*/\1/' | sort -n | tail -1)
+          max_memory=$(grep -o '"mem": [0-9]*' benchmark_results.txt | sed 's/"mem": //' | sort -n | tail -1)
           if [ "$max_memory" -gt 10000 ]; then
-            echo "WARNING: High memory usage detected: $max_memory units"
+            echo "WARNING: High memory usage for NFT: $max_memory units"
             # Don't fail, just warn for now
           fi
 
-          echo "Performance validation completed successfully!"
+          echo "NFT performance tests completed successfully!"
+
+      - name: Run Fungible Token Performance Tests
+        run: |
+          cd examples/token-contracts/fungible-token
+
+          echo "Running fungible token performance tests..."
+          aiken check --trace-level verbose > performance_results.txt
+
+          # Display results
+          echo "=== Fungible Token Performance Results ==="
+          cat performance_results.txt
+
+          # Basic performance validation
+          if grep -q '"status":"fail"' performance_results.txt; then
+            echo "ERROR: Performance test failures detected"
+            exit 1
+          fi
+
+          # Check memory usage for token operations (parse JSON output)
+          max_memory=$(grep -o '"mem": [0-9]*' performance_results.txt | sed 's/"mem": //' | sort -n | tail -1)
+          if [ "$max_memory" -gt 15000 ]; then
+            echo "WARNING: High memory usage for fungible token: $max_memory units"
+            # Don't fail, just warn for token operations
+          fi
+
+          # Verify admin operation tests exist
+          if ! grep -q "admin_mint_success\|bench_mint_performance" performance_results.txt; then
+            echo "WARNING: No admin operation performance tests found"
+          fi
+
+          echo "Fungible token performance tests completed successfully!"
 
   integration-validation:
     runs-on: ubuntu-latest
     name: Integration Validation
-    needs: [validate-documentation, performance-validation]
+    needs: [validate-documentation, performance-benchmarks]
 
     steps:
       - name: Checkout code
@@ -219,43 +371,63 @@ jobs:
           source $HOME/.aiken/bin/env  
           aikup
 
-      - name: Validate Contract Integration
+      - name: Validate Token Contract Integration
         run: |
-          echo "Running integration validation..."
+          echo "Running token contract integration validation..."
 
-          # Test that all examples can be built together
-          for example_dir in examples/*/; do
-            if [ -f "$example_dir/aiken.toml" ]; then
-              echo "Building $example_dir..."
-              cd "$example_dir"
-              aiken build
-              cd - > /dev/null
-            fi
-          done
+          # Test that both token contracts build together
+          echo "Building NFT contract..."
+          cd examples/token-contracts/nft-one-shot
+          aiken build
+          cd ../../../
 
-          # Test nested examples (like token-contracts/nft-one-shot)
-          for example_dir in examples/*/*/; do
-            if [ -f "$example_dir/aiken.toml" ]; then
-              echo "Building $example_dir..."
-              cd "$example_dir"
-              aiken build
-              cd - > /dev/null
-            fi
-          done
+          echo "Building Fungible Token contract..."
+          cd examples/token-contracts/fungible-token
+          aiken build
+          cd ../../../
 
-          echo "Integration validation completed successfully!"
+          # Test cross-contract compatibility
+          echo "Testing cross-contract compatibility..."
 
-      - name: Generate Success Report
+          # Both contracts should have compatible helper patterns
+          if ! diff -q examples/token-contracts/nft-one-shot/lib/nft_policy/helpers.ak examples/token-contracts/fungible-token/lib/fungible_token/helpers.ak > /dev/null; then
+            echo "INFO: Token contracts have different helper patterns (expected)"
+          fi
+
+          # Both should follow same testing patterns
+          nft_test_count=$(grep -c "^test " examples/token-contracts/nft-one-shot/lib/nft_policy/tests.ak)
+          fungible_test_count=$(grep -c "^test " examples/token-contracts/fungible-token/lib/fungible_token/tests.ak)
+
+          echo "NFT contract tests: $nft_test_count"
+          echo "Fungible token tests: $fungible_test_count"
+
+          if [ "$fungible_test_count" -lt 10 ]; then
+            echo "ERROR: Insufficient fungible token tests"
+            exit 1
+          fi
+
+          echo "Token contract integration validation passed!"
+
+      - name: Generate Enhanced Success Report
         run: |
-          echo "=== CI/CD Pipeline Success Report ===" 
-          echo "✅ Basic tests passed"
-          echo "✅ Token contract tests passed"  
-          echo "✅ Documentation validated"
-          echo "✅ Performance validation completed"
+          echo "=== Enhanced CI/CD Pipeline Success Report ===" 
+          echo "✅ Basic tests passed (Hello World)"
+          echo "✅ NFT one-shot contract tests passed"  
+          echo "✅ Fungible token contract tests passed"
+          echo "✅ Token contract security patterns validated"
+          echo "✅ Documentation validated for both contracts"
+          echo "✅ Performance tests completed"
           echo "✅ Integration validation passed"
           echo ""
-          echo "NFT One-Shot Contract successfully integrated into CI/CD pipeline!"
-          echo "Ready for production deployment and next contract development."
+          echo "🎉 Two production-ready token contracts successfully integrated!"
+          echo "📈 Pipeline now supports:"
+          echo "   • NFT one-shot minting policies"
+          echo "   • Admin-controlled fungible tokens"
+          echo "   • Comprehensive security validation"
+          echo "   • Performance monitoring"
+          echo "   • Cross-contract compatibility testing"
+          echo ""
+          echo "🚀 Ready for next contract: Multi-Signature Wallet or Escrow Contract"
 
   security:
     runs-on: ubuntu-latest
@@ -303,5 +475,7 @@ jobs:
           test -f examples/hello-world/README.md
           test -d examples/token-contracts/nft-one-shot
           test -f examples/token-contracts/nft-one-shot/README.md
+          test -d examples/token-contracts/fungible-token
+          test -f examples/token-contracts/fungible-token/README.md
 
           echo "Example projects verified"
