@@ -128,7 +128,7 @@ jobs:
 
           # Run type checking and tests
           echo "Running comprehensive tests..."
-          aiken check --trace all
+          aiken check --trace-level verbose
 
           # Build the project
           echo "Building contract..."
