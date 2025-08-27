@@ -18,7 +18,12 @@ jobs:
         run: |
           # Install Aiken using the official installation method
           curl --proto '=https' --tlsv1.2 -LsSf https://install.aiken-lang.org | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Add Aiken bin directory to PATH
+          echo "$HOME/.aiken/bin" >> $GITHUB_PATH
+          # Source the environment to make aikup available
+          source $HOME/.aiken/bin/env
+          # Install the latest version of Aiken
+          aikup
 
       - name: Verify Aiken installation
         run: aiken --version
