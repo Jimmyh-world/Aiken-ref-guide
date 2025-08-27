@@ -9,7 +9,7 @@ This guide provides clear navigation paths for different user types and use case
 ## 📋 **Version Information**
 
 - **Aiken Version**: v1.8.0+ (latest stable)
-- **Last Updated**: August 2024
+- **Last Updated**: August 2025
 - **Status**: ✅ Production Ready
 - **Test Coverage**: All examples validated by CI/CD
 

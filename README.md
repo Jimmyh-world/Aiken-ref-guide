@@ -7,7 +7,7 @@ Welcome to the AI-optimized knowledge base for the Aiken smart contract language
 ## Version Compatibility
 
 **Aiken Version**: This guide is compatible with Aiken **v1.8.0+**  
-**Last Updated**: August 2024  
+**Last Updated**: August 2025  
 **Status**: ✅ **Production Ready** - All examples tested and validated
 
 ## Mission
