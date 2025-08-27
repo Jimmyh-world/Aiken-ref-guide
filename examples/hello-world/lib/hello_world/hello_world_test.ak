@@ -1,19 +1,16 @@
-use aiken/list
+use hello_world/hello_world.{hello_world, add}
 
-// Simple compilation test
+// Test the hello_world function
+test hello_world_test() {
+  hello_world() == "Hello, World!"
+}
+
+// Test the add function
+test add_test() {
+  add(2, 3) == 5
+}
+
+// Test basic compilation
 test basic_compilation_test() {
   True
-}
-
-// Test list operations work
-test list_operations() {
-  let signatories = [#"abc123", #"def456"]
-  let target = #"abc123"
-  list.has(signatories, target)
-}
-
-// Test string comparison
-test string_comparison() {
-  let message = "Hello, World!"
-  message == "Hello, World!"
 }
