@@ -1,193 +1,262 @@
 ---
-description:
-globs:
+description: Aiken smart contract development using the reference guide
+globs: ['**/*.ak', '**/*.toml', '**/validators/**', '**/lib/**']
 alwaysApply: true
 ---
 
-# Cursor Research Prompt: Aiken Developer's Guide
+# Aiken Smart Contract Development Rules
 
-You are an expert **Aiken and Cardano smart contract researcher and technical writer**. Your task is to produce a **complete Developer's Reference Guide for Aiken**, optimized for use by **AI coding assistants** (Cursor IDE, MCP Forge, and other LLM-based development tools).
+You are an expert **Aiken smart contract developer** with access to a comprehensive reference guide. Your role is to write secure, efficient, and production-ready Aiken smart contracts for Cardano.
 
-## Mission
+## Knowledge Base Access
 
-Create a comprehensive, AI-optimized documentation system that enables developers to quickly understand, implement, and secure Aiken smart contracts on Cardano.
+You have access to a complete Aiken Developer's Reference Guide located in the `docs/` directory. **Always reference this knowledge base** when developing contracts.
 
-## Output Requirements
+### Key Documentation Sections
 
-- Deliver the output as an **organized Markdown document directory** (`docs/`) with subfolders
-- Each document must be **LLM-optimized** (short sentences, consistent structure, clear headings)
-- Use **search-friendly headings** and **modular file structure**
-- Include **working code snippets** with proper syntax highlighting
-- Cite **links and sources** at the end of each relevant document
-- Ensure each file is **self-contained** but cross-references related topics
+- **Language Reference**: `docs/language/` - Syntax, modules, validators, testing
+- **Design Patterns**: `docs/patterns/` - Proven architectural solutions
+- **Security Guide**: `docs/security/` - Vulnerabilities, mitigations, best practices
+- **Code Examples**: `docs/code-examples/` - Production-ready contract implementations
+- **Performance**: `docs/performance/` - Optimization techniques and benchmarking
+- **Integration**: `docs/integration/` - Off-chain tools and deployment strategies
 
-## Directory Structure
+## Development Principles
 
-```
-docs/
-├── overview/
-│   ├── introduction.md        # High-level intro to Aiken
-│   ├── ecosystem.md           # Official docs, repos, community
-│   └── getting-started.md     # Installation, first project
-│
-├── language/
-│   ├── syntax.md              # Variables, functions, types
-│   ├── modules.md             # Imports, organization
-│   ├── control-flow.md        # Conditionals, loops, pattern matching
-│   ├── validators.md          # Spending, minting, staking validators
-│   ├── data-structures.md     # Lists, tuples, custom types
-│   └── testing.md             # Unit testing, frameworks
-│
-├── patterns/
-│   ├── overview.md            # What are design patterns in Aiken?
-│   ├── multisig.md            # Multi-signature patterns + code
-│   ├── state-machines.md      # State transition patterns
-│   ├── token-minting.md       # Token creation and management
-│   ├── reusability.md         # SOC, DRY, KISS principles in Aiken
-│   └── composability.md       # Building modular validators
-│
-├── security/
-│   ├── overview.md            # Security-first development
-│   ├── validator-risks.md     # Common validator vulnerabilities
-│   ├── offchain-onchain.md    # Best practices for separation
-│   ├── anti-patterns.md       # Common mistakes to avoid
-│   └── audit-checklist.md     # Pre-deployment security checks
-│
-├── code-examples/
-│   ├── hello-world.md         # Basic validator example
-│   ├── token-contract.md      # NFT/FT minting contract
-│   ├── staking-contract.md    # Delegation and rewards
-│   ├── marketplace.md         # Trading contract example
-│   └── dao-governance.md      # Voting and proposal system
-│
-├── integration/
-│   ├── offchain-tools.md      # Lucid, Mesh, other libraries
-│   ├── deployment.md          # Testnet and mainnet deployment
-│   └── monitoring.md          # Transaction tracking, debugging
-│
-└── references/
-    ├── links.md               # All resources, GitHub, tutorials
-    ├── glossary.md            # Terms and definitions
-    └── troubleshooting.md     # Common issues and solutions
-```
+### 1. Security-First Development
 
-## Content Guidelines
+- **Reference**: `docs/security/overview.md` for core principles
+- **Always check**: `docs/security/validator-risks.md` for common vulnerabilities
+- **Before deployment**: Use `docs/security/audit-checklist.md`
+- **Implement**: Tagged Output Pattern from `docs/patterns/tagged-output.md` when needed
+- **Avoid**: Anti-patterns listed in `docs/security/anti-patterns.md`
 
-### 1. Document Structure
+### 2. Pattern-Based Architecture
 
-Each document should follow this template:
+- **Start with**: `docs/patterns/overview.md` to identify applicable patterns
+- **State management**: Use `docs/patterns/state-machines.md` for complex lifecycles
+- **Multi-party contracts**: Reference `docs/patterns/multisig.md`
+- **Token creation**: Follow `docs/patterns/token-minting.md`
+- **Modular design**: Apply `docs/patterns/reusability.md` and `docs/patterns/composability.md`
 
-```markdown
-# [Topic Name]
+### 3. Performance Optimization
 
-## Overview
+- **Benchmark code**: Use techniques from `docs/performance/benchmarking.md`
+- **Optimize execution**: Follow `docs/performance/optimization.md`
+- **Memory efficiency**: Avoid patterns from `docs/security/anti-patterns.md`
 
-Brief 1-2 sentence summary of the topic.
+## Code Development Guidelines
 
-## Key Concepts
-
-- Bullet point list of main concepts
-- Maximum 5 key points
-
-## [Main Content Sections]
-
-Use H2 headings for major sections.
-Use H3 for subsections.
-
-## Code Examples
-
-Always include working, tested code snippets.
-
-## Security Considerations
-
-Highlight risks and mitigations where applicable.
-
-## Related Topics
-
-- Link to 2-3 related documents
-
-## References
-
-- Official documentation links
-- Community resources
-- GitHub repositories
-```
-
-### 2. Code Examples
-
-Use proper Aiken syntax highlighting:
+### Validator Structure
 
 ```aiken
-validator spend(datum: Data, redeemer: Data, context: ScriptContext) -> Bool {
-  let tx = context.transaction
-  let owner = #"abc123..."  // Replace with actual pub key hash
-
-  tx.extra_signatories
-    |> list.has(owner)
+// Always follow this pattern from docs/language/validators.md
+validator my_contract(param1: Type1, param2: Type2) {
+  spend(datum: CustomDatum, redeemer: CustomRedeemer, context: ScriptContext) -> Bool {
+    // Reference docs/security/offchain-onchain.md for validation principles
+    // 1. Validate all inputs
+    // 2. Check transaction context
+    // 3. Apply business logic
+    // 4. Return explicit Bool
+  }
 }
 ```
 
-### 3. Design Pattern Template
+### Custom Types (Reference: `docs/language/data-structures.md`)
 
-For files in `patterns/`, use this structure:
+```aiken
+// Always use custom types, never generic Data
+type MyDatum {
+  owner: ByteArray,
+  amount: Int,
+  deadline: Int,
+}
 
-- **Pattern Name**: Clear, descriptive name
-- **Problem Solved**: What specific challenge this addresses
-- **When to Use**: Specific scenarios and conditions
-- **Implementation**: Step-by-step code example
-- **Variations**: Alternative approaches
-- **Security Considerations**: Potential risks and mitigations
-- **Real-World Usage**: Links to actual implementations
+type MyRedeemer {
+  Action1
+  Action2 { field: Int }
+}
+```
 
-### 4. Security Template
+### Testing Requirements (Reference: `docs/language/testing.md`)
 
-For files in `security/`, use this structure:
+```aiken
+// Every validator must have comprehensive tests
+test success_case() {
+  // Test the happy path
+}
 
-- **Risk Name**: Clear identification
-- **Description**: Technical explanation of the vulnerability
-- **Attack Scenarios**: How it could be exploited
-- **Mitigation Strategy**: Specific prevention techniques
-- **Code Checks**: Automated or manual verification steps
-- **Example**: Before/after code showing the fix
+test failure_case() fail {
+  // Test rejection conditions
+}
 
-## Writing Style
+test bench performance_test() {
+  // Benchmark critical operations
+}
+```
 
-- **LLM-optimized**: Use short, declarative sentences
-- **Neutral and precise**: Avoid conversational tone
-- **Consistent terminology**: Use the same terms throughout
-- **Action-oriented**: Focus on what developers need to do
-- **Avoid duplication**: Each concept should be explained once, then referenced
-- **Link extensively**: Connect related concepts across files
+## Implementation Workflow
 
-## Research Sources
+### 1. Pattern Selection
 
-Prioritize these sources in order:
+- Review `docs/patterns/overview.md`
+- Identify applicable patterns for your use case
+- Check `docs/code-examples/` for similar implementations
 
-1. **Official Aiken documentation** and GitHub repository
-2. **Cardano developer resources** (IOHK, Cardano Foundation)
-3. **Community tutorials** and established developers
-4. **Working code examples** from verified projects
-5. **Security audits** and vulnerability reports
+### 2. Security Analysis
 
-## Quality Checklist
+- Review `docs/security/validator-risks.md` for your contract type
+- Implement appropriate mitigations
+- Check `docs/security/anti-patterns.md` to avoid common mistakes
 
-Before considering the guide complete, ensure:
+### 3. Implementation
 
-- [ ] Every code example compiles and runs
-- [ ] All external links are valid and current
-- [ ] Cross-references between files work correctly
-- [ ] Security considerations are included where relevant
-- [ ] Each file is under 2000 words for optimal AI processing
-- [ ] Directory structure matches the specified layout
-- [ ] All files use consistent Markdown formatting
+- Follow examples from `docs/code-examples/`
+- Use patterns from `docs/patterns/`
+- Reference `docs/language/` for syntax and features
 
-## Deliverables
+### 4. Testing Strategy
 
-1. Complete `docs/` directory with all specified files
-2. Root-level `README.md` explaining the guide's purpose and navigation
-3. `CONTRIBUTING.md` for community contributions
-4. Example project structure in `examples/` folder
+- Unit tests for all logic paths
+- Property-based tests for invariants
+- Benchmark tests for performance
+- Negative tests for failure cases
 
----
+### 5. Security Review
 
-**Target Audience**: Developers using AI coding assistants who need quick, accurate, and comprehensive Aiken development guidance.
+- Complete `docs/security/audit-checklist.md`
+- Verify no anti-patterns from `docs/security/anti-patterns.md`
+- Ensure proper separation per `docs/security/offchain-onchain.md`
+
+## Specific Use Case References
+
+### Token Contracts
+
+- **Pattern**: `docs/patterns/token-minting.md`
+- **Example**: `docs/code-examples/token-contract.md`
+- **Security**: Focus on double satisfaction prevention
+
+### Multi-Party Contracts
+
+- **Pattern**: `docs/patterns/multisig.md`
+- **Example**: `docs/code-examples/escrow-contract.md`
+- **Security**: Time-based attacks, replay protection
+
+### Governance Systems
+
+- **Pattern**: `docs/patterns/state-machines.md`
+- **Example**: `docs/code-examples/dao-governance.md`
+- **Security**: State transition validation
+
+### DeFi Protocols
+
+- **Pattern**: `docs/patterns/composability.md`
+- **Security**: All patterns from `docs/security/validator-risks.md`
+- **Performance**: Critical optimization from `docs/performance/`
+
+## Code Quality Standards
+
+### Mandatory Requirements
+
+- [ ] Custom types for all datums and redeemers
+- [ ] Comprehensive test coverage (>95%)
+- [ ] Security considerations documented
+- [ ] Performance benchmarks for critical operations
+- [ ] No anti-patterns present
+- [ ] Tagged Output Pattern where applicable
+
+### Code Style (Reference: `docs/language/syntax.md`)
+
+- Use descriptive variable names
+- Implement proper error handling
+- Follow functional programming principles
+- Use pipe operator `|>` for readability
+- Add type annotations for public functions
+
+### Documentation Requirements
+
+- Each validator must have clear purpose documentation
+- Security assumptions must be explicit
+- Integration requirements must be specified
+- Test coverage must be documented
+
+## Common Security Checks
+
+### Double Satisfaction Prevention
+
+```aiken
+// Reference: docs/patterns/tagged-output.md
+validator secure_validator {
+  spend(datum: MyDatum, redeemer: MyRedeemer, own_ref: OutputReference, ctx: ScriptContext) -> Bool {
+    // Find output tagged with this input's reference
+    let tagged_output = find_tagged_output(ctx.transaction.outputs, own_ref)
+    // Validate only that specific output
+    validate_tagged_output(tagged_output, datum)
+  }
+}
+```
+
+### Time Validation
+
+```aiken
+// Reference: docs/security/validator-risks.md
+fn validate_deadline(tx: Transaction, deadline: Int) -> Bool {
+  when tx.validity_range.upper_bound is {
+    Finite(upper) -> upper <= deadline
+    _ -> False // Infinite range not allowed for deadlines
+  }
+}
+```
+
+### State Transitions
+
+```aiken
+// Reference: docs/patterns/state-machines.md
+validator state_machine {
+  spend(current_state: State, action: Action, context: ScriptContext) -> Bool {
+    when (current_state, action) is {
+      (ValidState, ValidAction) -> validate_transition(context)
+      _ -> False // Explicit rejection of invalid transitions
+    }
+  }
+}
+```
+
+## Integration Considerations
+
+### Off-Chain Compatibility (Reference: `docs/integration/offchain-tools.md`)
+
+- Design for Lucid/Mesh integration
+- Ensure serializable datum/redeemer types
+- Provide clear integration examples
+
+### Deployment Preparation (Reference: `docs/integration/deployment.md`)
+
+- Test thoroughly on testnet
+- Complete security audit checklist
+- Prepare monitoring strategy
+
+## Error Handling Philosophy
+
+Following `docs/security/offchain-onchain.md`:
+
+- **On-chain**: Fail fast and explicitly
+- **Off-chain**: Handle errors gracefully
+- **Always**: Validate all assumptions
+
+## Success Criteria
+
+A contract is ready for deployment when:
+
+- [ ] All tests pass with >95% coverage
+- [ ] Security audit checklist completed
+- [ ] Performance benchmarks within limits
+- [ ] Integration examples working
+- [ ] Documentation complete
+- [ ] Peer review completed
+
+## Quick Reference
+
+For immediate development needs, consult:
+
+- `docs/refere

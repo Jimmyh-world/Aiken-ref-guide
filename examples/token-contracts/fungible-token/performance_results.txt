@@ -1,0 +1,136 @@
+{
+  "seed": 1255046858,
+  "summary": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "kind": {
+      "unit": 12,
+      "property": 0
+    }
+  },
+  "modules": [
+    {
+      "name": "fungible_token/tests",
+      "summary": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "kind": {
+          "unit": 12,
+          "property": 0
+        }
+      },
+      "tests": [
+        {
+          "title": "admin_mint_success",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "non_admin_mint_fails",
+          "status": "pass",
+          "on_failure": "succeed_eventually",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "mint_zero_amount_fails",
+          "status": "pass",
+          "on_failure": "succeed_eventually",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "mint_negative_amount_fails",
+          "status": "pass",
+          "on_failure": "succeed_eventually",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "burn_success",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "burn_positive_amount_fails",
+          "status": "pass",
+          "on_failure": "succeed_eventually",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "burn_zero_amount_fails",
+          "status": "pass",
+          "on_failure": "succeed_eventually",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "admin_signed_test",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "valid_mint_amount_test",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 3404,
+            "cpu": 832296
+          }
+        },
+        {
+          "title": "valid_burn_amount_test",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 3404,
+            "cpu": 832296
+          }
+        },
+        {
+          "title": "prop_only_admin_can_mint",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        },
+        {
+          "title": "bench_mint_performance",
+          "status": "pass",
+          "on_failure": "fail_immediately",
+          "execution_units": {
+            "mem": 200,
+            "cpu": 16100
+          }
+        }
+      ]
+    }
+  ]
+}

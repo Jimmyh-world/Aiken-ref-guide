@@ -36,6 +36,7 @@ type Action {
 ## Admin Setup
 
 ### Initial Configuration
+
 The contract requires an admin public key hash to be set during deployment:
 
 ```aiken
@@ -45,6 +46,7 @@ let validator = fungible_token_validator(admin_pkh)
 ```
 
 ### Admin Requirements
+
 - **Public Key Hash**: Must be a valid Cardano public key hash
 - **Signature Validation**: Admin must sign all minting transactions
 - **Access Control**: Only the designated admin can mint new tokens
@@ -52,11 +54,13 @@ let validator = fungible_token_validator(admin_pkh)
 ## Security Model
 
 ### Access Control
+
 - **Minting**: Requires admin signature validation
 - **Burning**: Unrestricted (ledger ensures token ownership)
 - **Amount Validation**: Positive amounts for minting, negative for burning
 
 ### Security Checks
+
 1. **Admin Signature Validation**: Verifies admin signature in transaction
 2. **Positive Mint Validation**: Ensures only positive amounts are minted
 3. **Burn Logic Validation**: Ensures negative amounts for burning
@@ -98,12 +102,14 @@ let success = mint(redeemer, admin_pkh, context)
 ## Testing Strategy
 
 ### Test Coverage
+
 - **Success Cases**: Valid admin minting and user burning
 - **Failure Cases**: Unauthorized minting, invalid amounts
 - **Property Tests**: Admin control invariants
 - **Performance Tests**: Large token amount operations
 
 ### Test Categories
+
 1. **Unit Tests**: Individual function validation
 2. **Integration Tests**: End-to-end token operations
 3. **Property Tests**: Security invariant verification
@@ -112,6 +118,7 @@ let success = mint(redeemer, admin_pkh, context)
 ## Development Guidelines
 
 ### Code Quality Standards
+
 - Custom `Action` type for redeemer
 - Modular helper functions for validation
 - Comprehensive error handling
@@ -119,6 +126,7 @@ let success = mint(redeemer, admin_pkh, context)
 - Extensive test coverage
 
 ### Security Checklist
+
 - [x] Admin signature properly validated
 - [x] Mint amounts restricted to positive values
 - [x] Burn amounts properly handled as negative values
@@ -129,12 +137,15 @@ let success = mint(redeemer, admin_pkh, context)
 ## Integration Notes
 
 ### Off-Chain Integration
+
 This contract is designed for integration with:
+
 - **Lucid**: JavaScript/TypeScript wallet integration
 - **Mesh**: React-based wallet integration
 - **Custom Wallets**: Any Cardano-compatible wallet
 
 ### Deployment Considerations
+
 - **Testnet Testing**: Always test on testnet first
 - **Admin Key Security**: Secure admin private key storage
 - **Monitoring**: Track minting and burning operations
@@ -143,11 +154,13 @@ This contract is designed for integration with:
 ## Performance Characteristics
 
 ### Operation Costs
+
 - **Minting**: O(1) complexity for amount validation
 - **Burning**: O(1) complexity for amount validation
 - **Signature Verification**: O(n) where n is number of signatories
 
 ### Optimization Features
+
 - Efficient amount validation
 - Minimal on-chain computation
 - Optimized asset calculation
@@ -162,6 +175,7 @@ This contract is designed for integration with:
 ## Contributing
 
 When contributing to this contract:
+
 1. Follow the established patterns and conventions
 2. Add comprehensive tests for new features
 3. Update documentation for any changes

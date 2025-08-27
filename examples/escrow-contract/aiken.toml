@@ -1,0 +1,7 @@
+name = "jimmyh-world/escrow-contract"
+version = "1.0.0"
+license = "MIT"
+
+[[migrations]]
+name = "escrow"
+path = "validators/escrow.ak"
