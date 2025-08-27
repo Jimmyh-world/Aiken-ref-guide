@@ -28,17 +28,24 @@ jobs:
       - name: Verify Aiken installation
         run: aiken --version
 
-      - name: Run tests
+      - name: Run tests (hello-world)
         run: |
-          # Test the hello-world example
           cd examples/hello-world
-          aiken check
+          # First, let's see what files we have
+          echo "Project structure:"
+          find . -name "*.ak" -o -name "*.toml" | sort
+          echo ""
+          
+          # Check if we can parse the project
+          echo "Checking project configuration..."
+          aiken check --verbose
+        continue-on-error: false
 
-      - name: Build projects
+      - name: Build projects (hello-world)
         run: |
-          # Build the hello-world example
           cd examples/hello-world
-          aiken build
+          echo "Building project..."
+          aiken build --verbose
 
       - name: Check documentation links
         run: |
