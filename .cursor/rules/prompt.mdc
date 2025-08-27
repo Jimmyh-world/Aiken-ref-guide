@@ -1,0 +1,193 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Cursor Research Prompt: Aiken Developer's Guide
+
+You are an expert **Aiken and Cardano smart contract researcher and technical writer**. Your task is to produce a **complete Developer's Reference Guide for Aiken**, optimized for use by **AI coding assistants** (Cursor IDE, MCP Forge, and other LLM-based development tools).
+
+## Mission
+
+Create a comprehensive, AI-optimized documentation system that enables developers to quickly understand, implement, and secure Aiken smart contracts on Cardano.
+
+## Output Requirements
+
+- Deliver the output as an **organized Markdown document directory** (`docs/`) with subfolders
+- Each document must be **LLM-optimized** (short sentences, consistent structure, clear headings)
+- Use **search-friendly headings** and **modular file structure**
+- Include **working code snippets** with proper syntax highlighting
+- Cite **links and sources** at the end of each relevant document
+- Ensure each file is **self-contained** but cross-references related topics
+
+## Directory Structure
+
+```
+docs/
+├── overview/
+│   ├── introduction.md        # High-level intro to Aiken
+│   ├── ecosystem.md           # Official docs, repos, community
+│   └── getting-started.md     # Installation, first project
+│
+├── language/
+│   ├── syntax.md              # Variables, functions, types
+│   ├── modules.md             # Imports, organization
+│   ├── control-flow.md        # Conditionals, loops, pattern matching
+│   ├── validators.md          # Spending, minting, staking validators
+│   ├── data-structures.md     # Lists, tuples, custom types
+│   └── testing.md             # Unit testing, frameworks
+│
+├── patterns/
+│   ├── overview.md            # What are design patterns in Aiken?
+│   ├── multisig.md            # Multi-signature patterns + code
+│   ├── state-machines.md      # State transition patterns
+│   ├── token-minting.md       # Token creation and management
+│   ├── reusability.md         # SOC, DRY, KISS principles in Aiken
+│   └── composability.md       # Building modular validators
+│
+├── security/
+│   ├── overview.md            # Security-first development
+│   ├── validator-risks.md     # Common validator vulnerabilities
+│   ├── offchain-onchain.md    # Best practices for separation
+│   ├── anti-patterns.md       # Common mistakes to avoid
+│   └── audit-checklist.md     # Pre-deployment security checks
+│
+├── code-examples/
+│   ├── hello-world.md         # Basic validator example
+│   ├── token-contract.md      # NFT/FT minting contract
+│   ├── staking-contract.md    # Delegation and rewards
+│   ├── marketplace.md         # Trading contract example
+│   └── dao-governance.md      # Voting and proposal system
+│
+├── integration/
+│   ├── offchain-tools.md      # Lucid, Mesh, other libraries
+│   ├── deployment.md          # Testnet and mainnet deployment
+│   └── monitoring.md          # Transaction tracking, debugging
+│
+└── references/
+    ├── links.md               # All resources, GitHub, tutorials
+    ├── glossary.md            # Terms and definitions
+    └── troubleshooting.md     # Common issues and solutions
+```
+
+## Content Guidelines
+
+### 1. Document Structure
+
+Each document should follow this template:
+
+```markdown
+# [Topic Name]
+
+## Overview
+
+Brief 1-2 sentence summary of the topic.
+
+## Key Concepts
+
+- Bullet point list of main concepts
+- Maximum 5 key points
+
+## [Main Content Sections]
+
+Use H2 headings for major sections.
+Use H3 for subsections.
+
+## Code Examples
+
+Always include working, tested code snippets.
+
+## Security Considerations
+
+Highlight risks and mitigations where applicable.
+
+## Related Topics
+
+- Link to 2-3 related documents
+
+## References
+
+- Official documentation links
+- Community resources
+- GitHub repositories
+```
+
+### 2. Code Examples
+
+Use proper Aiken syntax highlighting:
+
+```aiken
+validator spend(datum: Data, redeemer: Data, context: ScriptContext) -> Bool {
+  let tx = context.transaction
+  let owner = #"abc123..."  // Replace with actual pub key hash
+
+  tx.extra_signatories
+    |> list.has(owner)
+}
+```
+
+### 3. Design Pattern Template
+
+For files in `patterns/`, use this structure:
+
+- **Pattern Name**: Clear, descriptive name
+- **Problem Solved**: What specific challenge this addresses
+- **When to Use**: Specific scenarios and conditions
+- **Implementation**: Step-by-step code example
+- **Variations**: Alternative approaches
+- **Security Considerations**: Potential risks and mitigations
+- **Real-World Usage**: Links to actual implementations
+
+### 4. Security Template
+
+For files in `security/`, use this structure:
+
+- **Risk Name**: Clear identification
+- **Description**: Technical explanation of the vulnerability
+- **Attack Scenarios**: How it could be exploited
+- **Mitigation Strategy**: Specific prevention techniques
+- **Code Checks**: Automated or manual verification steps
+- **Example**: Before/after code showing the fix
+
+## Writing Style
+
+- **LLM-optimized**: Use short, declarative sentences
+- **Neutral and precise**: Avoid conversational tone
+- **Consistent terminology**: Use the same terms throughout
+- **Action-oriented**: Focus on what developers need to do
+- **Avoid duplication**: Each concept should be explained once, then referenced
+- **Link extensively**: Connect related concepts across files
+
+## Research Sources
+
+Prioritize these sources in order:
+
+1. **Official Aiken documentation** and GitHub repository
+2. **Cardano developer resources** (IOHK, Cardano Foundation)
+3. **Community tutorials** and established developers
+4. **Working code examples** from verified projects
+5. **Security audits** and vulnerability reports
+
+## Quality Checklist
+
+Before considering the guide complete, ensure:
+
+- [ ] Every code example compiles and runs
+- [ ] All external links are valid and current
+- [ ] Cross-references between files work correctly
+- [ ] Security considerations are included where relevant
+- [ ] Each file is under 2000 words for optimal AI processing
+- [ ] Directory structure matches the specified layout
+- [ ] All files use consistent Markdown formatting
+
+## Deliverables
+
+1. Complete `docs/` directory with all specified files
+2. Root-level `README.md` explaining the guide's purpose and navigation
+3. `CONTRIBUTING.md` for community contributions
+4. Example project structure in `examples/` folder
+
+---
+
+**Target Audience**: Developers using AI coding assistants who need quick, accurate, and comprehensive Aiken development guidance.
