@@ -47,7 +47,9 @@ aiken/
 │   ├── integration/           # Off-chain tools and deployment
 │   └── references/            # Quick reference and troubleshooting
 └── examples/                   # Working project examples
-    └── hello-world/           # Basic validator example
+    ├── hello-world/           # Basic validator example
+    └── token-contracts/       # Token contract examples
+        └── nft-one-shot/      # NFT one-shot minting policy
 ```
 
 ### **Documentation Sections**

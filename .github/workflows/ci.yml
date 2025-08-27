@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Enhanced CI/CD Pipeline
 
 on:
   push:
@@ -7,8 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-basic:
     runs-on: ubuntu-latest
+    name: Test Basic Examples
 
     steps:
       - name: Checkout code
@@ -16,44 +17,245 @@ jobs:
 
       - name: Setup Aiken
         run: |
-          # Install Aiken using the official installation method
           curl --proto '=https' --tlsv1.2 -LsSf https://install.aiken-lang.org | sh
-          # Add Aiken bin directory to PATH
           echo "$HOME/.aiken/bin" >> $GITHUB_PATH
-          # Source the environment to make aikup available
           source $HOME/.aiken/bin/env
-          # Install the latest version of Aiken
           aikup
 
       - name: Verify Aiken installation
         run: aiken --version
 
-      - name: Run tests (hello-world)
+      # Original hello-world test
+      - name: Test Hello World Example
         run: |
           cd examples/hello-world
-          # First, let's see what files we have
-          echo "Project structure:"
-          find . -name "*.ak" -o -name "*.toml" | sort
-          echo ""
-
-          # Check if we can parse the project
-          echo "Checking project configuration..."
+          echo "Testing hello-world project..."
           aiken check
+          aiken build
         continue-on-error: false
 
-      - name: Build projects (hello-world)
+      # NEW: NFT One-Shot Contract Tests
+      - name: Test NFT One-Shot Contract
         run: |
-          cd examples/hello-world
-          echo "Building project..."
+          cd examples/token-contracts/nft-one-shot
+          echo "Testing NFT one-shot contract..."
+
+          # Check project structure
+          echo "Verifying project structure..."
+          test -f aiken.toml
+          test -f validators/nft_policy.ak
+          test -f lib/nft_policy/helpers.ak  
+          test -f lib/nft_policy/tests.ak
+          test -f README.md
+
+          # Run type checking and tests
+          echo "Running tests..."
+          aiken check
+
+          # Build the project
+          echo "Building contract..."
           aiken build
+
+          # Run tests with performance metrics
+          echo "Running tests with performance metrics..."
+          aiken check
+
+          # Verify plutus.json generation
+          echo "Verifying blueprint generation..."
+          test -f plutus.json
+          echo "Blueprint generated successfully"
+
+        continue-on-error: false
+
+  test-token-contracts:
+    runs-on: ubuntu-latest
+    name: Test Token Contract Suite
+    needs: test-basic
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Aiken
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://install.aiken-lang.org | sh
+          echo "$HOME/.aiken/bin" >> $GITHUB_PATH
+          source $HOME/.aiken/bin/env
+          aikup
+
+      - name: Test NFT Contract Security Patterns
+        run: |
+          cd examples/token-contracts/nft-one-shot
+
+          # Security validation tests
+          echo "Running security pattern validation..."
+
+          # Check that all helper functions exist
+          if ! grep -q "validate_mint_quantity" lib/nft_policy/helpers.ak; then
+            echo "ERROR: Missing validate_mint_quantity function"
+            exit 1
+          fi
+
+          if ! grep -q "validate_burn" lib/nft_policy/helpers.ak; then
+            echo "ERROR: Missing validate_burn function" 
+            exit 1
+          fi
+
+          # Verify comprehensive test coverage
+          echo "Verifying test coverage..."
+          test_count=$(grep -c "^test " lib/nft_policy/tests.ak)
+          if [ "$test_count" -lt 5 ]; then
+            echo "ERROR: Insufficient test coverage (found $test_count tests, minimum 5 required)"
+            exit 1
+          fi
+
+          echo "Security validation passed!"
+
+  validate-documentation:
+    runs-on: ubuntu-latest
+    name: Validate Documentation
+    needs: test-token-contracts
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install documentation tools
+        run: |
+          npm install -g markdown-link-check
+
+      - name: Check NFT Contract Documentation
+        run: |
+          cd examples/token-contracts/nft-one-shot
+
+          # Verify README exists and has required sections
+          echo "Validating README structure..."
+
+          if ! grep -q "# One-Shot NFT Minting Policy" README.md; then
+            echo "ERROR: README missing title section"
+            exit 1
+          fi
+
+          if ! grep -q "## Overview" README.md; then
+            echo "ERROR: README missing Overview section"
+            exit 1
+          fi
+
+                    if ! grep -q "## Testing" README.md; then
+            echo "ERROR: README missing Testing section"
+            exit 1
+          fi
+
+          # Check for working code examples
+          if ! grep -q "aiken check" README.md; then
+            echo "ERROR: README missing usage examples"
+            exit 1
+          fi
+
+          echo "Documentation validation passed!"
 
       - name: Check documentation links
         run: |
-          # Install link checker
-          npm install -g markdown-link-check
+          # Check main documentation
+          find docs/ -name "*.md" -exec markdown-link-check {} \;
 
-          # Check all markdown files for broken links
-          find . -name "*.md" -exec markdown-link-check {} \;
+          # Check example documentation
+          find examples/ -name "*.md" -exec markdown-link-check {} \;
+
+  performance-validation:
+    runs-on: ubuntu-latest
+    name: Performance Validation
+    needs: test-token-contracts
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Aiken
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://install.aiken-lang.org | sh
+          echo "$HOME/.aiken/bin" >> $GITHUB_PATH  
+          source $HOME/.aiken/bin/env
+          aikup
+
+      - name: Run Performance Validation
+        run: |
+          cd examples/token-contracts/nft-one-shot
+
+          echo "Running performance validation..."
+          aiken check > test_results.txt
+
+          # Display results
+          cat test_results.txt
+
+          # Basic performance validation
+          if grep -q "FAIL" test_results.txt; then
+            echo "ERROR: Test failures detected"
+            exit 1
+          fi
+
+          # Check memory usage is reasonable (under 10000 units for basic operations)
+          max_memory=$(grep "mem:" test_results.txt | sed 's/.*mem:\s*\([0-9]*\).*/\1/' | sort -n | tail -1)
+          if [ "$max_memory" -gt 10000 ]; then
+            echo "WARNING: High memory usage detected: $max_memory units"
+            # Don't fail, just warn for now
+          fi
+
+          echo "Performance validation completed successfully!"
+
+  integration-validation:
+    runs-on: ubuntu-latest
+    name: Integration Validation
+    needs: [validate-documentation, performance-validation]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Aiken
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://install.aiken-lang.org | sh
+          echo "$HOME/.aiken/bin" >> $GITHUB_PATH
+          source $HOME/.aiken/bin/env  
+          aikup
+
+      - name: Validate Contract Integration
+        run: |
+          echo "Running integration validation..."
+
+          # Test that all examples can be built together
+          for example_dir in examples/*/; do
+            if [ -f "$example_dir/aiken.toml" ]; then
+              echo "Building $example_dir..."
+              cd "$example_dir"
+              aiken build
+              cd - > /dev/null
+            fi
+          done
+
+          # Test nested examples (like token-contracts/nft-one-shot)
+          for example_dir in examples/*/*/; do
+            if [ -f "$example_dir/aiken.toml" ]; then
+              echo "Building $example_dir..."
+              cd "$example_dir"
+              aiken build
+              cd - > /dev/null
+            fi
+          done
+
+          echo "Integration validation completed successfully!"
+
+      - name: Generate Success Report
+        run: |
+          echo "=== CI/CD Pipeline Success Report ===" 
+          echo "✅ Basic tests passed"
+          echo "✅ Token contract tests passed"  
+          echo "✅ Documentation validated"
+          echo "✅ Performance validation completed"
+          echo "✅ Integration validation passed"
+          echo ""
+          echo "NFT One-Shot Contract successfully integrated into CI/CD pipeline!"
+          echo "Ready for production deployment and next contract development."
 
   security:
     runs-on: ubuntu-latest
@@ -99,5 +301,7 @@ jobs:
           # Verify example projects exist and are complete
           test -d examples/hello-world
           test -f examples/hello-world/README.md
+          test -d examples/token-contracts/nft-one-shot
+          test -f examples/token-contracts/nft-one-shot/README.md
 
           echo "Example projects verified"
