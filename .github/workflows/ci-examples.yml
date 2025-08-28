@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        aiken: ['1.1.14', '1.1.15']
+        aiken: ['1.1.15', '1.1.19']
         example:
           - { name: 'hello-world', path: 'examples/hello-world', timeout: 5 }
           - {

@@ -23,7 +23,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Install Aiken
-        run: cargo install aiken --version 1.1.15 --locked
+        run: cargo install aiken --version 1.1.19 --locked
 
       - name: Validate All Examples
         run: |
