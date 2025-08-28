@@ -1,4 +1,4 @@
-# 🎉 CI/CD Deployment Success!
+# 🎉 CI/CD Deployment Success
 
 ## ✅ **Successfully Merged to Main**
 

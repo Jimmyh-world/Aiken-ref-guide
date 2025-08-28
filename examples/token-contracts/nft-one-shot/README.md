@@ -25,11 +25,13 @@ A production-ready example demonstrating a secure NFT minting policy that ensure
 ## 📋 Prerequisites
 
 ### Required Software
+
 - **Aiken**: v1.1.14+ ([Installation Guide](https://aiken-lang.org/getting-started/installation))
 - **Node.js**: v18+ (for MeshJS integration)
 - **MeshJS**: Latest version (`npm install @meshsdk/core`)
 
 ### Network Access
+
 - **Testnet Access**: This example uses Preprod testnet
 - **Test ADA**: You'll need test ADA for transactions
 
@@ -123,11 +125,13 @@ The policy enforces these conditions:
 ## 🧪 Testing
 
 ### Run All Tests
+
 ```bash
 aiken test
 ```
 
 ### Test Coverage
+
 The test suite covers:
 
 - ✅ **Success Cases**:
@@ -141,6 +145,7 @@ The test suite covers:
   - Burning attempts
 
 ### Test Output Example
+
 ```
 Running 7 tests...
 ✓ valid_mint_succeeds
@@ -179,24 +184,29 @@ let params = NftPolicyParams {
 ## 🚨 Common Errors & Solutions
 
 ### "Policy validation failed"
+
 - Check all parameters match exactly
 - Verify reference UTxO is being consumed
 - Ensure issuer signature is present (if required)
 - Confirm transaction is within validity window
 
 ### "Multiple assets minted"
+
 - Ensure only one asset is being minted
 - Check redeemer quantity is exactly 1
 
 ### "Wrong token name"
+
 - Token name must match policy parameters exactly
 - Check for case sensitivity and encoding
 
 ### "Reference UTxO not consumed"
+
 - The specific UTxO must be included as an input
 - Verify UTxO ID matches policy parameters
 
 ### "Out of validity range"
+
 - Transaction must be submitted within the time window
 - Check current slot vs. valid_from/valid_until
 
@@ -262,11 +272,13 @@ tx.mint = MultiAsset.from_primitive({
 ## 🔗 Related Resources
 
 ### Official Documentation
+
 - [Aiken Language Reference](https://aiken-lang.org/language)
 - [Cardano Native Tokens](https://docs.cardano.org/native-tokens/)
 - [MeshJS Documentation](https://meshjs.dev/)
 
 ### Community Resources
+
 - [Aiken Discord](https://discord.gg/aiken-lang)
 - [Cardano Developer Portal](https://developers.cardano.org/)
 
@@ -300,4 +312,4 @@ Apache 2.0 - See [LICENSE](../../LICENSE) for details.
 
 ---
 
-**Secure NFT minting made simple! 🚀**
+## Secure NFT minting made simple! 🚀

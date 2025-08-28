@@ -13,11 +13,13 @@ A simple, production-ready example demonstrating the basic eUTxO model in Aiken.
 ## 📋 Prerequisites
 
 ### Required Software
+
 - **Aiken**: v1.1.14+ ([Installation Guide](https://aiken-lang.org/getting-started/installation))
 - **cardano-cli**: Latest version ([Cardano Docs](https://docs.cardano.org/cardano-node/install/))
 - **jq**: JSON processor (usually pre-installed on Linux/macOS)
 
 ### Network Access
+
 - **Testnet Access**: This example uses Preprod testnet
 - **Test ADA**: You'll need test ADA for transactions (get from [faucet](https://docs.cardano.org/cardano-testnet/tools/faucet/))
 
@@ -101,11 +103,13 @@ Both conditions must be true for the transaction to succeed.
 ## 🧪 Testing
 
 ### Run All Tests
+
 ```bash
 aiken test
 ```
 
 ### Test Coverage
+
 The test suite covers:
 
 - ✅ **Success Cases**:
@@ -119,6 +123,7 @@ The test suite covers:
   - Case-sensitive validation
 
 ### Test Output Example
+
 ```
 Running 7 tests...
 ✓ correct_redeemer_and_owner_succeeds
@@ -135,13 +140,17 @@ All tests passed! 🎉
 ## 🔧 Configuration
 
 ### Network Settings
+
 The scripts are configured for **Preprod testnet**:
+
 - Network Magic: `1097911063`
 - Lock Amount: `10 ADA` (10,000,000 lovelace)
 - Collateral: `5 ADA` (5,000,000 lovelace)
 
 ### Customization
+
 Edit the scripts to change:
+
 - Network (mainnet/testnet)
 - Lock amounts
 - Collateral amounts
@@ -150,42 +159,50 @@ Edit the scripts to change:
 ## 🚨 Common Errors & Solutions
 
 ### "Aiken is not installed"
+
 ```bash
 # Install Aiken
 curl -sSfL https://aiken-lang.org/install.sh | sh
 ```
 
 ### "cardano-cli is not installed"
+
 ```bash
 # Install cardano-node (includes cardano-cli)
 # Follow: https://docs.cardano.org/cardano-node/install/
 ```
 
 ### "Insufficient funds"
+
 - Get test ADA from the [faucet](https://docs.cardano.org/cardano-testnet/tools/faucet/)
 - Ensure you have enough for lock amount + collateral + fees
 
 ### "No UTxOs found at script address"
+
 - Run `./scripts/lock.sh` first to lock funds
 - Check the script address is correct
 
 ### "Transaction failed"
+
 - Verify you're using the correct network
 - Check protocol parameters are up to date
 - Ensure sufficient collateral
 
 ### "Invalid datum/redeemer"
+
 - The datum must contain the owner's public key hash
 - The redeemer must be exactly `"Hello, World!"` (case-sensitive)
 
 ## 🔗 Related Resources
 
 ### Official Documentation
+
 - [Aiken Hello World Tutorial](https://aiken-lang.org/example--hello-world/end-to-end/cardano-cli)
 - [Aiken Language Reference](https://aiken-lang.org/language)
 - [Cardano CLI Documentation](https://docs.cardano.org/cardano-node/reference/)
 
 ### Community Resources
+
 - [MeshJS Aiken Integration](https://meshjs.dev/guides/aiken)
 - [Aiken Discord](https://discord.gg/aiken-lang)
 
@@ -219,4 +236,4 @@ Apache 2.0 - See [LICENSE](../../LICENSE) for details.
 
 ---
 
-**Happy coding! 🚀**
+## Happy coding! 🚀
