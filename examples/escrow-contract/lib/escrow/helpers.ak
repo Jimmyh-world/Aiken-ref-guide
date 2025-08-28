@@ -24,7 +24,7 @@ pub type EscrowDatum {
   /// The amount of ADA in the escrow
   amount: Int,
   /// Optional additional data for extensibility
-  metadata: Option<ByteArray>
+  metadata: Option<ByteArray>,
 }
 
 /// Actions that can be performed on the escrow
@@ -32,19 +32,19 @@ pub type EscrowAction {
   /// Complete the escrow (buyer action)
   CompleteEscrow {
     /// Buyer's signature
-    buyer_signature: ByteArray
+    buyer_signature: ByteArray,
   }
   /// Cancel the escrow (either party can cancel)
   CancelEscrow {
     /// Signature of the cancelling party
     canceller_signature: ByteArray,
     /// Whether the canceller is the buyer
-    is_buyer: Bool
+    is_buyer: Bool,
   }
   /// Refund the escrow (seller action after deadline)
   Refund {
     /// Seller's signature
-    seller_signature: ByteArray
+    seller_signature: ByteArray,
   }
 }
 
@@ -65,21 +65,28 @@ pub type EscrowConfig {
   /// Minimum deadline duration in slots
   min_deadline_duration: Int,
   /// Maximum deadline duration in slots
-  max_deadline_duration: Int
+  max_deadline_duration: Int,
 }
 
 /// Default configuration for the escrow contract
 pub fn default_config() -> EscrowConfig {
   EscrowConfig {
-    min_amount: 1_000_000, // 1 ADA minimum
-    max_amount: 1_000_000_000_000, // 1M ADA maximum
-    min_deadline_duration: 7200, // 1 hour minimum (assuming 1 slot = 0.5 seconds)
-    max_deadline_duration: 864000, // 5 days maximum
+    min_amount: 1_000_000,
+    // 1 ADA minimum
+    max_amount: 1_000_000_000_000,
+    // 1M ADA maximum
+    min_deadline_duration: 7200,
+    // 1 hour minimum (assuming 1 slot = 0.5 seconds)
+    max_deadline_duration: 864000,
   }
+  // 5 days maximum
 }
 
 /// Validates that an escrow datum is well-formed
-pub fn validate_escrow_datum(datum: EscrowDatum, config: EscrowConfig) -> ValidationResult {
+pub fn validate_escrow_datum(
+  datum: EscrowDatum,
+  config: EscrowConfig,
+) -> ValidationResult {
   // Check amount bounds
   if datum.amount < config.min_amount {
     Invalid("Escrow amount below minimum")
@@ -109,17 +116,13 @@ pub fn validate_state_transition(
 }
 
 /// Validates that the current time is within the escrow deadline
-pub fn validate_deadline(
-  deadline: Int,
-) -> ValidationResult {
+pub fn validate_deadline(deadline: Int) -> ValidationResult {
   // Simplified deadline validation - in real implementation would check transaction validity range
   Valid
 }
 
 /// Validates that the current time is after the escrow deadline
-pub fn validate_after_deadline(
-  deadline: Int,
-) -> ValidationResult {
+pub fn validate_after_deadline(deadline: Int) -> ValidationResult {
   // Simplified after deadline validation
   Valid
 }
@@ -169,7 +172,12 @@ pub fn validate_canceller_signature(
   when action is {
     CancelEscrow { canceller_signature, is_buyer } -> {
       let message = create_cancellation_message(datum)
-      let expected_signer = if is_buyer { datum.buyer } else { datum.seller }
+      let expected_signer =
+        if is_buyer {
+          datum.buyer
+        } else {
+          datum.seller
+        }
       if verify_signature(canceller_signature, message, expected_signer) {
         Valid
       } else {
@@ -218,17 +226,13 @@ fn create_refund_message(datum: EscrowDatum) -> ByteArray {
 }
 
 /// Validates that the output amount matches the escrow amount
-pub fn validate_output_amount(
-  expected_amount: Int,
-) -> ValidationResult {
+pub fn validate_output_amount(expected_amount: Int) -> ValidationResult {
   // Simplified output validation - in real implementation would check transaction outputs
   Valid
 }
 
 /// Validates that the output goes to the correct recipient
-pub fn validate_output_recipient(
-  recipient: ByteArray,
-) -> ValidationResult {
+pub fn validate_output_recipient(recipient: ByteArray) -> ValidationResult {
   // Simplified recipient validation
   Valid
 }
@@ -244,7 +248,7 @@ pub fn update_escrow_state(
     state: new_state,
     deadline: datum.deadline,
     amount: datum.amount,
-    metadata: datum.metadata
+    metadata: datum.metadata,
   }
 }
 
@@ -290,7 +294,12 @@ pub fn validate_cancellation_transaction(
   } else {
     when action is {
       CancelEscrow { is_buyer, .. } -> {
-        let expected_recipient = if is_buyer { datum.buyer } else { datum.seller }
+        let expected_recipient =
+          if is_buyer {
+            datum.buyer
+          } else {
+            datum.seller
+          }
         let recipient_check = validate_output_recipient(expected_recipient)
         if recipient_check != Valid {
           recipient_check

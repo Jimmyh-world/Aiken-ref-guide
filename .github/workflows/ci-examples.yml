@@ -1,11 +1,11 @@
 name: CI – Examples
 on:
   pull_request:
-    paths: 
-      - "examples/**"
-      - ".github/workflows/**"
+    paths:
+      - 'examples/**'
+      - '.github/workflows/**'
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -20,17 +20,13 @@ jobs:
       matrix:
         aiken: ['1.1.14', '1.1.15']
         example:
-          - { 
-              name: 'hello-world', 
-              path: 'examples/hello-world',
-              timeout: 5
-            }
-          - { 
-              name: 'nft-one-shot', 
+          - { name: 'hello-world', path: 'examples/hello-world', timeout: 5 }
+          - {
+              name: 'nft-one-shot',
               path: 'examples/token-contracts/nft-one-shot',
-              timeout: 10
+              timeout: 10,
             }
-    
+
     uses: ./.github/workflows/_reusable-aiken-check.yml
     with:
       working_directory: ${{ matrix.example.path }}

@@ -18,12 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: dtolnay/rust-toolchain@stable
-      
+
       - name: Install Aiken
         run: cargo install aiken --version 1.1.15 --locked
-      
+
       - name: Validate Root Project
         run: |
           set -Eeuo pipefail
@@ -45,14 +45,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Create Archive
         run: |
           tar -czf aiken-ref-guide-${{ github.ref_name }}.tgz \
             examples/ docs/ scripts/ \
             README.md NAVIGATION.md QUICK_START.md CONTRIBUTING.md \
             --exclude='*.log' --exclude='target/' --exclude='plutus.json'
-      
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
