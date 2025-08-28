@@ -1,6 +1,6 @@
 # Repository Navigation Guide
 
-[![CI/CD Pipeline](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
+[![CI Core](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Core/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![CI Examples](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Examples/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Docs](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Docs/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
 
 ## 🗺️ **Complete Repository Map**
 
@@ -8,8 +8,8 @@ This guide provides clear navigation paths for different user types and use case
 
 ## 📋 **Version Information**
 
-- **Aiken Version**: v1.8.0+ (latest stable)
-- **Last Updated**: August 2025
+- **Aiken Version**: v1.1.14+ (latest stable)
+- **Last Updated**: December 2024
 - **Status**: ✅ Production Ready
 - **Test Coverage**: All examples validated by CI/CD
 

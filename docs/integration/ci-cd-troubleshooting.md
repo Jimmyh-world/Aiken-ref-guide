@@ -9,9 +9,11 @@ This guide provides solutions for common issues encountered with the CI/CD syste
 ### **1. Workflow Failures**
 
 #### **Issue: Aiken Installation Fails**
+
 **Error**: `error: could not find 'aiken' in registry 'crates-io' with version '=1.1.15'`
 
 **Solution**:
+
 ```bash
 # Check available Aiken versions
 cargo search aiken --limit 10
@@ -24,6 +26,7 @@ cargo install aiken --locked
 ```
 
 **Prevention**: Update the workflow to use available versions:
+
 ```yaml
 # In .github/workflows/_reusable-aiken-check.yml
 - name: Install Aiken
@@ -39,9 +42,11 @@ cargo install aiken --locked
 ```
 
 #### **Issue: Rust Version Compatibility**
+
 **Error**: `requires rustc 1.86.0 or newer, while the currently active rustc version is 1.83.0`
 
 **Solution**:
+
 ```bash
 # Update Rust toolchain
 rustup update
@@ -52,31 +57,36 @@ rustup default 1.86.0
 ```
 
 **Prevention**: Use compatible Aiken versions:
+
 ```yaml
 # Use versions compatible with current Rust
-aiken: ['1.1.14', '1.1.15']  # Compatible with Rust 1.83.0+
+aiken: ['1.1.14', '1.1.15'] # Compatible with Rust 1.83.0+
 ```
 
 #### **Issue: Workflow Not Triggering**
+
 **Problem**: Workflows don't run when pushing changes
 
 **Solution**:
+
 1. **Check Branch Configuration**:
+
    ```yaml
    # Ensure workflows run on all branches
    on:
-     push:  # No branch restrictions
+     push: # No branch restrictions
      pull_request:
        branches: [main]
    ```
 
 2. **Verify Path Triggers**:
+
    ```yaml
    # Check if your changes match the path patterns
    on:
      pull_request:
        paths:
-         - 'examples/**'  # Your changes should match this pattern
+         - 'examples/**' # Your changes should match this pattern
    ```
 
 3. **Check Workflow File Syntax**:
@@ -88,9 +98,11 @@ aiken: ['1.1.14', '1.1.15']  # Compatible with Rust 1.83.0+
 ### **2. Local Development Issues**
 
 #### **Issue: Local Script Fails**
+
 **Error**: `./scripts/ci/local-check.sh: Permission denied`
 
 **Solution**:
+
 ```bash
 # Make script executable
 chmod +x scripts/ci/local-check.sh
@@ -100,9 +112,11 @@ ls -la scripts/ci/local-check.sh
 ```
 
 #### **Issue: Aiken Commands Not Found**
+
 **Error**: `command not found: aiken`
 
 **Solution**:
+
 ```bash
 # Install Aiken
 cargo install aiken --locked
@@ -115,9 +129,11 @@ aiken --version
 ```
 
 #### **Issue: Format Check Fails**
+
 **Error**: `I found some files with incorrectly formatted source code`
 
 **Solution**:
+
 ```bash
 # Format all files
 aiken fmt
@@ -131,23 +147,27 @@ aiken fmt --check
 ```
 
 #### **Issue: Tests Fail Locally**
+
 **Error**: `Static analysis or tests failed`
 
 **Solution**:
+
 1. **Check Aiken Version**:
+
    ```bash
    aiken --version
    # Ensure you're using a compatible version
    ```
 
 2. **Run Individual Checks**:
+
    ```bash
    # Check formatting
    aiken fmt --check
-   
+
    # Run static analysis
    aiken check
-   
+
    # Run tests only
    aiken check  # Tests are included in check
    ```
@@ -161,11 +181,13 @@ aiken fmt --check
 ### **3. Performance Issues**
 
 #### **Issue: Slow Workflow Execution**
+
 **Problem**: Workflows taking longer than expected
 
 **Solutions**:
 
 1. **Optimize Caching**:
+
    ```yaml
    - uses: actions/cache@v4
      with:
@@ -181,9 +203,10 @@ aiken fmt --check
    ```
 
 2. **Enable Parallel Execution**:
+
    ```yaml
    strategy:
-     fail-fast: false  # Allow parallel jobs to continue
+     fail-fast: false # Allow parallel jobs to continue
      matrix:
        aiken: ['1.1.14', '1.1.15']
        example: [...]
@@ -196,33 +219,37 @@ aiken fmt --check
    ```
 
 #### **Issue: High Resource Usage**
+
 **Problem**: Workflows consuming too much memory/CPU
 
 **Solutions**:
 
 1. **Limit Concurrent Jobs**:
+
    ```yaml
    concurrency:
      group: ci-examples-${{ github.ref }}
-     cancel-in-progress: true  # Cancel redundant runs
+     cancel-in-progress: true # Cancel redundant runs
    ```
 
 2. **Optimize Matrix Size**:
    ```yaml
    # Reduce matrix combinations if needed
    matrix:
-     aiken: ['1.1.15']  # Test fewer versions
-     example: ['hello-world']  # Test fewer examples
+     aiken: ['1.1.15'] # Test fewer versions
+     example: ['hello-world'] # Test fewer examples
    ```
 
 ### **4. Documentation Issues**
 
 #### **Issue: Markdown Linting Fails**
+
 **Error**: Multiple markdown linting violations
 
 **Solutions**:
 
 1. **Update Configuration**:
+
    ```json
    // .markdownlint.json
    {
@@ -237,23 +264,26 @@ aiken fmt --check
    ```
 
 2. **Fix Common Issues**:
+
    ```bash
    # Install markdownlint locally
    npm install -g markdownlint-cli2
-   
+
    # Check specific files
    markdownlint-cli2 "**/*.md"
-   
+
    # Auto-fix where possible
    markdownlint-cli2 "**/*.md" --fix
    ```
 
 #### **Issue: Link Validation Fails**
+
 **Error**: External links returning 404 or timeout
 
 **Solutions**:
 
 1. **Check Link Configuration**:
+
    ```yaml
    - name: Check Links
      uses: lycheeverse/lychee-action@v1
@@ -262,10 +292,11 @@ aiken fmt --check
    ```
 
 2. **Update Broken Links**:
+
    ```bash
    # Find broken links
    lychee --no-progress **/*.md
-   
+
    # Update links in documentation
    # Replace broken URLs with working alternatives
    ```
@@ -273,21 +304,24 @@ aiken fmt --check
 ### **5. Matrix Testing Issues**
 
 #### **Issue: Matrix Job Failures**
+
 **Problem**: Some matrix combinations fail while others pass
 
 **Solutions**:
 
 1. **Check Version Compatibility**:
+
    ```yaml
    # Ensure all versions are compatible
    matrix:
-     aiken: ['1.1.14', '1.1.15']  # Test both versions
+     aiken: ['1.1.14', '1.1.15'] # Test both versions
      example:
        - { name: 'hello-world', path: 'examples/hello-world' }
        - { name: 'nft-one-shot', path: 'examples/token-contracts/nft-one-shot' }
    ```
 
 2. **Debug Specific Jobs**:
+
    ```bash
    # Test specific combination locally
    ./scripts/ci/local-check.sh examples/hello-world 1.1.14
@@ -295,10 +329,11 @@ aiken fmt --check
    ```
 
 3. **Check Job Logs**:
+
    ```bash
    # View specific job logs
    gh run view --job=<job-id>
-   
+
    # Download artifacts
    gh run download <run-id>
    ```
@@ -377,6 +412,7 @@ cat logs-*/fmt.log
 ### **3. Preventive Measures**
 
 1. **Regular Testing**:
+
    ```bash
    # Test all examples regularly
    for example in examples/*/; do
@@ -385,6 +421,7 @@ cat logs-*/fmt.log
    ```
 
 2. **Version Compatibility**:
+
    ```bash
    # Test new Aiken versions before updating
    cargo install aiken --version <new-version> --locked
@@ -402,7 +439,7 @@ cat logs-*/fmt.log
 
 - **[CI/CD Overview](../integration/ci-cd-overview.md)**: System overview and architecture
 - **[Implementation Guide](../integration/ci-cd-implementation.md)**: Detailed implementation information
-- **[Local Development Guide](../integration/local-development.md)**: Setting up development environment
+- **[Implementation Guide](../integration/ci-cd-implementation.md)**: Setting up development environment
 - **[Performance Optimization](../performance/ci-cd-optimization.md)**: Advanced optimization techniques
 
 ## 🎯 **Getting Help**
@@ -424,6 +461,7 @@ cat logs-*/fmt.log
 ### **Information to Include**
 
 When reporting issues, include:
+
 - **Error Messages**: Complete error output
 - **Environment**: OS, Aiken version, Rust version
 - **Steps to Reproduce**: Exact commands and sequence
@@ -432,7 +470,8 @@ When reporting issues, include:
 
 ---
 
-**Next Steps**: 
+**Next Steps**:
+
 - Read the [Implementation Guide](../integration/ci-cd-implementation.md) for detailed setup
 - Review [Performance Optimization](../performance/ci-cd-optimization.md) for advanced techniques
-- Check [Local Development Guide](../integration/local-development.md) for setup instructions
+- Check [Implementation Guide](../integration/ci-cd-implementation.md) for setup instructions

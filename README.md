@@ -1,13 +1,13 @@
 # Aiken Developer's Reference Guide for AI Coding Assistants
 
-[![CI/CD Pipeline](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
+[![CI Core](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Core/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![CI Examples](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Examples/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Docs](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Docs/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
 
 Welcome to the AI-optimized knowledge base for the Aiken smart contract language on Cardano. This guide is designed for developers and AI coding assistants (like Cursor, Cody, and GitHub Copilot) to quickly find, understand, and implement Aiken smart contracts.
 
 ## Version Compatibility
 
-**Aiken Version**: This guide is compatible with Aiken **v1.8.0+**  
-**Last Updated**: August 2025  
+**Aiken Version**: This guide is compatible with Aiken **v1.1.14+**  
+**Last Updated**: December 2024  
 **Status**: ✅ **Production Ready** - All examples tested and validated
 
 ## Mission
@@ -36,7 +36,11 @@ aiken/
 ├── QUICK_START.md              # 5-minute setup guide
 ├── CONTRIBUTING.md             # Community contribution guidelines
 ├── .github/workflows/          # CI/CD automation
-│   └── ci.yml
+│   ├── _reusable-aiken-check.yml
+│   ├── ci-core.yml
+│   ├── ci-examples.yml
+│   ├── docs.yml
+│   └── release.yml
 ├── docs/                       # Comprehensive documentation
 │   ├── overview/              # Introduction and getting started
 │   ├── language/              # Core language syntax and features
@@ -76,7 +80,7 @@ aiken/
 ### **Production Readiness**
 
 - **Working Examples**: Complete, testable project examples in `examples/`
-- **CI/CD Pipeline**: Automated testing and quality assurance
+- **CI/CD System**: Modular workflows with parallel execution and comprehensive validation
 - **Multi-User Design**: Clear paths for different user types and experience levels
 - **Professional Structure**: Organization that scales with project growth
 

@@ -22,6 +22,7 @@ on:
 ```
 
 ### **Key Features**
+
 - **Parameterized**: Configurable working directory and Aiken version
 - **Flexible**: Optional benchmark execution
 - **Reusable**: Single source of truth for validation logic
@@ -68,7 +69,7 @@ jobs:
 name: CI – Examples
 on:
   pull_request:
-    paths: 
+    paths:
       - 'examples/**'
       - '.github/workflows/**'
   push:
@@ -82,8 +83,11 @@ jobs:
         aiken: ['1.1.14', '1.1.15']
         example:
           - { name: 'hello-world', path: 'examples/hello-world' }
-          - { name: 'nft-one-shot', path: 'examples/token-contracts/nft-one-shot' }
-    
+          - {
+              name: 'nft-one-shot',
+              path: 'examples/token-contracts/nft-one-shot',
+            }
+
     uses: ./.github/workflows/_reusable-aiken-check.yml
     with:
       working_directory: ${{ matrix.example.path }}
@@ -100,7 +104,7 @@ jobs:
 name: Docs
 on:
   pull_request:
-    paths: 
+    paths:
       - '**/*.md'
       - 'docs/**'
   push:
@@ -174,6 +178,7 @@ echo "Benchmarks: $RUN_BENCHMARKS"
 ### **Validation Steps**
 
 1. **Dependency Check**
+
    ```bash
    # Check if aiken packages check is available
    if aiken packages check 2>/dev/null; then
@@ -184,6 +189,7 @@ echo "Benchmarks: $RUN_BENCHMARKS"
    ```
 
 2. **Format Check**
+
    ```bash
    echo "🎨 Checking formatting..."
    if ! aiken fmt --check; then
@@ -193,6 +199,7 @@ echo "Benchmarks: $RUN_BENCHMARKS"
    ```
 
 3. **Static Analysis and Tests**
+
    ```bash
    echo "🔍 Running static analysis and tests..."
    if ! aiken check; then
@@ -230,10 +237,12 @@ echo "Benchmarks: $RUN_BENCHMARKS"
 ### **Version Compatibility**
 
 **Supported Aiken Versions**:
+
 - **1.1.14**: Older version for backward compatibility
 - **1.1.15**: Latest stable version
 
 **Fallback Strategy**:
+
 ```bash
 # Try to install specific version, fallback to latest if not available
 if cargo install aiken --version "$AIKEN_VERSION" --locked 2>/dev/null; then
@@ -250,17 +259,19 @@ fi
 ### **Adding New Examples**
 
 1. **Create Example Structure**
+
    ```bash
    mkdir -p examples/new-example/{lib,validators,scripts}
    ```
 
 2. **Add to Matrix Testing**
+
    ```yaml
    # In .github/workflows/ci-examples.yml
    example:
      - { name: 'hello-world', path: 'examples/hello-world' }
      - { name: 'nft-one-shot', path: 'examples/token-contracts/nft-one-shot' }
-     - { name: 'new-example', path: 'examples/new-example' }  # Add this line
+     - { name: 'new-example', path: 'examples/new-example' } # Add this line
    ```
 
 3. **Test Locally**
@@ -281,7 +292,7 @@ jobs:
       working_directory: 'examples/custom-example'
       aiken_version: '1.1.15'
       run_benchmarks: true
-    
+
   additional-checks:
     needs: custom-validation
     runs-on: ubuntu-latest
@@ -296,6 +307,7 @@ jobs:
 ### **Performance Optimization**
 
 1. **Caching Strategy**
+
    ```yaml
    - uses: actions/cache@v4
      with:
@@ -386,25 +398,28 @@ fi
 ## 🔗 **Related Documentation**
 
 - **[CI/CD Overview](../integration/ci-cd-overview.md)**: System overview and architecture
-- **[Local Development Guide](../integration/local-development.md)**: Setting up development environment
+- **[CI/CD Overview](../integration/ci-cd-overview.md)**: Setting up development environment
 - **[Troubleshooting Guide](../integration/ci-cd-troubleshooting.md)**: Common issues and solutions
 - **[Performance Optimization](../performance/ci-cd-optimization.md)**: Advanced optimization techniques
 
 ## 🎯 **Best Practices**
 
 ### **Workflow Design**
+
 - **Single Responsibility**: Each workflow has a clear, focused purpose
 - **Reusability**: Common logic extracted to reusable workflows
 - **Parallelism**: Maximize concurrent execution where possible
 - **Graceful Degradation**: Handle failures and missing dependencies
 
 ### **Local Development**
+
 - **Parity**: Local validation matches CI exactly
 - **Fast Feedback**: Quick validation for development workflow
 - **Comprehensive**: All validation steps included
 - **User-Friendly**: Clear error messages and guidance
 
 ### **Maintenance**
+
 - **Version Management**: Track and update supported versions
 - **Performance Monitoring**: Regular review of execution times
 - **Error Analysis**: Investigate and fix recurring issues
@@ -412,7 +427,8 @@ fi
 
 ---
 
-**Next Steps**: 
+**Next Steps**:
+
 - Read the [Troubleshooting Guide](../integration/ci-cd-troubleshooting.md) for common issues
 - Review [Performance Optimization](../performance/ci-cd-optimization.md) for advanced techniques
-- Check [Local Development Guide](../integration/local-development.md) for setup instructions
+- Check [CI/CD Overview](../integration/ci-cd-overview.md) for setup instructions

@@ -13,7 +13,7 @@ A simple, production-ready example demonstrating the basic eUTxO model in Aiken.
 ## 📋 Prerequisites
 
 ### Required Software
-- **Aiken**: v1.8.0+ ([Installation Guide](https://aiken-lang.org/getting-started/installation))
+- **Aiken**: v1.1.14+ ([Installation Guide](https://aiken-lang.org/getting-started/installation))
 - **cardano-cli**: Latest version ([Cardano Docs](https://docs.cardano.org/cardano-node/install/))
 - **jq**: JSON processor (usually pre-installed on Linux/macOS)
 

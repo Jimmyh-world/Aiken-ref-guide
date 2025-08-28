@@ -12,7 +12,7 @@ This guide will have you writing and testing your first Aiken smart contract in 
 - **Memory**: At least 4GB RAM
 - **Storage**: 2GB free space
 - **Network**: Internet connection for installation
-- **Aiken Version**: This guide uses Aiken v1.8.0+ (latest stable)
+- **Aiken Version**: This guide uses Aiken v1.1.14+ (latest stable)
 
 ---
 

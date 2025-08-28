@@ -25,7 +25,7 @@ A production-ready example demonstrating a secure NFT minting policy that ensure
 ## 📋 Prerequisites
 
 ### Required Software
-- **Aiken**: v1.8.0+ ([Installation Guide](https://aiken-lang.org/getting-started/installation))
+- **Aiken**: v1.1.14+ ([Installation Guide](https://aiken-lang.org/getting-started/installation))
 - **Node.js**: v18+ (for MeshJS integration)
 - **MeshJS**: Latest version (`npm install @meshsdk/core`)
 

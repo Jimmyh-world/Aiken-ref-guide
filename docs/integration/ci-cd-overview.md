@@ -30,12 +30,14 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 ## 🚀 **Performance Characteristics**
 
 ### **Execution Times**
+
 - **CI Core**: 8-14 seconds (documentation validation)
 - **CI Examples**: 1-2 minutes (matrix testing)
 - **Docs**: 5-21 seconds (markdown + link validation)
 - **Release**: Variable (comprehensive validation)
 
 ### **Parallel Execution**
+
 - **Matrix Jobs**: 4 concurrent executions
 - **Efficiency**: 60-80% time reduction vs sequential
 - **Scalability**: Ready for additional examples
@@ -43,26 +45,34 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 ## 🔄 **Workflow Breakdown**
 
 ### **1. CI – Core**
+
 **Purpose**: Validate repository structure and documentation
+
 - **Trigger**: Documentation and script changes
 - **Execution**: 8-14 seconds
 - **Validation**: Documentation files, scripts, workflow presence
 
 ### **2. CI – Examples**
+
 **Purpose**: Matrix testing across Aiken versions
+
 - **Trigger**: Example directory changes
 - **Execution**: 1-2 minutes
 - **Matrix**: 2 examples × 2 Aiken versions = 4 parallel jobs
 - **Coverage**: Cross-version compatibility validation
 
 ### **3. Docs**
+
 **Purpose**: Documentation quality assurance
+
 - **Trigger**: Markdown file changes
 - **Execution**: 5-21 seconds
 - **Validation**: Markdown linting, link validation
 
 ### **4. Release**
+
 **Purpose**: Pre-release validation and packaging
+
 - **Trigger**: Tags or manual dispatch
 - **Execution**: Variable
 - **Actions**: Complete validation, archive creation, release
@@ -70,6 +80,7 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 ## 🛠️ **Local Development**
 
 ### **Local Parity Script**
+
 ```bash
 # Test specific example
 ./scripts/ci/local-check.sh examples/hello-world 1.1.15
@@ -82,6 +93,7 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 ```
 
 ### **Validation Steps**
+
 1. **Dependency Check**: Verify Aiken installation
 2. **Format Check**: Ensure code formatting compliance
 3. **Static Analysis**: Type checking and tests
@@ -90,11 +102,14 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 ## 📊 **Cross-Version Compatibility**
 
 ### **Supported Aiken Versions**
+
 - **Aiken 1.1.14**: Older version compatibility
 - **Aiken 1.1.15**: Latest stable version
 
 ### **Matrix Testing Strategy**
+
 Each example is tested against both Aiken versions to ensure:
+
 - **Backward Compatibility**: Works with older versions
 - **Forward Compatibility**: Works with latest versions
 - **Version-Specific Features**: Proper handling of version differences
@@ -102,17 +117,20 @@ Each example is tested against both Aiken versions to ensure:
 ## 🔍 **Quality Gates**
 
 ### **Code Quality**
+
 - **Formatting**: Consistent code style across all examples
 - **Static Analysis**: Type checking and compilation
 - **Test Coverage**: Comprehensive test validation
 - **Performance**: Benchmark validation for critical operations
 
 ### **Documentation Quality**
+
 - **Markdown Linting**: Consistent formatting and structure
 - **Link Validation**: All external links are functional
 - **Content Completeness**: Required documentation present
 
 ### **Repository Quality**
+
 - **Structure Validation**: Required files and directories
 - **Script Functionality**: Local development tools working
 - **Workflow Presence**: All CI/CD workflows available
@@ -120,11 +138,13 @@ Each example is tested against both Aiken versions to ensure:
 ## 🚨 **Error Handling**
 
 ### **Graceful Fallbacks**
+
 - **Version Compatibility**: Falls back to latest if specific version unavailable
 - **Command Availability**: Handles missing commands gracefully
 - **Partial Failures**: Continues with warnings when possible
 
 ### **Rich Logging**
+
 - **Structured Output**: Grouped logs for easy reading
 - **Artifact Upload**: Detailed logs preserved for debugging
 - **Summary Reports**: Clear pass/fail status with context
@@ -132,12 +152,14 @@ Each example is tested against both Aiken versions to ensure:
 ## 📈 **Monitoring and Metrics**
 
 ### **Key Performance Indicators**
+
 - **Execution Time**: Track performance improvements
 - **Success Rate**: Monitor workflow reliability
 - **Parallel Efficiency**: Measure concurrent job utilization
 - **Cache Hit Rate**: Optimize dependency caching
 
 ### **Quality Metrics**
+
 - **Test Coverage**: Maintain >95% coverage
 - **Format Compliance**: Zero formatting violations
 - **Link Health**: All documentation links working
@@ -145,25 +167,28 @@ Each example is tested against both Aiken versions to ensure:
 ## 🔗 **Related Documentation**
 
 - **[CI/CD Implementation Guide](../integration/ci-cd-implementation.md)**: Detailed implementation walkthrough
-- **[Local Development Guide](../integration/local-development.md)**: Setting up local development environment
+- **[Implementation Guide](../integration/ci-cd-implementation.md)**: Setting up local development environment
 - **[Troubleshooting Guide](../integration/ci-cd-troubleshooting.md)**: Common issues and solutions
 - **[Performance Optimization](../performance/ci-cd-optimization.md)**: Advanced optimization techniques
 
 ## 🎯 **Quick Start**
 
 ### **For Developers**
+
 1. **Setup**: Install Aiken and dependencies
 2. **Test Locally**: Use `./scripts/ci/local-check.sh`
 3. **Push Changes**: CI/CD automatically validates
 4. **Monitor**: Check GitHub Actions for results
 
 ### **For Contributors**
+
 1. **Fork Repository**: Create your own copy
 2. **Make Changes**: Follow local development workflow
 3. **Test Thoroughly**: Ensure all validations pass
 4. **Submit PR**: CI/CD validates automatically
 
 ### **For Maintainers**
+
 1. **Monitor Workflows**: Track performance and success rates
 2. **Review Results**: Analyze CI/CD output and artifacts
 3. **Optimize**: Implement performance improvements
@@ -172,12 +197,14 @@ Each example is tested against both Aiken versions to ensure:
 ## 🎉 **Success Indicators**
 
 ### **System Health**
+
 - ✅ All workflows completing successfully
 - ✅ Performance targets being met
 - ✅ Cross-version compatibility confirmed
 - ✅ Local development parity maintained
 
 ### **Developer Experience**
+
 - ✅ Fast feedback loops (1-2 minutes)
 - ✅ Clear error messages and guidance
 - ✅ Comprehensive validation coverage
@@ -185,7 +212,8 @@ Each example is tested against both Aiken versions to ensure:
 
 ---
 
-**Next Steps**: 
+**Next Steps**:
+
 - Read the [Implementation Guide](../integration/ci-cd-implementation.md) for detailed setup
 - Check the [Troubleshooting Guide](../integration/ci-cd-troubleshooting.md) for common issues
 - Review [Performance Optimization](../performance/ci-cd-optimization.md) for advanced techniques
