@@ -7,7 +7,6 @@ on:
       - '*.md'
       - '!examples/**'
   push:
-    branches: [main, feat/ci-cd-optimization]
   workflow_dispatch:
 
 concurrency:

@@ -5,7 +5,6 @@ on:
       - '**/*.md'
       - 'docs/**'
   push:
-    branches: [main, feat/ci-cd-optimization]
   workflow_dispatch:
 
 jobs:

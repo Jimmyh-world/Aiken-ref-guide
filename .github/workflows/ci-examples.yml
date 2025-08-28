@@ -5,7 +5,6 @@ on:
       - 'examples/**'
       - '.github/workflows/**'
   push:
-    branches: [main, feat/ci-cd-optimization]
   workflow_dispatch:
 
 concurrency:
