@@ -1,4 +1,4 @@
-use fungible_token/helpers.{valid_mint_amount, valid_burn_amount, admin_signed}
+use fungible_token/helpers.{admin_signed, valid_burn_amount, valid_mint_amount}
 
 // Success case: Valid admin mint
 test admin_mint_success() {
@@ -43,15 +43,11 @@ test admin_signed_test() {
 }
 
 test valid_mint_amount_test() {
-  valid_mint_amount(1000) && 
-  !valid_mint_amount(0) &&
-  !valid_mint_amount(-100)
+  valid_mint_amount(1000) && !valid_mint_amount(0) && !valid_mint_amount(-100)
 }
 
 test valid_burn_amount_test() {
-  valid_burn_amount(-500) &&
-  !valid_burn_amount(0) &&
-  !valid_burn_amount(100)
+  valid_burn_amount(-500) && !valid_burn_amount(0) && !valid_burn_amount(100)
 }
 
 // Property-based test: Admin control invariant
@@ -65,5 +61,3 @@ test bench_mint_performance() {
   // Test performance of mint validation
   valid_mint_amount(1000000)
 }
-
-

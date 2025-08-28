@@ -1,0 +1,47 @@
+name: CI – Core
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'scripts/**'
+      - '*.md'
+      - '!examples/**'
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  documentation-validation:
+    name: Documentation & Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Documentation
+        run: |
+          echo "✅ Validating documentation structure..."
+          test -f README.md
+          test -f NAVIGATION.md
+          test -f QUICK_START.md
+          test -f CONTRIBUTING.md
+          echo "✅ Documentation files present"
+
+      - name: Validate Scripts
+        run: |
+          echo "✅ Validating CI scripts..."
+          test -f scripts/ci/local-check.sh
+          test -x scripts/ci/local-check.sh
+          echo "✅ CI scripts present and executable"
+
+      - name: Validate Workflows
+        run: |
+          echo "✅ Validating workflow files..."
+          test -f .github/workflows/_reusable-aiken-check.yml
+          test -f .github/workflows/ci-core.yml
+          test -f .github/workflows/ci-examples.yml
+          test -f .github/workflows/docs.yml
+          test -f .github/workflows/release.yml
+          echo "✅ All workflow files present"
