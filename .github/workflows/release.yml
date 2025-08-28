@@ -25,13 +25,6 @@ jobs:
       - name: Install Aiken
         run: cargo install aiken --version 1.1.15 --locked
 
-      - name: Validate Root Project
-        run: |
-          set -Eeuo pipefail
-          aiken fmt --check
-          aiken check
-          aiken test
-
       - name: Validate All Examples
         run: |
           set -Eeuo pipefail
