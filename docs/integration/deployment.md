@@ -79,10 +79,33 @@ Deploying to mainnet requires extreme caution. Follow this checklist:
 - [ ] **Monitoring Plan**: You have a plan and tools in place to monitor contract activity post-deployment.
 - [ ] **Emergency Plan**: You have a documented procedure for responding to any discovered vulnerabilities or issues.
 
+## CI/CD Integration
+
+The repository includes a comprehensive CI/CD system that automates testing and validation:
+
+### **Pre-Deployment Validation**
+- **Automated Testing**: All examples validated across Aiken versions
+- **Cross-Version Compatibility**: Ensures backward and forward compatibility
+- **Documentation Quality**: Automated markdown linting and link validation
+- **Performance Benchmarks**: Optional performance measurement
+
+### **Deployment Workflow**
+1. **Local Development**: Use `./scripts/ci/local-check.sh` for local validation
+2. **Automated CI**: GitHub Actions validate all changes automatically
+3. **Release Process**: Automated validation before release creation
+4. **Quality Gates**: Multiple validation layers ensure deployment readiness
+
+### **CI/CD Documentation**
+- **[CI/CD Overview](./ci-cd-overview.md)**: System overview and architecture
+- **[Implementation Guide](./ci-cd-implementation.md)**: Detailed setup and configuration
+- **[Troubleshooting Guide](./ci-cd-troubleshooting.md)**: Common issues and solutions
+- **[Performance Optimization](../performance/ci-cd-optimization.md)**: Advanced optimization techniques
+
 ## Related Topics
 
 - [Off-chain Tools](./offchain-tools.md)
 - [Monitoring](./monitoring.md)
+- [CI/CD Overview](./ci-cd-overview.md)
 - [Audit Checklist](../security/audit-checklist.md)
 
 ## References
