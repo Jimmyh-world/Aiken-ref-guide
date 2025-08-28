@@ -7,7 +7,7 @@ on:
       - '*.md'
       - '!examples/**'
   push:
-    branches: [main]
+    branches: [main, feat/ci-cd-optimization]
   workflow_dispatch:
 
 concurrency:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Validate Documentation
         run: |
           echo "✅ Validating documentation structure..."
@@ -29,14 +29,14 @@ jobs:
           test -f QUICK_START.md
           test -f CONTRIBUTING.md
           echo "✅ Documentation files present"
-      
+
       - name: Validate Scripts
         run: |
           echo "✅ Validating CI scripts..."
           test -f scripts/ci/local-check.sh
           test -x scripts/ci/local-check.sh
           echo "✅ CI scripts present and executable"
-      
+
       - name: Validate Workflows
         run: |
           echo "✅ Validating workflow files..."
