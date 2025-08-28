@@ -1,295 +1,510 @@
-// Escrow Contract Tests
-// Comprehensive test suite for the escrow contract state machine
+// Security Tests for Secure Escrow Contract
+// Tests that verify all critical vulnerabilities have been fixed
 
+use aiken/transaction.{ScriptContext, Transaction, Input, Output, OutputReference}
+use aiken/transaction/credential.{PubKeyHash}
+use aiken/time.{Interval, Bound, Finite, Infinite}
+use aiken/transaction/value.{Value}
 use escrow/helpers.{
-  Active, Cancel, CancelEscrow, Complete, CompleteEscrow, EscrowAction,
-  EscrowConfig, EscrowDatum, EscrowState, Invalid, Refund, Valid,
-  ValidationResult, default_config, is_final_state, update_escrow_state,
-  validate_after_deadline, validate_buyer_signature,
-  validate_canceller_signature, validate_deadline, validate_escrow_datum,
-  validate_output_amount, validate_output_recipient, validate_seller_signature,
-  validate_state_transition,
+  EscrowDatum, EscrowAction, EscrowState, TaggedEscrowDatum,
+  Active, Complete, Cancel, create_escrow_datum, create_tagged_datum
 }
 
-// Mock escrow datum for testing
-fn create_mock_datum(state: EscrowState, amount: Int) -> EscrowDatum {
-  EscrowDatum {
-    buyer: "buyer_key_hash",
-    // BUYER_KEY_HASH
-    seller: "seller_key_hash",
-    // SELLER_KEY_HASH
-    state,
-    deadline: 1000,
-    // DEADLINE
-    amount,
-    metadata: None,
+// Mock data for testing
+const buyer_pkh: PubKeyHash = #"62757965725f6b65795f686173685f31323334353637383930"
+const seller_pkh: PubKeyHash = #"73656c6c65725f6b65795f686173685f30393837363534333231"
+const attacker_pkh: PubKeyHash = #"61747461636b65725f6b65795f686173685f31313131313131313131"
+const escrow_amount: Int = 10_000_000  // 10 ADA
+const deadline: Int = 1000
+const nonce: Int = 1
+
+fn create_mock_datum() -> EscrowDatum {
+  create_escrow_datum(buyer_pkh, seller_pkh, escrow_amount, deadline, nonce)
+}
+
+fn create_mock_tagged_datum(
+  original_datum: EscrowDatum,
+  input_ref: OutputReference
+) -> TaggedEscrowDatum {
+  create_tagged_datum(original_datum, input_ref)
+}
+
+fn create_seller_payment_output(amount: Int) -> Output {
+  Output {
+    address: seller_pkh,
+    value: Value { lovelace: amount, ..Value::default() },
+    datum: None,
   }
 }
 
-// Test escrow datum validation
-test valid_escrow_datum() {
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_escrow_datum(datum, default_config())
-  result == Valid
+fn create_buyer_payment_output(amount: Int) -> Output {
+  Output {
+    address: buyer_pkh,
+    value: Value { lovelace: amount, ..Value::default() },
+    datum: None,
+  }
 }
 
-test invalid_escrow_datum_amount_too_low() {
-  let datum = create_mock_datum(Active, 100_000)
-  // Below minimum
-  let result = validate_escrow_datum(datum, default_config())
-  result == Invalid("Escrow amount below minimum")
+fn create_tagged_output(
+  tagged_datum: TaggedEscrowDatum,
+  amount: Int
+) -> Output {
+  Output {
+    address: seller_pkh, // Script address would be used in real implementation
+    value: Value { lovelace: amount, ..Value::default() },
+    datum: InlineDatum(tagged_datum),
+  }
 }
 
-test invalid_escrow_datum_amount_too_high() {
-  let datum = create_mock_datum(Active, 2_000_000_000_000)
-  // Above maximum
-  let result = validate_escrow_datum(datum, default_config())
-  result == Invalid("Escrow amount above maximum")
+fn before_deadline_interval() -> Interval {
+  Interval {
+    lower_bound: Finite(500),
+    upper_bound: Finite(999),
+  }
 }
 
-test invalid_escrow_datum_same_parties() {
-  let datum =
-    EscrowDatum {
-      buyer: "same_key_hash",
-      seller: "same_key_hash",
-      // Same as buyer
-      state: Active,
-      deadline: 1000,
-      amount: 10_000_000,
-      metadata: None,
-    }
-  let result = validate_escrow_datum(datum, default_config())
-  result == Invalid("Buyer and seller cannot be the same")
+fn after_deadline_interval() -> Interval {
+  Interval {
+    lower_bound: Finite(1001),
+    upper_bound: Finite(2000),
+  }
 }
 
-test invalid_escrow_datum_negative_deadline() {
-  let datum =
-    EscrowDatum {
-      buyer: "buyer_key_hash",
-      seller: "seller_key_hash",
-      state: Active,
-      deadline: -100,
-      // Negative deadline
-      amount: 10_000_000,
-      metadata: None,
-    }
-  let result = validate_escrow_datum(datum, default_config())
-  result == Invalid("Deadline must be positive")
+// Test 1: Successful completion by buyer
+test successful_completion() {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  // Create tagged output with updated state
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],           // ✅ Buyer signed
+      validity_range: before_deadline_interval(),  // ✅ Before deadline
+      outputs: [
+        create_seller_payment_output(escrow_amount),  // ✅ Payment to seller
+        create_tagged_output(tagged_datum, 0),        // ✅ Tagged output
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-// Test state transition validation
-test valid_state_transition_active_to_complete() {
-  let action = CompleteEscrow { buyer_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let result = validate_state_transition(Active, action)
-  result == Valid
+// Test 2: Prevent completion without buyer signature (SECURITY)
+test completion_requires_buyer_signature() fail {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [seller_pkh],          // ❌ Wrong signer!
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_seller_payment_output(escrow_amount),
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because buyer didn't sign
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-test valid_state_transition_active_to_cancel() {
-  let action =
-    CancelEscrow {
-      canceller_signature: "valid_signature",
-      // VALID_SIGNATURE
-      is_buyer: True,
-    }
-  let result = validate_state_transition(Active, action)
-  result == Valid
+// Test 3: Prevent completion after deadline (SECURITY)
+test completion_fails_after_deadline() fail {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],           // ✅ Correct signer
+      validity_range: after_deadline_interval(),  // ❌ After deadline!
+      outputs: [
+        create_seller_payment_output(escrow_amount),
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because deadline passed
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-test valid_state_transition_active_to_refund() {
-  let action = Refund { seller_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let result = validate_state_transition(Active, action)
-  result == Valid
+// Test 4: Prevent payment theft (SECURITY)
+test completion_requires_seller_payment() fail {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: "tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],           // ✅ Correct signer
+      validity_range: before_deadline_interval(),  // ✅ Correct time
+      outputs: [
+        Output {                              // ❌ Payment to attacker!
+          address: attacker_pkh,
+          value: Value { lovelace: escrow_amount, ..Value::default() },
+          datum: None,
+        },
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because seller wasn't paid
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-test invalid_state_transition_complete_to_complete() {
-  let action = CompleteEscrow { buyer_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let result = validate_state_transition(Complete, action)
-  result == Invalid("Cannot modify completed escrow")
+// Test 5: Successful cancellation by buyer
+test successful_buyer_cancellation() {
+  let datum = create_mock_datum()
+  let redeemer = Cancel { canceller_is_buyer: True }
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Cancel,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],           // ✅ Buyer signed
+      validity_range: before_deadline_interval(),  // ✅ Before deadline
+      outputs: [
+        create_buyer_payment_output(escrow_amount),  // ✅ Refund to buyer
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-test invalid_state_transition_cancel_to_complete() {
-  let action = CompleteEscrow { buyer_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let result = validate_state_transition(Cancel, action)
-  result == Invalid("Cannot modify cancelled escrow")
+// Test 6: Successful refund after deadline
+test successful_seller_refund() {
+  let datum = create_mock_datum()
+  let redeemer = Refund
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Cancel,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [seller_pkh],          // ✅ Seller signed
+      validity_range: after_deadline_interval(),  // ✅ After deadline
+      outputs: [
+        create_buyer_payment_output(escrow_amount),  // ✅ Refund to buyer
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-// Test deadline validation
-test valid_deadline_before_deadline() {
-  let result = validate_deadline(1000)
-  // DEADLINE
-  result == Valid
+// Test 7: Prevent self-dealing (SECURITY)
+test prevent_self_dealing() fail {
+  let bad_datum = EscrowDatum {
+    buyer: buyer_pkh,
+    seller: buyer_pkh,                         // ❌ Same as buyer!
+    state: Active,
+    deadline: deadline,
+    amount: escrow_amount,
+    nonce: nonce,
+    metadata: None,
+  }
+  
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_seller_payment_output(escrow_amount),
+        create_tagged_output(create_mock_tagged_datum(bad_datum, input_ref), 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because buyer == seller
+  escrow_contract.spend(bad_datum, redeemer, input_ref, ctx)
 }
 
-test valid_after_deadline() {
-  let result = validate_after_deadline(1000)
-  // DEADLINE
-  result == Valid
+// Test 8: Prevent zero/negative amounts (SECURITY)
+test prevent_zero_amount() fail {
+  let bad_datum = EscrowDatum {
+    buyer: buyer_pkh,
+    seller: seller_pkh,
+    state: Active,
+    deadline: deadline,
+    amount: 0,                                // ❌ Zero amount!
+    nonce: nonce,
+    metadata: None,
+  }
+  
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_seller_payment_output(0),
+        create_tagged_output(create_mock_tagged_datum(bad_datum, input_ref), 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because amount is zero
+  escrow_contract.spend(bad_datum, redeemer, input_ref, ctx)
 }
 
-// Test signature validation
-test valid_buyer_signature() {
-  let action = CompleteEscrow { buyer_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_buyer_signature(action, datum)
-  result == Valid
+// Test 9: Prevent double satisfaction attack (CRITICAL SECURITY)
+test prevent_double_satisfaction() fail {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_seller_payment_output(escrow_amount),
+        // ❌ Missing tagged output - should fail
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because no tagged output exists
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-test invalid_buyer_signature_empty() {
-  let action = CompleteEscrow { buyer_signature: "" }
-  // INVALID_SIGNATURE
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_buyer_signature(action, datum)
-  result == Invalid("Invalid buyer signature")
+// Test 10: Prevent replay attacks (CRITICAL SECURITY)
+test prevent_replay_attack() fail {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce,  // ❌ Same nonce - should increment!
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_seller_payment_output(escrow_amount),
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because nonce wasn't incremented
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }
 
-test invalid_buyer_signature_wrong_action() {
-  let action =
-    CancelEscrow {
-      canceller_signature: "valid_signature",
-      // VALID_SIGNATURE
-      is_buyer: True,
-    }
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_buyer_signature(action, datum)
-  result == Invalid("Action is not a completion")
+// Test 11: Prevent modification of completed escrow
+test prevent_modify_completed_escrow() fail {
+  let completed_datum = EscrowDatum {
+    buyer: buyer_pkh,
+    seller: seller_pkh,
+    state: Complete,                           // ❌ Already completed!
+    deadline: deadline,
+    amount: escrow_amount,
+    nonce: nonce,
+    metadata: None,
+  }
+  
+  let redeemer = Cancel { canceller_is_buyer: True }
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_buyer_payment_output(escrow_amount),
+        create_tagged_output(create_mock_tagged_datum(completed_datum, input_ref), 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Should fail because escrow is already completed
+  escrow_contract.spend(completed_datum, redeemer, input_ref, ctx)
 }
 
-// Test output validation
-test valid_output_amount() {
-  let result = validate_output_amount(10_000_000)
-  // ESCROW_AMOUNT
-  result == Valid
+// Test 12: Validate proper state transitions
+test validate_state_transitions() {
+  let datum = create_mock_datum()
+  
+  // Test valid transitions
+  assert validate_state_transition(Active, Complete) == Valid
+  assert validate_state_transition(Active, Cancel { canceller_is_buyer: True }) == Valid
+  assert validate_state_transition(Active, Refund) == Valid
+  
+  // Test invalid transitions
+  assert validate_state_transition(Complete, Complete) == Invalid("Cannot modify completed escrow")
+  assert validate_state_transition(Cancel, Complete) == Invalid("Cannot modify cancelled escrow")
 }
 
-test valid_output_recipient() {
-  let result = validate_output_recipient("seller_key_hash")
-  // SELLER_KEY_HASH
-  result == Valid
+// Test 13: Validate escrow parameters
+test validate_escrow_parameters() {
+  let config = default_config()
+  
+  // Test valid parameters
+  let valid_datum = create_mock_datum()
+  assert validate_escrow_datum(valid_datum, config) == Valid
+  
+  // Test invalid parameters
+  let invalid_amount_datum = EscrowDatum {
+    buyer: buyer_pkh,
+    seller: seller_pkh,
+    state: Active,
+    deadline: deadline,
+    amount: 500_000,  // Below minimum
+    nonce: nonce,
+    metadata: None,
+  }
+  assert validate_escrow_datum(invalid_amount_datum, config) == Invalid("Escrow amount below minimum")
 }
 
-// Test state update functions
-// test update_escrow_state() {
-//   let original_datum = create_mock_datum(Active, 10_000_000) // ESCROW_AMOUNT
-//   let updated_datum = update_escrow_state(original_datum, Complete)
-//   
-//   updated_datum.state == Complete &&
-//   updated_datum.buyer == original_datum.buyer &&
-//   updated_datum.seller == original_datum.seller &&
-//   updated_datum.amount == original_datum.amount
-// }
-
-test is_final_state_active() {
-  is_final_state(Active) == False
-}
-
-test is_final_state_complete() {
-  is_final_state(Complete) == True
-}
-
-test is_final_state_cancel() {
-  is_final_state(Cancel) == True
-}
-
-// Test edge cases
-test edge_case_zero_amount() {
-  let datum = create_mock_datum(Active, 0)
-  let result = validate_escrow_datum(datum, default_config())
-  result == Invalid("Escrow amount below minimum")
-}
-
-test edge_case_maximum_amount() {
-  let datum = create_mock_datum(Active, default_config().max_amount)
-  let result = validate_escrow_datum(datum, default_config())
-  result == Valid
-}
-
-test edge_case_minimum_amount() {
-  let datum = create_mock_datum(Active, default_config().min_amount)
-  let result = validate_escrow_datum(datum, default_config())
-  result == Valid
-}
-
-// Test cancellation by buyer vs seller
-test valid_cancellation_by_buyer() {
-  let action =
-    CancelEscrow {
-      canceller_signature: "valid_signature",
-      // VALID_SIGNATURE
-      is_buyer: True,
-    }
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_canceller_signature(action, datum)
-  result == Valid
-}
-
-test valid_cancellation_by_seller() {
-  let action =
-    CancelEscrow {
-      canceller_signature: "valid_signature",
-      // VALID_SIGNATURE
-      is_buyer: False,
-    }
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_canceller_signature(action, datum)
-  result == Valid
-}
-
-// Test refund validation
-test valid_refund_signature() {
-  let action = Refund { seller_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_seller_signature(action, datum)
-  result == Valid
-}
-
-test invalid_refund_signature_empty() {
-  let action = Refund { seller_signature: "" }
-  // INVALID_SIGNATURE
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let result = validate_seller_signature(action, datum)
-  result == Invalid("Invalid seller signature")
-}
-
-// Performance benchmark tests
-test bench_validate_escrow_datum_performance() {
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let _ = validate_escrow_datum(datum, default_config())
-  True
-}
-
-test bench_validate_state_transition_performance() {
-  let action = CompleteEscrow { buyer_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let _ = validate_state_transition(Active, action)
-  True
-}
-
-test bench_validate_deadline_performance() {
-  let _ = validate_deadline(1000)
-  // DEADLINE
-  True
-}
-
-test bench_signature_validation_performance() {
-  let action = CompleteEscrow { buyer_signature: "valid_signature" }
-  // VALID_SIGNATURE
-  let datum = create_mock_datum(Active, 10_000_000)
-  // ESCROW_AMOUNT
-  let _ = validate_buyer_signature(action, datum)
-  True
+// Test 14: Benchmark critical operations
+test bench completion_validation() {
+  let datum = create_mock_datum()
+  let redeemer = Complete
+  let input_ref = OutputReference { id: #"tx_hash", index: 0 }
+  
+  let updated_datum = EscrowDatum {
+    buyer: datum.buyer,
+    seller: datum.seller,
+    state: Complete,
+    deadline: datum.deadline,
+    amount: datum.amount,
+    nonce: datum.nonce + 1,
+    metadata: datum.metadata,
+  }
+  let tagged_datum = create_mock_tagged_datum(updated_datum, input_ref)
+  
+  let ctx = ScriptContext {
+    transaction: Transaction {
+      extra_signatories: [buyer_pkh],
+      validity_range: before_deadline_interval(),
+      outputs: [
+        create_seller_payment_output(escrow_amount),
+        create_tagged_output(tagged_datum, 0),
+      ],
+      ..Transaction::default()
+    },
+    purpose: Spending(input_ref)
+  }
+  
+  // Benchmark the completion validation
+  escrow_contract.spend(datum, redeemer, input_ref, ctx)
 }

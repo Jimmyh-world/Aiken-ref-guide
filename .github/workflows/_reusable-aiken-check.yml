@@ -99,11 +99,17 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Prepare Artifact Name
+        run: |
+          # Sanitize directory name for artifact naming
+          SANITIZED_DIR=$(echo "${{ inputs.working_directory }}" | sed 's|/|-|g')
+          echo "SANITIZED_DIR=$SANITIZED_DIR" >> $GITHUB_ENV
+
       - name: Upload Logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: logs-${{ inputs.working_directory }}-${{ inputs.aiken_version }}-${{ github.run_id }}
+          name: logs-${{ env.SANITIZED_DIR }}-${{ inputs.aiken_version }}-${{ github.run_id }}
           path: |
             ${{ inputs.working_directory }}/deps.log
             ${{ inputs.working_directory }}/fmt.log

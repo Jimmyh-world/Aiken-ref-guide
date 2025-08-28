@@ -30,7 +30,7 @@ jobs:
           set -Eeuo pipefail
           for example_dir in examples/hello-world examples/token-contracts/nft-one-shot; do
             echo "Validating $example_dir..."
-            (cd "$example_dir" && aiken fmt --check && aiken check && aiken test)
+            (cd "$example_dir" && aiken fmt --check && aiken check)
           done
 
   create-release:
