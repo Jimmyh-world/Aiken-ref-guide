@@ -3,5 +3,7 @@
   "no-duplicate-heading": false,
   "no-bare-urls": false,
   "fenced-code-language": false,
-  "blanks-around-fences": false
+  "blanks-around-fences": false,
+  "blanks-around-headings": false,
+  "blanks-around-lists": false
 }
