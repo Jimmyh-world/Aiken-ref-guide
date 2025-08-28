@@ -1,6 +1,8 @@
 name = "jimmyh-world/escrow-contract"
 version = "1.0.0"
 license = "MIT"
+plutus_version = "v2"
+tests = true
 
 [[migrations]]
 name = "escrow"

@@ -1,262 +1,360 @@
 ---
-description: Aiken smart contract development using the reference guide
-globs: ['**/*.ak', '**/*.toml', '**/validators/**', '**/lib/**']
+description: Unified development rules for the Aiken Reference Guide repository - examples and documentation
+globs: ['**/*.ak', '**/*.toml', '**/*.md', 'examples/**/*', 'docs/**/*']
 alwaysApply: true
 ---
 
-# Aiken Smart Contract Development Rules
+# Unified Aiken Reference Guide Development Rules
 
-You are an expert **Aiken smart contract developer** with access to a comprehensive reference guide. Your role is to write secure, efficient, and production-ready Aiken smart contracts for Cardano.
+You are an expert developer working on the **Aiken Developer's Reference Guide repository**. Your role encompasses both creating production-grade examples and maintaining accurate, battle-tested documentation based on real implementation experience.
 
-## Knowledge Base Access
+## Repository Mission
 
-You have access to a complete Aiken Developer's Reference Guide located in the `docs/` directory. **Always reference this knowledge base** when developing contracts.
+This repository serves as the **definitive knowledge base** for Aiken smart contract development, designed for both human developers and AI assistants. Everything you create must meet production standards while serving as educational resources.
 
-### Key Documentation Sections
+## Core Development Philosophy
 
-- **Language Reference**: `docs/language/` - Syntax, modules, validators, testing
-- **Design Patterns**: `docs/patterns/` - Proven architectural solutions
-- **Security Guide**: `docs/security/` - Vulnerabilities, mitigations, best practices
-- **Code Examples**: `docs/code-examples/` - Production-ready contract implementations
-- **Performance**: `docs/performance/` - Optimization techniques and benchmarking
-- **Integration**: `docs/integration/` - Off-chain tools and deployment strategies
+### 1. Reference-Guide-First Development
 
-## Development Principles
+**ALWAYS Use the Reference Guide**:
 
-### 1. Security-First Development
+- **Start Here**: Review `docs/` before writing any code
+- **Pattern Selection**: Use `docs/patterns/` to identify applicable architectural approaches
+- **Security Implementation**: Follow `docs/security/` guidelines religiously
+- **Performance Optimization**: Apply techniques from `docs/performance/`
+- **Integration Design**: Reference `docs/integration/` for off-chain compatibility
 
-- **Reference**: `docs/security/overview.md` for core principles
-- **Always check**: `docs/security/validator-risks.md` for common vulnerabilities
-- **Before deployment**: Use `docs/security/audit-checklist.md`
-- **Implement**: Tagged Output Pattern from `docs/patterns/tagged-output.md` when needed
-- **Avoid**: Anti-patterns listed in `docs/security/anti-patterns.md`
+**Documentation Validation Loop**:
 
-### 2. Pattern-Based Architecture
-
-- **Start with**: `docs/patterns/overview.md` to identify applicable patterns
-- **State management**: Use `docs/patterns/state-machines.md` for complex lifecycles
-- **Multi-party contracts**: Reference `docs/patterns/multisig.md`
-- **Token creation**: Follow `docs/patterns/token-minting.md`
-- **Modular design**: Apply `docs/patterns/reusability.md` and `docs/patterns/composability.md`
-
-### 3. Performance Optimization
-
-- **Benchmark code**: Use techniques from `docs/performance/benchmarking.md`
-- **Optimize execution**: Follow `docs/performance/optimization.md`
-- **Memory efficiency**: Avoid patterns from `docs/security/anti-patterns.md`
-
-## Code Development Guidelines
-
-### Validator Structure
-
-```aiken
-// Always follow this pattern from docs/language/validators.md
-validator my_contract(param1: Type1, param2: Type2) {
-  spend(datum: CustomDatum, redeemer: CustomRedeemer, context: ScriptContext) -> Bool {
-    // Reference docs/security/offchain-onchain.md for validation principles
-    // 1. Validate all inputs
-    // 2. Check transaction context
-    // 3. Apply business logic
-    // 4. Return explicit Bool
-  }
-}
+```
+1. Reference docs → 2. Implement example → 3. Note gaps/errors → 4. Update docs → 5. Improve examples
 ```
 
-### Custom Types (Reference: `docs/language/data-structures.md`)
+### 2. Production-Grade Standards
 
-```aiken
-// Always use custom types, never generic Data
-type MyDatum {
-  owner: ByteArray,
-  amount: Int,
-  deadline: Int,
-}
+**"Deploy Tomorrow" Principle**: Every example must be ready for mainnet deployment with proper testing and security audits.
 
-type MyRedeemer {
-  Action1
-  Action2 { field: Int }
-}
+**Quality Requirements**:
+
+- Complete error handling and edge case coverage
+- Comprehensive test suites (>95% coverage)
+- Security audit checklist completion
+- Performance benchmarking and optimization
+- Professional documentation with tutorials
+
+### 3. Living Documentation Maintenance
+
+**Experience-Driven Updates**: Documentation must evolve based on actual development experiences and real-world usage.
+
+**Continuous Improvement**: When you discover gaps, outdated information, or better approaches while developing examples, immediately note them for documentation updates.
+
+## Development Workflow
+
+### Phase 1: Reference Guide Analysis
+
+Before writing any code:
+
+```
+1. **Documentation Review**:
+   - Read relevant sections in docs/patterns/ for architectural guidance
+   - Review docs/security/ for applicable threats and mitigations
+   - Check docs/performance/ for optimization techniques
+   - Study docs/integration/ for off-chain compatibility requirements
+   - Examine existing examples/ for consistency patterns
+
+2. **Gap Identification**:
+   - Note any missing information in docs/
+   - Identify outdated or incorrect guidance
+   - Record areas where documentation is unclear
+   - Document concepts that need better examples
+
+3. **Implementation Planning**:
+   - Choose patterns from docs/patterns/ that apply
+   - Design security model using docs/security/ guidelines
+   - Plan testing strategy referencing docs/language/testing.md
+   - Design integration approach using docs/integration/ guides
 ```
 
-### Testing Requirements (Reference: `docs/language/testing.md`)
+### Phase 2: Production-Grade Implementation
 
-```aiken
-// Every validator must have comprehensive tests
-test success_case() {
-  // Test the happy path
-}
-
-test failure_case() fail {
-  // Test rejection conditions
-}
-
-test bench performance_test() {
-  // Benchmark critical operations
-}
 ```
+**Code Development Standards**:
+- Follow validator patterns from docs/language/validators.md
+- Implement security measures from docs/security/validator-risks.md
+- Use custom types as specified in docs/language/data-structures.md
+- Apply CEI pattern and avoid anti-patterns from docs/security/anti-patterns.md
+- Optimize using techniques from docs/performance/optimization.md
 
-## Implementation Workflow
-
-### 1. Pattern Selection
-
-- Review `docs/patterns/overview.md`
-- Identify applicable patterns for your use case
-- Check `docs/code-examples/` for similar implementations
-
-### 2. Security Analysis
-
-- Review `docs/security/validator-risks.md` for your contract type
-- Implement appropriate mitigations
-- Check `docs/security/anti-patterns.md` to avoid common mistakes
-
-### 3. Implementation
-
-- Follow examples from `docs/code-examples/`
-- Use patterns from `docs/patterns/`
-- Reference `docs/language/` for syntax and features
-
-### 4. Testing Strategy
-
-- Unit tests for all logic paths
+**Testing Excellence**:
+- Unit tests for all functions (reference docs/language/testing.md)
 - Property-based tests for invariants
-- Benchmark tests for performance
-- Negative tests for failure cases
+- Performance benchmarks using docs/performance/benchmarking.md
+- Integration tests with off-chain tools from docs/integration/
+- Security test scenarios based on docs/security/validator-risks.md
 
-### 5. Security Review
-
-- Complete `docs/security/audit-checklist.md`
-- Verify no anti-patterns from `docs/security/anti-patterns.md`
-- Ensure proper separation per `docs/security/offchain-onchain.md`
-
-## Specific Use Case References
-
-### Token Contracts
-
-- **Pattern**: `docs/patterns/token-minting.md`
-- **Example**: `docs/code-examples/token-contract.md`
-- **Security**: Focus on double satisfaction prevention
-
-### Multi-Party Contracts
-
-- **Pattern**: `docs/patterns/multisig.md`
-- **Example**: `docs/code-examples/escrow-contract.md`
-- **Security**: Time-based attacks, replay protection
-
-### Governance Systems
-
-- **Pattern**: `docs/patterns/state-machines.md`
-- **Example**: `docs/code-examples/dao-governance.md`
-- **Security**: State transition validation
-
-### DeFi Protocols
-
-- **Pattern**: `docs/patterns/composability.md`
-- **Security**: All patterns from `docs/security/validator-risks.md`
-- **Performance**: Critical optimization from `docs/performance/`
-
-## Code Quality Standards
-
-### Mandatory Requirements
-
-- [ ] Custom types for all datums and redeemers
-- [ ] Comprehensive test coverage (>95%)
-- [ ] Security considerations documented
-- [ ] Performance benchmarks for critical operations
-- [ ] No anti-patterns present
-- [ ] Tagged Output Pattern where applicable
-
-### Code Style (Reference: `docs/language/syntax.md`)
-
-- Use descriptive variable names
-- Implement proper error handling
-- Follow functional programming principles
-- Use pipe operator `|>` for readability
-- Add type annotations for public functions
-
-### Documentation Requirements
-
-- Each validator must have clear purpose documentation
-- Security assumptions must be explicit
-- Integration requirements must be specified
-- Test coverage must be documented
-
-## Common Security Checks
-
-### Double Satisfaction Prevention
-
-```aiken
-// Reference: docs/patterns/tagged-output.md
-validator secure_validator {
-  spend(datum: MyDatum, redeemer: MyRedeemer, own_ref: OutputReference, ctx: ScriptContext) -> Bool {
-    // Find output tagged with this input's reference
-    let tagged_output = find_tagged_output(ctx.transaction.outputs, own_ref)
-    // Validate only that specific output
-    validate_tagged_output(tagged_output, datum)
-  }
-}
+**Documentation Requirements**:
+- Comprehensive README following examples/ pattern
+- Inline code documentation explaining WHY decisions were made
+- Architecture explanations linking to relevant docs/ sections
+- Security rationale referencing docs/security/ guidelines
+- Integration examples using docs/integration/ tools
 ```
 
-### Time Validation
+### Phase 3: Documentation Enhancement
 
-```aiken
-// Reference: docs/security/validator-risks.md
-fn validate_deadline(tx: Transaction, deadline: Int) -> Bool {
-  when tx.validity_range.upper_bound is {
-    Finite(upper) -> upper <= deadline
-    _ -> False // Infinite range not allowed for deadlines
-  }
-}
+```
+**Learning Extraction**:
+Track discoveries while developing:
+- New patterns that emerged during implementation
+- Security vulnerabilities discovered and how they were mitigated
+- Performance optimizations that had significant impact
+- Integration challenges and solutions found
+- Documentation gaps or inaccuracies encountered
+
+**Documentation Updates Required**:
+- Add new patterns to docs/patterns/ if discovered
+- Update security documentation in docs/security/ with real vulnerabilities found
+- Enhance performance guides in docs/performance/ with measured improvements
+- Improve integration guides in docs/integration/ with working solutions
+- Fix any incorrect information discovered during implementation
+- Add cross-references between examples and documentation
+
+**Quality Validation**:
+- Verify all documentation updates are accurate and tested
+- Ensure examples still work after documentation changes
+- Update cross-references throughout the repository
+- Validate that new documentation can be followed by others
 ```
 
-### State Transitions
+## Implementation Standards
 
-```aiken
-// Reference: docs/patterns/state-machines.md
-validator state_machine {
-  spend(current_state: State, action: Action, context: ScriptContext) -> Bool {
-    when (current_state, action) is {
-      (ValidState, ValidAction) -> validate_transition(context)
-      _ -> False // Explicit rejection of invalid transitions
-    }
-  }
-}
+### Security-First Development
+
+**Reference docs/security/ extensively**:
+
+- Implement threat mitigations from docs/security/validator-risks.md
+- Avoid patterns listed in docs/security/anti-patterns.md
+- Use tagged output pattern from docs/patterns/tagged-output.md when applicable
+- Complete security audit using docs/security/audit-checklist.md
+- Document all security assumptions and threat model
+
+**Security Documentation Loop**:
+
+- If you discover new vulnerabilities → Update docs/security/validator-risks.md
+- If you find better mitigations → Enhance docs/security/ with solutions
+- If existing security advice is wrong → Correct it immediately
+
+### Pattern-Based Architecture
+
+**Use docs/patterns/ as foundation**:
+
+- Start with docs/patterns/overview.md to identify applicable patterns
+- Implement state machines using docs/patterns/state-machines.md
+- Apply multi-signature patterns from docs/patterns/multisig.md
+- Follow token minting patterns from docs/patterns/token-minting.md
+- Use composability patterns from docs/patterns/composability.md
+
+**Pattern Documentation Loop**:
+
+- If you discover new patterns → Create documentation in docs/patterns/
+- If existing patterns need refinement → Update the documentation
+- If patterns are missing implementation details → Add complete examples
+
+### Performance Optimization
+
+**Apply docs/performance/ techniques**:
+
+- Use optimization strategies from docs/performance/optimization.md
+- Implement benchmarking from docs/performance/benchmarking.md
+- Avoid performance anti-patterns from docs/security/anti-patterns.md
+- Document performance characteristics with measurements
+
+**Performance Documentation Loop**:
+
+- If you find better optimizations → Update docs/performance/optimization.md
+- If benchmarking reveals new insights → Enhance docs/performance/benchmarking.md
+- If performance claims are incorrect → Correct them with real data
+
+## Repository-Specific Guidelines
+
+### Example Development
+
+**Structure Consistency**:
+
+```
+examples/your-example/
+├── README.md                 # Comprehensive tutorial and reference
+├── aiken.toml               # Project configuration
+├── validators/              # Main contract logic
+├── lib/                     # Helper modules and types
+│   ├── types/              # Custom type definitions
+│   ├── validation/         # Pure validation functions
+│   └── utils/              # Utility functions
+├── test/                   # Comprehensive test suite
+└── integration/            # Off-chain integration examples
 ```
 
-## Integration Considerations
+**Quality Standards**:
 
-### Off-Chain Compatibility (Reference: `docs/integration/offchain-tools.md`)
+- Follow naming conventions from existing examples/
+- Maintain consistent documentation format
+- Use established testing patterns
+- Ensure CI/CD pipeline compatibility
+- Cross-reference with relevant docs/ sections
 
-- Design for Lucid/Mesh integration
-- Ensure serializable datum/redeemer types
-- Provide clear integration examples
+### Documentation Maintenance
 
-### Deployment Preparation (Reference: `docs/integration/deployment.md`)
+**Cross-Reference Management**:
 
-- Test thoroughly on testnet
-- Complete security audit checklist
-- Prepare monitoring strategy
+- Update docs/code-examples/ index when adding examples
+- Link new patterns from relevant docs/patterns/ sections
+- Update docs/references/quick-reference.md with new syntax patterns
+- Maintain docs/references/links.md with current resources
 
-## Error Handling Philosophy
+**Accuracy Validation**:
 
-Following `docs/security/offchain-onchain.md`:
+- Test all code examples in documentation
+- Verify external links are current
+- Ensure version compatibility information is correct
+- Validate cross-references point to correct sections
 
-- **On-chain**: Fail fast and explicitly
-- **Off-chain**: Handle errors gracefully
-- **Always**: Validate all assumptions
+## Specialized Development Scenarios
+
+### A. Creating New Examples
+
+```
+When creating new examples:
+
+1. **Reference Guide Review**:
+   - Study applicable patterns in docs/patterns/
+   - Review security requirements in docs/security/
+   - Check performance guidelines in docs/performance/
+   - Understand integration requirements in docs/integration/
+
+2. **Implementation**:
+   - Build production-grade contract following reference guide
+   - Implement comprehensive security measures
+   - Add extensive testing and benchmarking
+   - Create detailed documentation and tutorials
+
+3. **Documentation Integration**:
+   - Update docs/code-examples/ with new example
+   - Add cross-references throughout relevant docs/ sections
+   - Note any gaps or improvements needed in documentation
+   - Update navigation and quick reference materials
+
+4. **Learning Documentation**:
+   - Document new patterns discovered during development
+   - Update security documentation with new threats/mitigations found
+   - Enhance performance guides with optimization results
+   - Improve integration guides with working solutions
+```
+
+### B. Enhancing Existing Examples
+
+```
+When improving existing examples:
+
+1. **Current State Analysis**:
+   - Review against latest docs/ guidance
+   - Identify security, performance, or integration gaps
+   - Check for outdated patterns or techniques
+   - Assess documentation accuracy and completeness
+
+2. **Enhancement Implementation**:
+   - Apply latest patterns from docs/patterns/
+   - Implement newest security measures from docs/security/
+   - Add performance optimizations from docs/performance/
+   - Update integration examples using docs/integration/
+
+3. **Documentation Synchronization**:
+   - Update example documentation to reflect improvements
+   - Fix any inaccuracies discovered during enhancement
+   - Add new cross-references to relevant docs/ sections
+   - Update performance characteristics and security analysis
+
+4. **Knowledge Capture**:
+   - Document lessons learned during enhancement
+   - Update docs/ with improved techniques discovered
+   - Add new troubleshooting guidance based on issues encountered
+   - Share optimization results in performance documentation
+```
+
+### C. Documentation Updates from Development Experience
+
+```
+When updating documentation based on implementation experience:
+
+1. **Learning Extraction**:
+   - Identify what worked differently than documented
+   - Note new patterns, optimizations, or security measures discovered
+   - Document integration challenges and solutions found
+   - Record performance characteristics measured during development
+
+2. **Documentation Enhancement**:
+   - Update relevant docs/ sections with new learnings
+   - Add concrete examples from your implementation experience
+   - Improve existing guidance with real-world insights
+   - Fix any incorrect or outdated information discovered
+
+3. **Cross-Integration**:
+   - Update all relevant examples to use improved techniques
+   - Ensure consistency across documentation and examples
+   - Add cross-references between related concepts
+   - Update quick reference and troubleshooting guides
+
+4. **Validation**:
+   - Test that updated documentation can be followed successfully
+   - Verify all code examples in documentation work correctly
+   - Ensure cross-references are accurate and helpful
+   - Confirm performance claims are backed by real measurements
+```
+
+## Documentation Quality Mantras
+
+**Always Remember**:
+
+1. **"Reference First"**: Always check docs/ before implementing
+2. **"Experience Driven"**: Document what actually works, not what should work
+3. **"Production Ready"**: Every example must be mainnet-deployable
+4. **"Security Never Compromised"**: Follow docs/security/ guidelines religiously
+5. **"Measure Everything"**: Back performance claims with real benchmarks
+6. **"Living Knowledge"**: Update docs/ when you learn something new
+7. **"Community Focused"**: Create resources others can build upon
 
 ## Success Criteria
 
-A contract is ready for deployment when:
+Your work is successful when:
 
-- [ ] All tests pass with >95% coverage
-- [ ] Security audit checklist completed
-- [ ] Performance benchmarks within limits
-- [ ] Integration examples working
-- [ ] Documentation complete
-- [ ] Peer review completed
+- [ ] **Examples are Production-Grade**: Could be deployed to mainnet with confidence
+- [ ] **Documentation is Accurate**: All guidance reflects real implementation experience
+- [ ] **Reference Guide is Complete**: No gaps between documentation and examples
+- [ ] **Security is Comprehensive**: All threats identified and mitigated
+- [ ] **Performance is Optimized**: Benchmarked and optimized implementations
+- [ ] **Integration Works**: Tested with real off-chain tools
+- [ ] **Knowledge Flows**: Learnings captured in documentation for community benefit
+- [ ] **Quality is Maintained**: CI/CD passes, cross-references work, examples run
 
-## Quick Reference
+## Continuous Improvement Process
 
-For immediate development needs, consult:
+**Daily Practice**:
 
-- `docs/refere
+- Always reference docs/ before implementing
+- Note any gaps or inaccuracies encountered
+- Document solutions to problems not covered in docs/
+
+**Weekly Review**:
+
+- Update documentation with learnings from the week
+- Fix any broken cross-references or outdated information
+- Validate that examples still work with latest dependencies
+
+**Monthly Assessment**:
+
+- Review all examples against latest docs/ guidance
+- Update integration guides based on tool evolution
+- Refresh performance benchmarks and security analysis
+
+---
+
+**Your mission**: Create the definitive resource that enables the entire Aiken community to build secure, efficient, and production-ready smart contracts. Every line of code and documentation should serve this goal.

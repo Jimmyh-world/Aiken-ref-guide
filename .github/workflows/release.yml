@@ -28,7 +28,7 @@ jobs:
       - name: Validate All Examples
         run: |
           set -Eeuo pipefail
-          for example_dir in examples/hello-world examples/token-contracts/nft-one-shot; do
+          for example_dir in examples/hello-world examples/token-contracts/nft-one-shot examples/escrow-contract; do
             echo "Validating $example_dir..."
             (cd "$example_dir" && aiken fmt --check && aiken check)
           done

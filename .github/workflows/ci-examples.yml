@@ -25,6 +25,11 @@ jobs:
               path: 'examples/token-contracts/nft-one-shot',
               timeout: 10,
             }
+          - {
+              name: 'escrow-contract',
+              path: 'examples/escrow-contract',
+              timeout: 15,
+            }
 
     uses: ./.github/workflows/_reusable-aiken-check.yml
     with:
