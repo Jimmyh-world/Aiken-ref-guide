@@ -18,11 +18,6 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
           globs: '**/*.md'
-          config: |
-            {
-              "line-length": false,
-              "no-duplicate-heading": false
-            }
 
   link-check:
     name: Link Validation
