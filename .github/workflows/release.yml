@@ -43,9 +43,9 @@ jobs:
       - name: Create Archive
         run: |
           tar -czf aiken-ref-guide-${{ github.ref_name }}.tgz \
+            --exclude='*.log' --exclude='target/' --exclude='plutus.json' \
             examples/ docs/ scripts/ \
-            README.md NAVIGATION.md QUICK_START.md CONTRIBUTING.md \
-            --exclude='*.log' --exclude='target/' --exclude='plutus.json'
+            README.md NAVIGATION.md QUICK_START.md CONTRIBUTING.md
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
