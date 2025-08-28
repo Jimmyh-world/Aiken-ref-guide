@@ -9,17 +9,25 @@
 
 // Policy parameters - these are baked into the policy script
 pub type NftPolicyParams {
-  issuer: ByteArray,              // Who can mint (optional, can be #None)
-  reference_utxo: ByteArray,      // Specific UTxO that must be consumed
-  token_name: ByteArray,          // Exact token name required
-  valid_from: Int,                // Earliest slot for minting
-  valid_until: Int,               // Latest slot for minting
+  issuer: ByteArray,
+  // Who can mint (optional, can be #None)
+  reference_utxo: ByteArray,
+  // Specific UTxO that must be consumed
+  token_name: ByteArray,
+  // Exact token name required
+  valid_from: Int,
+  // Earliest slot for minting
+  valid_until: Int,
 }
+
+// Latest slot for minting
 
 // Redeemer for the minting policy
 pub type NftMintRedeemer {
-  quantity: Int,                  // Must be exactly 1
+  quantity: Int,
 }
+
+// Must be exactly 1
 
 // Main minting policy function
 pub fn nft_mint_policy(
@@ -29,19 +37,18 @@ pub fn nft_mint_policy(
 ) -> Bool {
   // 1. Validate minting quantity (exactly one token)
   let valid_quantity = redeemer.quantity == 1
-  
   // 2. Check validity interval (simplified for demo)
-  let valid_time = True // TODO: Implement proper time validation
-  
+  let valid_time = True
+  // TODO: Implement proper time validation
   // 3. Validate that the reference UTxO is being consumed (simplified)
-  let reference_consumed = True // TODO: Implement proper UTxO validation
-  
+  let reference_consumed = True
+  // TODO: Implement proper UTxO validation
   // 4. Check issuer signature (simplified)
-  let issuer_signed = True // TODO: Implement proper signature validation
-  
+  let issuer_signed = True
+  // TODO: Implement proper signature validation
   // 5. Validate minted assets (simplified)
-  let valid_mint = True // TODO: Implement proper asset validation
-  
+  let valid_mint = True
+  // TODO: Implement proper asset validation
   // All conditions must be true
   valid_quantity && valid_time && reference_consumed && issuer_signed && valid_mint
 }
@@ -55,11 +62,11 @@ pub fn create_policy_params(
   valid_until: Int,
 ) -> NftPolicyParams {
   NftPolicyParams {
-    issuer: issuer,
-    reference_utxo: reference_utxo,
-    token_name: token_name,
-    valid_from: valid_from,
-    valid_until: valid_until,
+    issuer,
+    reference_utxo,
+    token_name,
+    valid_from,
+    valid_until,
   }
 }
 
@@ -70,5 +77,6 @@ pub fn validate_mint_quantity(quantity: Int) -> Bool {
 
 // Helper function to validate burning (should always fail for NFTs)
 pub fn validate_burn(_quantity: Int) -> Bool {
-  False // NFTs should never be burned
+  False
+  // NFTs should never be burned
 }

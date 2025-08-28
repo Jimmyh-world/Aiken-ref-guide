@@ -1,4 +1,4 @@
-use hello_world/hello_world.{hello_world, add}
+use hello_world/hello_world.{add, hello_world}
 
 // Test the hello_world function
 test hello_world_test() {

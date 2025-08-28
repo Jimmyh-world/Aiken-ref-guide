@@ -1,0 +1,53 @@
+name: CI – Examples
+on:
+  pull_request:
+    paths: 
+      - "examples/**"
+      - ".github/workflows/**"
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-examples-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-examples:
+    name: ${{ matrix.example.name }} (Aiken ${{ matrix.aiken }})
+    strategy:
+      fail-fast: false
+      matrix:
+        aiken: ['1.1.14', '1.1.15']
+        example:
+          - { 
+              name: 'hello-world', 
+              path: 'examples/hello-world',
+              timeout: 5
+            }
+          - { 
+              name: 'nft-one-shot', 
+              path: 'examples/token-contracts/nft-one-shot',
+              timeout: 10
+            }
+    
+    uses: ./.github/workflows/_reusable-aiken-check.yml
+    with:
+      working_directory: ${{ matrix.example.path }}
+      aiken_version: ${{ matrix.aiken }}
+      run_benchmarks: false
+
+  examples-summary:
+    name: Examples Summary
+    needs: test-examples
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Generate Summary
+        run: |
+          if [[ "${{ needs.test-examples.result }}" == "success" ]]; then
+            echo "✅ All examples passed across all Aiken versions" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some examples failed - check individual jobs" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi

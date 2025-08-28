@@ -1,0 +1,62 @@
+name: Release
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  validate-release:
+    name: Validate for Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+      
+      - name: Install Aiken
+        run: cargo install aiken --version 1.1.15 --locked
+      
+      - name: Validate Root Project
+        run: |
+          set -Eeuo pipefail
+          aiken fmt --check
+          aiken check
+          aiken test
+
+      - name: Validate All Examples
+        run: |
+          set -Eeuo pipefail
+          for example_dir in examples/hello-world examples/token-contracts/nft-one-shot; do
+            echo "Validating $example_dir..."
+            (cd "$example_dir" && aiken fmt --check && aiken check && aiken test)
+          done
+
+  create-release:
+    name: Create Release
+    needs: validate-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create Archive
+        run: |
+          tar -czf aiken-ref-guide-${{ github.ref_name }}.tgz \
+            examples/ docs/ scripts/ \
+            README.md NAVIGATION.md QUICK_START.md CONTRIBUTING.md \
+            --exclude='*.log' --exclude='target/' --exclude='plutus.json'
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: aiken-ref-guide-${{ github.ref_name }}.tgz
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

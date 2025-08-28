@@ -47,3 +47,4 @@ echo "   - plutus.json (validator script)"
 if [ -f "plutus.json" ]; then
     echo "🔑 Validator hash: $(jq -r '.validators[0].hash' plutus.json)"
 fi
+

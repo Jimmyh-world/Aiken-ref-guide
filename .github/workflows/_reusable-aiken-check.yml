@@ -1,0 +1,114 @@
+name: _reusable-aiken-check
+on:
+  workflow_call:
+    inputs:
+      working_directory: { required: true, type: string }
+      aiken_version: { required: true, type: string }
+      run_benchmarks: { required: false, type: boolean, default: false }
+
+jobs:
+  aiken:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+      
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ inputs.aiken_version }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ inputs.aiken_version }}-
+            ${{ runner.os }}-cargo-
+
+      - name: Install Aiken
+        run: |
+          set -Eeuo pipefail
+          if ! command -v aiken &> /dev/null || ! aiken --version | grep -q "${{ inputs.aiken_version }}"; then
+            # Try to install specific version, fallback to latest if not available
+            if cargo install aiken --version ${{ inputs.aiken_version }} --locked 2>/dev/null; then
+              echo "Installed specific version: $(aiken --version)"
+            else
+              echo "Specific version not available, installing latest..."
+              cargo install aiken --locked
+              echo "Installed latest version: $(aiken --version)"
+            fi
+          else
+            echo "Using existing installation: $(aiken --version)"
+          fi
+
+      - name: Check Dependencies
+        run: |
+          set -Eeuo pipefail
+          echo "::group::dependency check"
+          aiken packages check 2>&1 | tee deps.log || echo "::warning::Dependency check issues found"
+          echo "::endgroup::"
+
+      - name: Format Check
+        run: |
+          set -Eeuo pipefail
+          echo "::group::aiken fmt"
+          if ! aiken fmt --check 2>&1 | tee fmt.log; then
+            echo "::error title=Formatting failed,file=**/*.ak::Run 'aiken fmt' locally to fix formatting"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Static Analysis and Tests
+        run: |
+          set -Eeuo pipefail
+          echo "::group::aiken check"
+          if ! aiken check 2>&1 | tee check.log; then
+            echo "::error title=Static analysis or tests failed::Check error details in artifacts"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Run Benchmarks
+        if: ${{ inputs.run_benchmarks }}
+        run: |
+          set -Eeuo pipefail
+          echo "::group::aiken bench"
+          aiken bench 2>&1 | tee bench.log || echo "::warning::Benchmark issues found"
+          echo "::endgroup::"
+
+      - name: Generate Summary
+        run: |
+          {
+            echo "## ✅ Aiken Validation Summary"
+            echo "- **Directory**: \`${{ inputs.working_directory }}\`"
+            echo "- **Aiken Version**: \`${{ inputs.aiken_version }}\`"
+            echo "- **OS**: \`${{ runner.os }}\`"
+            echo "- **Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            if [ -f test.log ]; then
+              echo "### Test Results"
+              echo "\`\`\`"
+              tail -5 test.log
+              echo "\`\`\`"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ inputs.working_directory }}-${{ inputs.aiken_version }}-${{ github.run_id }}
+          path: |
+            ${{ inputs.working_directory }}/deps.log
+            ${{ inputs.working_directory }}/fmt.log
+            ${{ inputs.working_directory }}/check.log
+            ${{ inputs.working_directory }}/test.log
+            ${{ inputs.working_directory }}/bench.log
+          retention-days: 30
+          if-no-files-found: ignore

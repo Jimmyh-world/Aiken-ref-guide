@@ -1,0 +1,61 @@
+name: Docs
+on:
+  pull_request:
+    paths: 
+      - '**/*.md'
+      - 'docs/**'
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Lint Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+          config: |
+            {
+              "line-length": false,
+              "no-duplicate-heading": false
+            }
+
+  link-check:
+    name: Link Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check Links
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --no-progress --exclude-mail --require-https --timeout 20 --max-retries 3 **/*.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docs-summary:
+    name: Documentation Summary
+    needs: [markdown-lint, link-check]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Generate Summary
+        run: |
+          {
+            echo "## 📚 Documentation Validation"
+            if [[ "${{ needs.markdown-lint.result }}" == "success" ]]; then
+              echo "- ✅ Markdown linting passed"
+            else
+              echo "- ❌ Markdown linting failed"
+            fi
+            if [[ "${{ needs.link-check.result }}" == "success" ]]; then
+              echo "- ✅ Link validation passed"
+            else
+              echo "- ❌ Link validation failed"
+            fi
+          } >> $GITHUB_STEP_SUMMARY

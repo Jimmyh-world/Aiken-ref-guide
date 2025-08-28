@@ -79,3 +79,4 @@ status:
 	@echo "  Aiken version: $(shell aiken --version 2>/dev/null || echo 'Not installed')"
 	@echo "  Build artifacts: $(shell if [ -f plutus.json ]; then echo '✅ Present'; else echo '❌ Missing'; fi)"
 	@echo "  Tests: $(shell if aiken test >/dev/null 2>&1; then echo '✅ Passing'; else echo '❌ Failing'; fi)"
+

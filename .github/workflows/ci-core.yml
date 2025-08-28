@@ -1,0 +1,25 @@
+name: CI – Core
+on:
+  pull_request:
+    paths:
+      - "aiken/**"
+      - "lib/**"
+      - "validators/**"
+      - "aiken.toml"
+      - ".github/workflows/**"
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  root-validation:
+    name: Root Project
+    uses: ./.github/workflows/_reusable-aiken-check.yml
+    with:
+      working_directory: "."
+      aiken_version: "1.1.15"
+      run_benchmarks: true

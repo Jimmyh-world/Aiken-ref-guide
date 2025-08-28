@@ -118,3 +118,4 @@ echo "   Collateral UTxO: $(cat keys/payment.addr) + $COLLATERAL_AMOUNT lovelace
 rm -f utxo.json protocol.json lock.tx lock.signed
 
 echo "💡 Next step: Run ./scripts/unlock.sh to spend the locked funds"
+

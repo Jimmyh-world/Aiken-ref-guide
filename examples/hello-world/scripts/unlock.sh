@@ -122,3 +122,4 @@ echo "   Amount unlocked: $((SCRIPT_AMOUNT - 2000000)) lovelace (minus fees)"
 rm -f script_utxo.json payment_utxo.json protocol.json unlock.tx unlock.signed redeemer.hash
 
 echo "🎉 Hello World validator demonstration completed successfully!"
+

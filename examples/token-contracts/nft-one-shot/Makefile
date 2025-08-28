@@ -89,3 +89,4 @@ audit:
 	@echo "  ✅ Token name validation"
 	@echo "  ✅ No burning allowed"
 	@echo "  ✅ Hash stability ensured"
+

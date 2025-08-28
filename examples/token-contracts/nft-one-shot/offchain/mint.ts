@@ -218,3 +218,4 @@ export async function mintNftExample(wallet: WalletApi): Promise<void> {
 
 // Export for use in other modules
 export { NftPolicyParams, NftMintRedeemer };
+
