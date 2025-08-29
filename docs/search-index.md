@@ -68,20 +68,20 @@ tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 
 ## Context Loading Priority
 
-### **For General Aiken Queries** (Load in order):
+### **For General Aiken Queries** (Load in order)
 
 1. [docs/overview/introduction.md](overview/introduction.md) - Aiken overview
 2. [docs/language/syntax.md](language/syntax.md) - Language fundamentals
 3. [examples/hello-world/](../examples/hello-world/) - Basic working example
 
-### **For Smart Contract Development** (Load in order):
+### **For Smart Contract Development** (Load in order)
 
 1. [docs/language/validators.md](language/validators.md) - Validator structure
 2. [docs/patterns/overview.md](patterns/overview.md) - Design patterns
 3. [docs/security/overview.md](security/overview.md) - Security practices
 4. [examples/escrow-contract/](../examples/escrow-contract/) - Production example
 
-### **For Security Analysis** (Always include):
+### **For Security Analysis** (Always include)
 
 1. [SECURITY_STATUS.md](../SECURITY_STATUS.md) - Current security audit status
 2. [docs/security/](security/) - Complete security documentation

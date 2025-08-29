@@ -34,6 +34,7 @@ For critical security vulnerabilities that could affect users deploying code fro
 - [ ] **Low**: Documentation clarity issue
 
 ## Description
+
 A clear description of the security issue:
 
 ## Location
@@ -43,9 +44,11 @@ A clear description of the security issue:
 - **Function/Section**: [specific area]
 
 ## Impact
+
 Describe the potential impact if this vulnerability were exploited:
 
 ## Reproduction
+
 If applicable, steps to demonstrate the issue:
 
 1. [Step 1]
@@ -53,9 +56,11 @@ If applicable, steps to demonstrate the issue:
 3. [Observe vulnerability]
 
 ## Suggested Fix
+
 If you have suggestions for how to fix this issue:
 
 ## Affected Users
+
 Who might be affected by this vulnerability:
 
 - [ ] Developers copying example code
@@ -64,6 +69,7 @@ Who might be affected by this vulnerability:
 - [ ] Production deployments
 
 ## Current Mitigation
+
 Are there any existing warnings or mitigations in place?
 
 ## References
@@ -79,4 +85,5 @@ Are there any existing warnings or mitigations in place?
 - [ ] This requires immediate action
 
 ## Additional Context
+
 Any other relevant information about this security issue.
