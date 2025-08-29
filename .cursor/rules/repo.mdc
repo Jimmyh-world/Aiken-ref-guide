@@ -1,733 +1,457 @@
-# 🚀 Universal AI-Optimized Repository Template
+# 🚀 Aiken AI-Optimized Repository Rules
 
-> **A complete template for developer-facing open source projects with built-in AI SEO and LLM optimization**
+> **Repository governance rules for Aiken smart contract development with built-in AI SEO and LLM optimization**
 
 ## 🚀 **Deployment & Monitoring Commands**
 
-### **Quick Deploy with Monitoring**
+### **Aiken Quality-Separated Branch Deployment**
 
 ```bash
-# 1. Initial setup and customization
-git clone <this-template>
-cd your-project
-# ... customize files ...
+# 1. Aiken-specific setup and validation
+git clone <aiken-repository>
+cd aiken-project
+aiken check  # Validate all Aiken contracts
+aiken test   # Run Aiken test suites
 
-# 2. Deploy with real-time monitoring
+# 2. Deploy with real-time Aiken monitoring
 git add .
-git commit -m "feat: initial repository setup with AI-optimized template"
+git commit -m "feat: production-ready Aiken contracts with comprehensive security audit"
 git push origin main
 
-# 3. Monitor deployment status (run in separate terminal)
-gh run list --limit 5
-gh run watch  # Real-time workflow monitoring
-gh workflow view ci-core --yaml  # View workflow details
+# 3. Monitor Aiken deployment status (run in separate terminal)
+gh run list --limit 5 | grep -E "(Aiken|Examples)"
+gh run watch  # Real-time Aiken workflow monitoring
+gh workflow view ci-examples --yaml  # View Aiken matrix testing workflow
 ```
 
-### **Advanced Monitoring & Validation**
+### **Advanced Aiken Monitoring & Validation**
 
 ```bash
-# Monitor all workflows simultaneously
-gh api repos/:owner/:repo/actions/runs --jq '.workflow_runs[] | select(.status=="in_progress") | {name: .name, status: .status, url: .html_url}'
+# Monitor Aiken workflows across quality-separated branches
+gh api repos/:owner/:repo/actions/runs --jq '.workflow_runs[] | select(.name | contains("Aiken") or contains("Examples")) | {name: .name, branch: .head_branch, status: .status, aiken_version: .head_commit.message}'
 
-# Check deployment health
-gh workflow list
-gh run list --workflow="CI Core" --limit 3
-gh run list --workflow="Docs" --limit 3
-gh run list --workflow="Security Audit" --limit 3
+# Check Aiken deployment health per branch
+gh workflow list | grep -E "(Aiken|Examples|Security)"
+gh run list --workflow="CI – Examples" --branch main --limit 3
+gh run list --workflow="Aiken Development Validation" --branch development --limit 3
+gh run list --workflow="Aiken Educational Safety" --branch educational --limit 3
 
-# Monitor specific areas
-gh api repos/:owner/:repo/commits/main/status --jq '.statuses[] | {context: .context, state: .state}'
+# Monitor Aiken-specific quality gates
+gh api repos/:owner/:repo/commits/main/status --jq '.statuses[] | select(.context | contains("Aiken") or contains("hello-world") or contains("escrow")) | {context: .context, state: .state}'
 ```
 
-### **Post-Deploy Verification**
+### **Post-Deploy Aiken Verification**
 
 ```bash
-# Verify badges and links
-curl -I "https://github.com/username/repo/workflows/CI%20Core/badge.svg"
+# Verify Aiken-specific badges and links
+curl -I "https://github.com/username/repo/workflows/CI%20%E2%80%93%20Examples/badge.svg"
+curl -I "https://img.shields.io/badge/Aiken-v1.1.19-blue.svg"
 curl -I "https://img.shields.io/badge/security-audited-green.svg"
 
-# Check documentation accessibility
-gh api repos/:owner/:repo/contents/docs --jq '.[].name'
-gh api repos/:owner/:repo/contents/examples --jq '.[].name'
+# Check Aiken examples accessibility per branch
+gh api repos/:owner/:repo/contents/examples/hello-world --ref main --jq '.name'
+gh api repos/:owner/:repo/contents/examples/escrow-contract --ref main --jq '.name'
+gh api repos/:owner/:repo/contents/examples --ref development --jq '.[].name'
+gh api repos/:owner/:repo/contents/examples --ref educational --jq '.[].name'
 
-# Monitor repository metrics
-gh api repos/:owner/:repo --jq '{stars: .stargazers_count, forks: .forks_count, issues: .open_issues_count}'
+# Monitor Aiken repository metrics
+gh api repos/:owner/:repo --jq '{stars: .stargazers_count, forks: .forks_count, aiken_examples: .size}'
 ```
 
-## 📋 Template Checklist
+## 📋 Aiken Repository Checklist
 
-Before deploying, ensure you've customized:
+Before deploying Aiken examples, ensure you've configured:
 
-- [ ] Project name and description throughout
-- [ ] Security status and audit information
-- [ ] CI/CD workflows for your tech stack
-- [ ] License and contribution guidelines
-- [ ] Dependencies and version requirements
-- [ ] **GitHub CLI installed**: `gh auth status` ✅
+- [ ] **Aiken version compatibility**: v1.1.15+ specified and tested
+- [ ] **Security status**: Comprehensive audit per Aiken contract
+- [ ] **CI/CD workflows**: Matrix testing across Aiken versions (1.1.15, 1.1.19)
+- [ ] **Branch protection**: Quality-separated rules for main/development/educational
+- [ ] **Aiken dependencies**: All smart contract dependencies validated
+- [ ] **GitHub CLI installed**: `gh auth status` ✅ (required for Aiken monitoring)
 
 ---
 
-## 📁 Complete Repository Structure
+## 📁 Complete Aiken Repository Structure
 
 ```
-your-project/
-├── README.md                    # Project overview + quick start
-├── NAVIGATION.md               # Repository navigation guide
-├── QUICK_START.md              # 5-minute setup guide
-├── CONTRIBUTING.md             # Community contribution guidelines
-├── SECURITY_STATUS.md          # Security audit status by component
+aiken-project/
+├── README.md                    # Aiken project overview + security status
+├── NAVIGATION.md               # Aiken-specific navigation guide
+├── QUICK_START.md              # 5-minute Aiken setup guide
+├── CONTRIBUTING.md             # Aiken contribution guidelines
+├── SECURITY_STATUS.md          # Aiken contract security audit by component
 ├── LICENSE                     # Open source license
 ├── .github/
-│   ├── workflows/              # CI/CD automation
+│   ├── workflows/              # Aiken-specific CI/CD automation
 │   │   ├── ci-core.yml
-│   │   ├── ci-examples.yml
+│   │   ├── ci-examples.yml     # Aiken matrix testing
 │   │   ├── docs.yml
-│   │   └── security-audit.yml
+│   │   ├── aiken-security.yml  # Aiken security validation
+│   │   └── _reusable-aiken-check.yml
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   ├── feature_request.md
-│   │   └── security_issue.md
-│   └── PULL_REQUEST_TEMPLATE.md
-├── docs/                       # Comprehensive documentation
-│   ├── search-index.md         # AI/LLM search optimization
-│   ├── overview/              # Introduction and getting started
+│   │   ├── aiken_bug_report.md
+│   │   ├── aiken_feature_request.md
+│   │   └── aiken_security_issue.md
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── CODEOWNERS              # Aiken-specific code ownership
+├── docs/                       # Comprehensive Aiken documentation
+│   ├── search-index.md         # Aiken AI/LLM search optimization
+│   ├── overview/              # Aiken introduction and Cardano context
 │   │   ├── introduction.md
 │   │   ├── installation.md
-│   │   └── ecosystem.md
-│   ├── core/                  # Core concepts and syntax
+│   │   └── cardano-ecosystem.md
+│   ├── language/              # Aiken language reference
 │   │   ├── syntax.md
-│   │   ├── types.md
-│   │   └── features.md
-│   ├── patterns/              # Design patterns and best practices
+│   │   ├── validators.md
+│   │   ├── data-structures.md
+│   │   └── testing.md
+│   ├── patterns/              # Aiken-specific design patterns
 │   │   ├── overview.md
-│   │   ├── common-patterns.md
+│   │   ├── escrow-patterns.md
+│   │   ├── token-patterns.md
 │   │   └── advanced-patterns.md
-│   ├── security/              # Security-first development
+│   ├── security/              # Aiken security-first development
 │   │   ├── overview.md
-│   │   ├── vulnerabilities.md
+│   │   ├── validator-risks.md
 │   │   ├── best-practices.md
 │   │   └── audit-checklist.md
-│   ├── examples/              # Working code examples
-│   │   ├── basic-usage.md
-│   │   ├── intermediate.md
-│   │   └── advanced.md
-│   ├── performance/           # Optimization guides
+│   ├── examples/              # Working Aiken contract documentation
+│   │   ├── hello-world.md
+│   │   ├── escrow-contract.md
+│   │   └── nft-minting.md
+│   ├── performance/           # Aiken optimization guides
 │   │   ├── optimization.md
 │   │   ├── benchmarking.md
 │   │   └── profiling.md
-│   ├── integration/           # Deployment and tooling
+│   ├── integration/           # Off-chain Aiken integration
 │   │   ├── deployment.md
-│   │   ├── ci-cd.md
+│   │   ├── offchain-tools.md
 │   │   └── monitoring.md
-│   └── references/            # Quick reference materials
-│       ├── api-reference.md
+│   └── references/            # Aiken quick reference materials
+│       ├── quick-reference.md
 │       ├── glossary.md
 │       ├── troubleshooting.md
 │       └── links.md
-├── examples/                   # Working project examples
-│   ├── basic/
-│   │   └── hello-world/
-│   ├── intermediate/
-│   │   └── production-ready/
-│   └── advanced/
-│       └── complex-integration/
-├── scripts/                   # Automation and utility scripts
-│   ├── setup.sh
-│   ├── test.sh
-│   └── deploy.sh
-└── tests/                     # Test suites and validation
-    ├── integration/
-    ├── performance/
-    └── security/
+├── examples/                   # Working Aiken project examples
+│   ├── hello-world/           # Basic Aiken validator (main branch)
+│   │   ├── aiken.toml
+│   │   ├── validators/hello_world.ak
+│   │   ├── lib/hello_world/tests.ak
+│   │   └── README.md
+│   ├── escrow-contract/       # Production-ready Aiken escrow (main branch)
+│   │   ├── aiken.toml
+│   │   ├── validators/escrow.ak
+│   │   ├── lib/escrow/
+│   │   ├── offchain/
+│   │   └── README.md
+│   └── token-contracts/       # Aiken token patterns (branch-separated)
+│       ├── nft-one-shot/      # Development branch
+│       └── fungible-token/    # Educational branch with circuit breakers
+├── scripts/                   # Aiken automation and utility scripts
+│   ├── aiken-setup.sh
+│   ├── ci/
+│   │   └── local-check.sh     # Local Aiken validation
+│   └── security/
+│       └── audit-runner.sh    # Aiken security audit
+└── tests/                     # Aiken test suites and validation
+    ├── integration/           # Cross-tool Aiken integration tests
+    ├── performance/           # Aiken performance benchmarks
+    └── security/              # Aiken security test scenarios
 ```
 
 ---
 
-## 📄 File Templates
+## 📄 Aiken Repository Governance Rules
 
-### 1. README.md Template
+### 1. Branch Protection Configuration
 
+#### Main Branch (Production Aiken Contracts)
+```yaml
+protection_rules:
+  require_pull_request: true
+  required_reviewers: 2
+  dismiss_stale_reviews: true
+  require_code_owner_reviews: true
+  
+  status_checks:
+    require_all_pass: true
+    require_up_to_date: true
+    required_checks:
+      - "CI – Core"
+      - "CI – Examples / hello-world (Aiken 1.1.15)"
+      - "CI – Examples / hello-world (Aiken 1.1.19)"
+      - "CI – Examples / escrow-contract (Aiken 1.1.15)"
+      - "CI – Examples / escrow-contract (Aiken 1.1.19)"
+      - "Aiken Security Audit – Production"
+      - "Docs"
+  
+  additional_restrictions:
+    require_signed_commits: true
+    enforce_admins: true
+    allow_force_pushes: false
+    allow_deletions: false
+    require_linear_history: true
+```
+
+#### Development Branch (Active Aiken Development)
+```yaml
+protection_rules:
+  require_pull_request: true
+  required_reviewers: 1
+  require_code_owner_reviews: true
+  
+  status_checks:
+    require_all_pass: true
+    required_checks:
+      - "CI – Core"
+      - "Aiken Development Validation"
+      - "Aiken Security Scan – Development"
+      - "Docs"
+  
+  additional_restrictions:
+    allow_force_pushes: true
+    allow_deletions: true
+```
+
+#### Educational Branch (Aiken Learning Examples)
+```yaml
+protection_rules:
+  require_pull_request: true
+  required_reviewers: 1
+  require_code_owner_reviews: true
+  
+  status_checks:
+    require_all_pass: true
+    required_checks:
+      - "Aiken Educational Content Validation"
+      - "Circuit Breaker Verification"
+      - "Docs Educational Standards"
+```
+
+### 2. CODEOWNERS Configuration
+
+```gitignore
+# Aiken-Specific Code Ownership Rules
+
+# === GLOBAL OWNERSHIP ===
+* @aiken-maintainer
+
+# === AIKEN CONTRACT SECURITY ===
+**/validators/ @aiken-maintainer @aiken-security-team
+**/lib/ @aiken-maintainer @aiken-reviewers
+examples/*/validators/*.ak @aiken-maintainer @aiken-security-team
+
+# === BRANCH-SPECIFIC OWNERSHIP ===
+# Main branch - Production Aiken contracts only
+examples/hello-world/ @aiken-maintainer @aiken-security-team
+examples/escrow-contract/ @aiken-maintainer @aiken-security-team
+
+# Development branch - Active Aiken development
+examples/token-contracts/nft-one-shot/ @aiken-maintainer @aiken-contributors
+
+# Educational branch - Learning Aiken examples
+examples/token-contracts/fungible-token/ @aiken-maintainer @aiken-education-team
+
+# === AIKEN DOCUMENTATION ===
+docs/language/ @aiken-maintainer @aiken-documentation-team
+docs/security/ @aiken-maintainer @aiken-security-team
+docs/patterns/ @aiken-maintainer @aiken-patterns-team
+
+# === AIKEN CI/CD ===
+.github/workflows/*aiken* @aiken-maintainer @aiken-devops-team
+scripts/ci/local-check.sh @aiken-maintainer @aiken-devops-team
+
+# === AIKEN AI OPTIMIZATION ===
+docs/search-index.md @aiken-maintainer @aiken-ai-team
+.cursor/ @aiken-maintainer @aiken-ai-team
+```
+
+### 3. Issue Templates
+
+#### Aiken Bug Report Template
 ```markdown
 ---
-title: 'Project Name'
-description: 'Brief description optimized for search engines and AI'
-tags: [primary-tag, secondary-tag, tech-stack]
+name: Aiken Bug Report
+about: Report a bug in Aiken smart contracts or documentation
+title: '[AIKEN BUG] '
+labels: ['bug', 'aiken', 'needs-triage']
 ---
 
-# Project Name
+## Aiken Environment
+- **Aiken Version**: (e.g., v1.1.19)
+- **Example/Contract**: (e.g., hello-world, escrow-contract)
+- **Branch**: (main, development, educational)
 
-[![CI Core](https://github.com/username/repo/workflows/CI%20Core/badge.svg)](https://github.com/username/repo/actions)
-[![Security Audit](https://img.shields.io/badge/security-audited-green.svg)](SECURITY_STATUS.md)
-[![Documentation](https://img.shields.io/badge/docs-complete-blue.svg)](docs/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+## Bug Description
+Clear description of the Aiken-related issue.
 
-> **One-line project description that captures the essence and value proposition**
+## Expected Aiken Behavior
+What should happen with the Aiken contract.
 
-**Brief elevator pitch paragraph**: What this project does, why it matters, and who should use it. Keep it under 100 words and optimize for both humans and AI understanding.
+## Actual Aiken Behavior  
+What actually happens with the Aiken contract.
 
-## Version Compatibility
+## Reproduction Steps
+1. Navigate to Aiken example: `cd examples/...`
+2. Run Aiken command: `aiken check`
+3. Observe issue...
 
-**Version**: Compatible with [Technology] **vX.X.X+** (tested vX.X.X & vX.X.X)  
-**Last Updated**: [Month Year]  
-**Status**: ⚠️ **See [SECURITY_STATUS.md](SECURITY_STATUS.md) before production use**
-
-## 🚨 Security Notice
-
-**Critical**: Review [SECURITY_STATUS.md](SECURITY_STATUS.md) for component-by-component security audit status before deploying ANY examples.
-
-## Mission
-
-[2-3 sentences about the project's mission and approach, optimized for LLM understanding]
-
-## How to Use This Guide
-
-### **Quick Start**
-
-- **New to [Project]?** Start with [`QUICK_START.md`](QUICK_START.md) for a 5-minute setup guide
-- **Need Navigation?** Use [`NAVIGATION.md`](NAVIGATION.md) to find exactly what you need
-
-### **User Types**
-
-- **AI Assistants**: Ingest the `docs/` directory for comprehensive understanding. The modular structure enables precise context-sourcing.
-- **Developers**: Browse `docs/` for specific topics. Each file is self-contained with cross-references.
-- **New Users**: Follow guided learning paths in [`NAVIGATION.md`](NAVIGATION.md)
-
-## Repository Structure
+## Additional Context
+- [ ] Issue affects contract compilation
+- [ ] Issue affects contract testing
+- [ ] Issue affects security validation
+- [ ] Issue affects documentation
 ```
 
-project/
-├── README.md # Project overview + quick start
-├── NAVIGATION.md # Repository navigation guide
-├── QUICK_START.md # 5-minute setup guide
-├── docs/ # Comprehensive documentation
-│ ├── overview/ # Introduction and getting started
-│ ├── core/ # Core concepts and syntax
-│ ├── patterns/ # Design patterns and best practices
-│ ├── security/ # Security-first development
-│ ├── examples/ # Working code examples
-│ ├── performance/ # Optimization guides
-│ ├── integration/ # Deployment and tooling
-│ └── references/ # Quick reference materials
-└── examples/ # Working project examples
-├── basic/ # Simple starter examples
-├── intermediate/ # Production-ready patterns
-└── advanced/ # Complex integrations
-
-```
-
-### Documentation Sections
-- **`docs/overview/`**: Introduction, ecosystem, and getting started
-- **`docs/core/`**: Core syntax, features, and concepts
-- **`docs/patterns/`**: Design patterns with working code
-- **`docs/security/`**: Security best practices and audit checklists
-- **`docs/examples/`**: Complete, real-world examples
-- **`docs/performance/`**: Optimization and benchmarking guides
-- **`docs/integration/`**: Deployment, CI/CD, and monitoring
-- **`docs/references/`**: API docs, glossary, and troubleshooting
-
-## Key Features
-
-### Documentation Excellence
-- **AI-Optimized**: Structured for LLM consumption with consistent patterns
-- **Modular**: Each topic isolated for precise context retrieval
-- **Code-Centric**: Every concept supported by working examples
-- **Security-First**: Security considerations integrated throughout
-- **Cross-Referenced**: Cohesive learning paths with intelligent linking
-
-### Production Readiness
-- **Working Examples**: Complete, testable project examples
-- **CI/CD System**: Automated workflows with comprehensive validation
-- **Multi-User Design**: Clear paths for different experience levels
-- **Professional Structure**: Scales with project growth
-
-## Getting Started
-
-1. **Installation**: See [QUICK_START.md](QUICK_START.md)
-2. **First Steps**: Try the [Hello World example](examples/basic/hello-world/)
-3. **Learn More**: Browse [core concepts](docs/core/)
-4. **Build Something**: Use [design patterns](docs/patterns/)
-
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## Security
-
-Security is a top priority. Please review [SECURITY_STATUS.md](SECURITY_STATUS.md) and report security issues through our [security policy](.github/SECURITY.md).
-
-## License
-
-This project is licensed under [LICENSE_TYPE] - see [LICENSE](LICENSE) for details.
-
----
-
-*This guide is maintained to reflect the latest stable version of [Project Name].*
-```
-
-### 2. NAVIGATION.md Template
-
+#### Aiken Security Issue Template
 ```markdown
 ---
-title: 'Repository Navigation Guide'
-description: 'Find exactly what you need in this repository'
-tags: [navigation, guide, structure]
+name: Aiken Security Issue
+about: Report a security vulnerability in Aiken contracts
+title: '[AIKEN SECURITY] '
+labels: ['security', 'aiken', 'critical']
 ---
 
-# 🧭 Repository Navigation Guide
+## ⚠️ Security Issue Classification
 
-> **Find exactly what you need quickly and efficiently**
+**Severity**: [ ] Critical [ ] High [ ] Medium [ ] Low
+**Affected Contract**: (specific Aiken validator)
+**Branch**: (main/development/educational)
 
-## 🎯 **I Want To...**
+## Vulnerability Description
+Detailed description of the security issue in the Aiken contract.
 
-### **Get Started Quickly**
+## Impact Assessment
+Potential consequences if this vulnerability is exploited.
 
-- 🚀 **Set up in 5 minutes**: [`QUICK_START.md`](QUICK_START.md)
-- 👋 **See a simple example**: [`examples/basic/hello-world/`](examples/basic/hello-world/)
-- 📖 **Understand the basics**: [`docs/overview/introduction.md`](docs/overview/introduction.md)
-
-### **Learn the Technology**
-
-- 🔤 **Language syntax**: [`docs/core/syntax.md`](docs/core/syntax.md)
-- 🏗️ **Core concepts**: [`docs/core/`](docs/core/)
-- 🎨 **Design patterns**: [`docs/patterns/`](docs/patterns/)
-- 🔐 **Security practices**: [`docs/security/`](docs/security/)
-
-### **Build Something**
-
-- 📝 **Basic examples**: [`docs/examples/basic-usage.md`](docs/examples/basic-usage.md)
-- 🏭 **Production patterns**: [`examples/intermediate/`](examples/intermediate/)
-- ⚡ **Performance optimization**: [`docs/performance/`](docs/performance/)
-- 🚀 **Deploy to production**: [`docs/integration/deployment.md`](docs/integration/deployment.md)
-
-### **Solve Problems**
-
-- 🔍 **Troubleshooting**: [`docs/references/troubleshooting.md`](docs/references/troubleshooting.md)
-- 📚 **API reference**: [`docs/references/api-reference.md`](docs/references/api-reference.md)
-- 💬 **Get help**: [`docs/references/links.md#community-support`](docs/references/links.md#community-support)
-
-### **Contribute**
-
-- 🤝 **Contribution guide**: [`CONTRIBUTING.md`](CONTRIBUTING.md)
-- 🐛 **Report issues**: [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/)
-- 🔒 **Security issues**: [`.github/SECURITY.md`](.github/SECURITY.md)
-
-## 📊 **By Experience Level**
-
-### **🟢 Beginner**
-
-1. Start with [`QUICK_START.md`](QUICK_START.md)
-2. Try [`examples/basic/hello-world/`](examples/basic/hello-world/)
-3. Read [`docs/overview/introduction.md`](docs/overview/introduction.md)
-4. Learn [`docs/core/syntax.md`](docs/core/syntax.md)
-
-### **🟡 Intermediate**
-
-1. Review [`docs/patterns/common-patterns.md`](docs/patterns/common-patterns.md)
-2. Explore [`examples/intermediate/`](examples/intermediate/)
-3. Study [`docs/security/best-practices.md`](docs/security/best-practices.md)
-4. Try [`docs/performance/optimization.md`](docs/performance/optimization.md)
-
-### **🔴 Advanced**
-
-1. Master [`docs/patterns/advanced-patterns.md`](docs/patterns/advanced-patterns.md)
-2. Build with [`examples/advanced/`](examples/advanced/)
-3. Implement [`docs/integration/ci-cd.md`](docs/integration/ci-cd.md)
-4. Contribute via [`CONTRIBUTING.md`](CONTRIBUTING.md)
-
-## 📚 **By Topic**
-
-### **Core Technology**
-
-- **Syntax & Features**: [`docs/core/`](docs/core/)
-- **Type System**: [`docs/core/types.md`](docs/core/types.md)
-- **Advanced Features**: [`docs/core/features.md`](docs/core/features.md)
-
-### **Best Practices**
-
-- **Design Patterns**: [`docs/patterns/`](docs/patterns/)
-- **Security**: [`docs/security/`](docs/security/)
-- **Performance**: [`docs/performance/`](docs/performance/)
-
-### **Implementation**
-
-- **Code Examples**: [`docs/examples/`](docs/examples/)
-- **Working Projects**: [`examples/`](examples/)
-- **Integration**: [`docs/integration/`](docs/integration/)
-
-### **Reference**
-
-- **API Documentation**: [`docs/references/api-reference.md`](docs/references/api-reference.md)
-- **Glossary**: [`docs/references/glossary.md`](docs/references/glossary.md)
-- **External Links**: [`docs/references/links.md`](docs/references/links.md)
-
-## 🔍 **AI/LLM Users**
-
-### **High-Priority Context Files**
-
-1. [`docs/search-index.md`](docs/search-index.md) - AI search optimization
-2. [`docs/core/`](docs/core/) - Core concepts
-3. [`docs/patterns/`](docs/patterns/) - Reusable patterns
-4. [`docs/security/`](docs/security/) - Security practices
-5. [`examples/`](examples/) - Working implementations
-
-### **Context Loading Strategy**
-
-- **For general queries**: Load [`docs/overview/`](docs/overview/) + [`docs/core/`](docs/core/)
-- **For code generation**: Load [`docs/patterns/`](docs/patterns/) + [`examples/`](examples/)
-- **For security**: Always include [`docs/security/`](docs/security/)
-- **For performance**: Include [`docs/performance/`](docs/performance/)
-
-## 📋 **Documentation Status**
-
-### **✅ Complete**
-
-- Core language reference
-- Security best practices
-- Design patterns
-- Working examples
-
-### **🔄 In Progress**
-
-- Advanced integration guides
-- Performance benchmarks
-- Community contributions
-
-### **📅 Planned**
-
-- Video tutorials
-- Interactive examples
-- Extended integrations
-
----
-
-## 🆘 **Need Help?**
-
-1. **Quick fixes**: [`docs/references/troubleshooting.md`](docs/references/troubleshooting.md)
-2. **Community**: [`docs/references/links.md#community-support`](docs/references/links.md#community-support)
-3. **Issues**: [GitHub Issues](../../issues)
-
----
-
-_Navigation updated to reflect current repository structure._
+## Affected Aiken Code
+```aiken
+// Include specific Aiken code that demonstrates the vulnerability
 ```
 
-### 3. QUICK_START.md Template
+## Suggested Fix
+Proposed solution or mitigation for the Aiken security issue.
 
-````markdown
----
-title: 'Quick Start Guide'
-description: 'Get up and running with [Project] in 5 minutes'
-tags: [quickstart, setup, installation]
-estimated_time: '5 minutes'
-difficulty: 'beginner'
----
-
-# 🚀 Quick Start Guide
-
-> **Get up and running with [Project Name] in under 5 minutes**
-
-## Prerequisites
-
-Before starting, ensure you have:
-
-- [ ] [Dependency 1] (version X.X+)
-- [ ] [Dependency 2] (version X.X+)
-- [ ] [Tool/Environment] (recommended)
-
-## Installation
-
-### Option 1: Package Manager (Recommended)
-
-```bash
-# Install via package manager
-npm install project-name
-# or
-pip install project-name
-# or
-cargo install project-name
-```
-````
-
-### Option 2: Build from Source
-
-```bash
-git clone https://github.com/username/project-name.git
-cd project-name
-# Build instructions specific to your project
-make install
+## Additional Security Context
+- [ ] Affects production contracts (main branch)
+- [ ] Affects development contracts
+- [ ] Affects educational examples
+- [ ] Could lead to fund loss
+- [ ] Could lead to contract exploitation
 ```
 
-## Verification
+### 4. Automated Quality Gates
 
-Verify installation:
+```yaml
+# .github/workflows/aiken-promotion-gate.yml
+name: "Aiken Production Promotion Gate"
 
-```bash
-project-name --version
-# Expected output: project-name X.X.X
+on:
+  pull_request:
+    branches: [main]
+    paths: ['examples/**']
+
+jobs:
+  aiken-security-audit:
+    name: "Comprehensive Aiken Security Audit"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Aiken
+        run: cargo install aiken --version 1.1.19 --locked
+        
+      - name: Aiken Security Checklist
+        run: |
+          python scripts/security/aiken-comprehensive-audit.py
+          python scripts/security/aiken-vulnerability-scan.py --strict
+          
+      - name: Aiken Circuit Breaker Check
+        run: |
+          python scripts/security/aiken-circuit-breaker-check.py
+
+  aiken-performance-benchmarks:
+    name: "Aiken Performance Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aiken Performance Suite
+        run: |
+          python scripts/performance/aiken-benchmark-suite.py --production
+          python scripts/performance/aiken-gas-optimization.py
+
+  aiken-matrix-testing:
+    name: "Aiken Version Compatibility"
+    strategy:
+      matrix:
+        aiken_version: ['1.1.15', '1.1.19']
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Aiken ${{ matrix.aiken_version }}
+        run: |
+          cargo install aiken --version ${{ matrix.aiken_version }} --locked
+          cd examples && for dir in */; do (cd "$dir" && aiken check && aiken test); done
+
+  aiken-documentation-quality:
+    name: "Aiken Documentation Standards"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aiken Documentation Validation
+        run: |
+          python scripts/docs/aiken-completeness-check.py --production
+          python scripts/docs/aiken-ai-optimization-validator.py
 ```
 
-## Your First Example
+## 🎯 **Aiken Repository Implementation Checklist**
 
-Create a new project:
+### **Phase 1: Aiken Core Structure + Monitoring**
+- [ ] **Install Aiken**: `aiken --version` ✅ (v1.1.15+ required)
+- [ ] **Install GitHub CLI**: `gh --version` ✅ (required for monitoring)
+- [ ] **Authenticate GitHub**: `gh auth login`
+- [ ] Configure Aiken project structure with quality-separated branches
+- [ ] Set up SECURITY_STATUS.md with Aiken contract audit status
+- [ ] Configure CODEOWNERS for Aiken-specific ownership
+- [ ] **Test Aiken access**: `aiken check` works in examples
 
-```bash
-project-name init my-first-project
-cd my-first-project
-```
+### **Phase 2: Aiken Documentation Excellence**
+- [ ] Complete docs/language/ with Aiken syntax and validators
+- [ ] Document Aiken patterns in docs/patterns/
+- [ ] Create Aiken security documentation in docs/security/
+- [ ] Write Aiken examples documentation in docs/examples/
+- [ ] Set up Aiken AI optimization in docs/search-index.md
 
-### Basic Example
+### **Phase 3: Aiken Examples by Quality**
+- [ ] **Main branch examples** (Production-ready):
+  - [ ] hello-world Aiken validator with security audit
+  - [ ] escrow-contract with comprehensive testing
+- [ ] **Development branch examples** (Active development):
+  - [ ] nft-one-shot with functional validation
+- [ ] **Educational branch examples** (Safe learning):
+  - [ ] fungible-token with circuit breakers
 
-```language
-// Basic working example
-// This should be copy-pasteable and work immediately
-function hello() {
-    return "Hello, World!";
-}
-```
+### **Phase 4: Aiken AI Optimization**
+- [ ] Add Aiken-specific YAML frontmatter to all documentation
+- [ ] Cross-reference all Aiken concepts and patterns
+- [ ] Test documentation with AI assistants for Aiken accuracy
+- [ ] Validate Aiken context loading priorities
 
-Run the example:
+### **Phase 5: Aiken Production + Live Monitoring**
+- [ ] Deploy Aiken CI/CD workflows with matrix testing
+- [ ] Configure Aiken security scanning automation
+- [ ] Set up Aiken performance benchmarking
+- [ ] **Deploy with monitoring**: Use Aiken commands from above
+- [ ] **Verify Aiken status**: `gh run list --workflow="CI – Examples"`
+- [ ] **Monitor ongoing**: `gh run watch` for Aiken deployments
 
-```bash
-project-name run
-# Expected output: Hello, World!
-```
+## 🏆 **Expected Aiken Repository Outcomes**
 
-## Next Steps
+Repositories following these Aiken rules should achieve:
 
-Now that you're set up:
+- **🔍 Enhanced Aiken Discoverability**: AI systems easily find and cite Aiken examples
+- **⚡ Faster Aiken Onboarding**: Developers productive with Aiken in under 5 minutes  
+- **🔒 Aiken Security Excellence**: Security considerations integrated throughout all examples
+- **📚 Self-Documenting Aiken**: Documentation stays current with working Aiken examples
+- **🤝 Aiken Community Ready**: Clear contribution paths for Aiken development
 
-1. **Learn the basics**: Read [Core Concepts](docs/core/syntax.md)
-2. **Try examples**: Explore [Working Examples](examples/)
-3. **Build something**: Use [Design Patterns](docs/patterns/)
-4. **Stay secure**: Review [Security Guide](docs/security/overview.md)
-
-## Common Issues
-
-### Issue 1: Installation fails
-
-```bash
-# Solution command
-project-name doctor
-```
-
-### Issue 2: Permission errors
-
-```bash
-# Solution command with explanation
-sudo project-name install --global
-```
-
-## Getting Help
-
-- 📖 **Documentation**: [Full docs](docs/)
-- 🗺️ **Navigation**: [Find what you need](NAVIGATION.md)
-- 💬 **Community**: [Discord/Forum link](docs/references/links.md)
-- 🐛 **Issues**: [GitHub Issues](../../issues)
-
----
-
-**Total setup time**: ⏱️ **~5 minutes**
-**Next recommended read**: [Core Concepts](docs/core/syntax.md)
-
-````
-
-### 4. docs/search-index.md Template
-
-```markdown
----
-title: "AI Search Index"
-description: "Optimized search index for AI assistants and LLMs"
-tags: [ai, search, index, llm]
----
-
-# 🤖 AI Search Index
-
-> **Optimized navigation for AI assistants and Large Language Models**
-
-## Quick Reference Map
-
-### **Getting Started**
-- **Setup**: [QUICK_START.md](../QUICK_START.md) - 5-minute installation
-- **Navigation**: [NAVIGATION.md](../NAVIGATION.md) - Repository roadmap
-- **First Example**: [examples/basic/hello-world/](../examples/basic/hello-world/)
-
-### **Core Documentation**
-- **Syntax**: [docs/core/syntax.md](core/syntax.md) - Language fundamentals
-- **Types**: [docs/core/types.md](core/types.md) - Type system
-- **Patterns**: [docs/patterns/](patterns/) - Reusable solutions
-
-### **Security & Production**
-- **Security Status**: [SECURITY_STATUS.md](../SECURITY_STATUS.md) - Audit status
-- **Best Practices**: [docs/security/best-practices.md](security/best-practices.md)
-- **Deployment**: [docs/integration/deployment.md](integration/deployment.md)
-
-## Common AI Query Patterns
-
-### "How do I get started?"
-→ [QUICK_START.md](../QUICK_START.md)
-
-### "Show me a working example"
-→ [examples/basic/](../examples/basic/) or [docs/examples/](examples/)
-
-### "What are the security considerations?"
-→ [docs/security/overview.md](security/overview.md)
-
-### "How do I implement [pattern]?"
-→ [docs/patterns/](patterns/) + [examples/](../examples/)
-
-### "What are the best practices?"
-→ [docs/patterns/common-patterns.md](patterns/common-patterns.md)
-
-### "How do I optimize performance?"
-→ [docs/performance/optimization.md](performance/optimization.md)
-
-### "How do I deploy to production?"
-→ [docs/integration/deployment.md](integration/deployment.md)
-
-## Context Loading Priority
-
-### **For General Queries** (Load in order):
-1. [docs/overview/introduction.md](overview/introduction.md)
-2. [docs/core/syntax.md](core/syntax.md)
-3. [examples/basic/hello-world/](../examples/basic/hello-world/)
-
-### **For Code Generation** (Load in order):
-1. [docs/patterns/common-patterns.md](patterns/common-patterns.md)
-2. [examples/intermediate/](../examples/intermediate/)
-3. [docs/security/best-practices.md](security/best-practices.md)
-
-### **For Security Analysis** (Always include):
-1. [SECURITY_STATUS.md](../SECURITY_STATUS.md)
-2. [docs/security/](security/)
-3. [docs/security/audit-checklist.md](security/audit-checklist.md)
-
-### **For Performance Optimization**:
-1. [docs/performance/optimization.md](performance/optimization.md)
-2. [docs/performance/benchmarking.md](performance/benchmarking.md)
-3. [examples/advanced/](../examples/advanced/)
-
-## Documentation Categories
-
-### **📚 Learning Resources**
-- Beginner: [docs/overview/](overview/) → [docs/core/](core/)
-- Intermediate: [docs/patterns/](patterns/) → [examples/intermediate/](../examples/intermediate/)
-- Advanced: [docs/patterns/advanced-patterns.md](patterns/advanced-patterns.md)
-
-### **🔒 Security Resources**
-- Overview: [docs/security/overview.md](security/overview.md)
-- Vulnerabilities: [docs/security/vulnerabilities.md](security/vulnerabilities.md)
-- Checklist: [docs/security/audit-checklist.md](security/audit-checklist.md)
-
-### **⚡ Performance Resources**
-- Optimization: [docs/performance/optimization.md](performance/optimization.md)
-- Benchmarks: [docs/performance/benchmarking.md](performance/benchmarking.md)
-- Profiling: [docs/performance/profiling.md](performance/profiling.md)
-
-### **🔧 Reference Materials**
-- API: [docs/references/api-reference.md](references/api-reference.md)
-- Glossary: [docs/references/glossary.md](references/glossary.md)
-- Troubleshooting: [docs/references/troubleshooting.md](references/troubleshooting.md)
-
-## File Importance Scoring
-
-### **Critical (Always load for any query)**
-- [SECURITY_STATUS.md](../SECURITY_STATUS.md) - Security audit status
-- [docs/core/syntax.md](core/syntax.md) - Core language features
-
-### **High Priority (Load for most queries)**
-- [docs/patterns/common-patterns.md](patterns/common-patterns.md) - Reusable solutions
-- [examples/intermediate/](../examples/intermediate/) - Production examples
-- [docs/security/best-practices.md](security/best-practices.md) - Security guidelines
-
-### **Medium Priority (Load for specific domains)**
-- [docs/performance/](performance/) - For optimization queries
-- [docs/integration/](integration/) - For deployment queries
-- [examples/advanced/](../examples/advanced/) - For complex implementations
-
-### **Low Priority (Reference only)**
-- [docs/references/](references/) - Lookup information
-- [docs/overview/ecosystem.md](overview/ecosystem.md) - Background context
+These rules establish the **gold standard** for Aiken smart contract repositories in the AI era, ensuring maximum discoverability, usability, and professional credibility for Cardano blockchain development.
 
 ---
 
-## AI Usage Guidelines
-
-### **Response Quality Tips**
-1. **Always include security considerations** from [docs/security/](security/)
-2. **Prefer working examples** from [examples/](../examples/) over theoretical code
-3. **Reference specific files** with exact paths for user follow-up
-4. **Include version compatibility** from README badges
-
-### **Context Window Optimization**
-- **Small queries**: Load core + specific topic
-- **Large queries**: Use priority system above
-- **Code generation**: Always include patterns + security + example
-- **Troubleshooting**: Load references + common issues
-
----
-
-*This search index is maintained to optimize AI assistant performance and accuracy.*
-````
-
-## 🎯 **Implementation Checklist**
-
-When implementing this template:
-
-### **Phase 1: Core Structure + Monitoring Setup**
-
-- [ ] **Install GitHub CLI**: `gh --version` (required for monitoring)
-- [ ] **Authenticate**: `gh auth login`
-- [ ] Copy directory structure
-- [ ] Customize README.md with your project details
-- [ ] Set up NAVIGATION.md with your specific paths
-- [ ] Create QUICK_START.md for your technology
-- [ ] Add SECURITY_STATUS.md with audit information
-- [ ] **Test CLI access**: `gh repo view` should show your repo
-
-### **Phase 2: Documentation**
-
-- [ ] Fill out docs/overview/ with project introduction
-- [ ] Document core concepts in docs/core/
-- [ ] Add design patterns to docs/patterns/
-- [ ] Create security documentation in docs/security/
-- [ ] Write working examples in docs/examples/
-
-### **Phase 3: Examples**
-
-- [ ] Create basic example in examples/basic/
-- [ ] Build intermediate example in examples/intermediate/
-- [ ] Develop advanced example in examples/advanced/
-- [ ] Ensure all examples compile and run
-
-### **Phase 4: AI Optimization**
-
-- [ ] Set up docs/search-index.md
-- [ ] Add YAML frontmatter to all documentation
-- [ ] Cross-reference all related documents
-- [ ] Test with AI assistants for accuracy
-
-### **Phase 5: Production Ready + Live Monitoring**
-
-- [ ] Set up CI/CD workflows
-- [ ] Add security scanning
-- [ ] Configure automated testing
-- [ ] Add badges to README
-- [ ] **Deploy with monitoring**: Use commands from top section
-- [ ] **Verify live status**: `gh run list --limit 5`
-- [ ] **Monitor ongoing**: Set up `gh run watch` for future pushes
-
-## 🏆 **Expected Outcomes**
-
-Projects using this template should achieve:
-
-- **🔍 Enhanced Discoverability**: AI systems can easily find and cite your project
-- **⚡ Faster Onboarding**: Developers get productive in under 5 minutes
-- **🔒 Security First**: Security considerations are integrated throughout
-- **📚 Self-Documenting**: Documentation stays current with working examples
-- **🤝 Community Ready**: Clear contribution paths and professional presentation
-
-This template represents the **gold standard** for developer-facing repositories in the AI era. Use it confidently for any project where you want maximum discoverability, usability, and professional credibility.
-
----
-
-_Template Version 1.0 - Optimized for AI SEO and developer experience_
+_Aiken Repository Rules v1.0 - Optimized for AI SEO and Aiken developer experience_

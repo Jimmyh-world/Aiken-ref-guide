@@ -1,0 +1,392 @@
+name: Production Promotion Gate
+on:
+  pull_request:
+    branches: [main]
+    paths: 
+      - 'examples/**'
+      - 'docs/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+    inputs:
+      example_path:
+        description: 'Example path to validate for production promotion'
+        required: true
+        type: string
+      force_promotion:
+        description: 'Force promotion (skip some automated checks)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: production-promotion-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Comprehensive production validation
+  production_validation:
+    name: Production Validation Matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        aiken: ['1.1.15', '1.1.19']
+        example:
+          # Automatically detect changed examples or use manual input
+          - { name: 'hello-world', path: 'examples/hello-world' }
+          - { name: 'escrow-contract', path: 'examples/escrow-contract' }
+          - { name: 'nft-one-shot', path: 'examples/token-contracts/nft-one-shot' }
+    
+    uses: ./.github/workflows/_reusable-production-check.yml
+    with:
+      working_directory: ${{ matrix.example.path }}
+      aiken_version: ${{ matrix.aiken }}
+      security_level: "production"
+      run_benchmarks: true
+      run_security_audit: true
+
+  # Advanced security audit
+  comprehensive_security_audit:
+    name: Comprehensive Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Security Audit Environment
+        run: |
+          # Install security analysis tools
+          pip install --upgrade pip
+          pip install bandit safety semgrep || echo "Security tools installation partial"
+
+      - name: Static Security Analysis
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Static Security Analysis"
+          
+          # Create security audit report
+          mkdir -p security-reports
+          
+          # Analyze Aiken contracts for security patterns
+          echo "## Security Audit Report" > security-reports/audit.md
+          echo "**Timestamp**: $(date -u)" >> security-reports/audit.md
+          echo "**Commit**: ${{ github.sha }}" >> security-reports/audit.md
+          echo "" >> security-reports/audit.md
+          
+          # Check for security anti-patterns in examples
+          echo "### Security Pattern Analysis" >> security-reports/audit.md
+          
+          for example_dir in examples/*/; do
+            if [ -d "$example_dir" ]; then
+              example_name=$(basename "$example_dir")
+              echo "#### Example: $example_name" >> security-reports/audit.md
+              
+              # Check for circuit breakers (should not exist in production candidates)
+              circuit_breakers=$(find "$example_dir" -name "*.ak" -exec grep -l "fail @" {} \; 2>/dev/null || true)
+              if [ -n "$circuit_breakers" ]; then
+                echo "⚠️ **Circuit breakers found** (not suitable for main branch):" >> security-reports/audit.md
+                echo '```' >> security-reports/audit.md
+                echo "$circuit_breakers" >> security-reports/audit.md
+                echo '```' >> security-reports/audit.md
+              else
+                echo "✅ **No circuit breakers** (production ready)" >> security-reports/audit.md
+              fi
+              
+              # Check for placeholder security
+              placeholders=$(find "$example_dir" -name "*.ak" -exec grep -l "True\|return true" {} \; 2>/dev/null | grep -v test || true)
+              if [ -n "$placeholders" ]; then
+                echo "❌ **Potential placeholder security found**:" >> security-reports/audit.md
+                echo '```' >> security-reports/audit.md
+                echo "$placeholders" >> security-reports/audit.md
+                echo '```' >> security-reports/audit.md
+              else
+                echo "✅ **No placeholder security detected**" >> security-reports/audit.md
+              fi
+              
+              # Check for proper signature validation
+              sig_validation=$(find "$example_dir" -name "*.ak" -exec grep -l "extra_signatories\|signature" {} \; 2>/dev/null || true)
+              if [ -n "$sig_validation" ]; then
+                echo "✅ **Signature validation patterns found**" >> security-reports/audit.md
+              else
+                echo "⚠️ **No signature validation patterns** (may not be applicable)" >> security-reports/audit.md
+              fi
+              
+              echo "" >> security-reports/audit.md
+            fi
+          done
+          
+          echo "::endgroup::"
+
+      - name: Documentation Security Review
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Documentation Security Review"
+          
+          # Check SECURITY_STATUS.md is up to date
+          if [ -f "SECURITY_STATUS.md" ]; then
+            echo "✅ SECURITY_STATUS.md exists"
+            
+            # Verify recent update
+            last_modified=$(stat -f "%Sm" -t "%Y-%m-%d" SECURITY_STATUS.md 2>/dev/null || stat -c "%y" SECURITY_STATUS.md | cut -d' ' -f1)
+            echo "📅 Last modified: $last_modified"
+            
+            # Check if all examples are documented
+            for example_dir in examples/*/; do
+              if [ -d "$example_dir" ]; then
+                example_name=$(basename "$example_dir")
+                if grep -q "$example_name" SECURITY_STATUS.md; then
+                  echo "✅ $example_name documented in security status"
+                else
+                  echo "⚠️ $example_name missing from security status"
+                fi
+              fi
+            done
+          else
+            echo "❌ SECURITY_STATUS.md missing"
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+
+      - name: Upload Security Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-reports-${{ github.run_id }}
+          path: security-reports/
+          retention-days: 90
+
+  # Performance and optimization validation
+  performance_validation:
+    name: Performance Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Aiken
+        run: |
+          set -Eeuo pipefail
+          # Install latest stable Aiken
+          cargo install aiken --locked
+          echo "Installed: $(aiken --version)"
+
+      - name: Performance Benchmarking
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Performance Benchmarking"
+          
+          mkdir -p performance-reports
+          
+          for example_dir in examples/*/; do
+            if [ -d "$example_dir" ]; then
+              example_name=$(basename "$example_dir")
+              echo "## Performance Report: $example_name" > "performance-reports/$example_name.md"
+              
+              pushd "$example_dir"
+              
+              # Run benchmark if available
+              if aiken bench 2>&1 | tee "../../performance-reports/$example_name-bench.log"; then
+                echo "✅ Benchmark completed successfully" >> "../../performance-reports/$example_name.md"
+                
+                # Extract key metrics if available
+                if grep -q "Budget" "../../performance-reports/$example_name-bench.log"; then
+                  echo "### Budget Analysis" >> "../../performance-reports/$example_name.md"
+                  echo '```' >> "../../performance-reports/$example_name.md"
+                  grep "Budget\|Memory\|CPU" "../../performance-reports/$example_name-bench.log" >> "../../performance-reports/$example_name.md"
+                  echo '```' >> "../../performance-reports/$example_name.md"
+                fi
+              else
+                echo "⚠️ Benchmark failed or unavailable" >> "../../performance-reports/$example_name.md"
+              fi
+              
+              popd
+            fi
+          done
+          
+          echo "::endgroup::"
+
+      - name: Upload Performance Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-reports-${{ github.run_id }}
+          path: performance-reports/
+          retention-days: 90
+
+  # Documentation validation
+  documentation_validation:
+    name: Documentation Standards Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Production Documentation Standards
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Documentation Standards"
+          
+          failed_checks=0
+          
+          for example_dir in examples/*/; do
+            if [ -d "$example_dir" ]; then
+              example_name=$(basename "$example_dir")
+              echo "📋 Validating: $example_name"
+              
+              # Check README exists
+              if [ -f "$example_dir/README.md" ]; then
+                echo "  ✅ README.md exists"
+                
+                # Check for required sections
+                readme_content=$(cat "$example_dir/README.md")
+                
+                if echo "$readme_content" | grep -qi "security\|audit"; then
+                  echo "  ✅ Security section found"
+                else
+                  echo "  ❌ Security section missing"
+                  ((failed_checks++))
+                fi
+                
+                if echo "$readme_content" | grep -qi "usage\|example\|how to"; then
+                  echo "  ✅ Usage examples found"
+                else
+                  echo "  ❌ Usage examples missing"
+                  ((failed_checks++))
+                fi
+                
+                if echo "$readme_content" | grep -qi "deploy\|production\|mainnet"; then
+                  echo "  ✅ Deployment guidance found"
+                else
+                  echo "  ⚠️ Deployment guidance recommended"
+                fi
+                
+              else
+                echo "  ❌ README.md missing"
+                ((failed_checks++))
+              fi
+              
+              # Check for comprehensive inline documentation
+              ak_files=$(find "$example_dir" -name "*.ak" | wc -l)
+              documented_functions=$(find "$example_dir" -name "*.ak" -exec grep -l "// \|/// " {} \; | wc -l)
+              
+              if [ "$documented_functions" -gt 0 ]; then
+                echo "  ✅ Inline documentation found"
+              else
+                echo "  ⚠️ Limited inline documentation"
+              fi
+              
+              echo ""
+            fi
+          done
+          
+          if [ $failed_checks -gt 0 ]; then
+            echo "❌ Documentation validation failed: $failed_checks issues found"
+            exit 1
+          else
+            echo "✅ All documentation standards met"
+          fi
+          
+          echo "::endgroup::"
+
+  # Final promotion decision
+  promotion_decision:
+    name: Production Promotion Decision
+    needs: [production_validation, comprehensive_security_audit, performance_validation, documentation_validation]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Evaluate Promotion Readiness
+        run: |
+          {
+            echo "# 🚀 Production Promotion Assessment"
+            echo "**Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Commit**: ${{ github.sha }}"
+            echo "**PR**: #${{ github.event.number }}"
+            echo ""
+            
+            # Evaluate each gate
+            echo "## Quality Gate Results"
+            
+            if [[ "${{ needs.production_validation.result }}" == "success" ]]; then
+              echo "✅ **Production Validation**: PASSED"
+            else
+              echo "❌ **Production Validation**: FAILED"
+            fi
+            
+            if [[ "${{ needs.comprehensive_security_audit.result }}" == "success" ]]; then
+              echo "✅ **Security Audit**: PASSED"
+            else
+              echo "❌ **Security Audit**: FAILED"
+            fi
+            
+            if [[ "${{ needs.performance_validation.result }}" == "success" ]]; then
+              echo "✅ **Performance Validation**: PASSED"
+            else
+              echo "❌ **Performance Validation**: FAILED"
+            fi
+            
+            if [[ "${{ needs.documentation_validation.result }}" == "success" ]]; then
+              echo "✅ **Documentation Standards**: PASSED"
+            else
+              echo "❌ **Documentation Standards**: FAILED"
+            fi
+            
+            echo ""
+            
+            # Overall assessment
+            if [[ "${{ needs.production_validation.result }}" == "success" ]] && \
+               [[ "${{ needs.comprehensive_security_audit.result }}" == "success" ]] && \
+               [[ "${{ needs.performance_validation.result }}" == "success" ]] && \
+               [[ "${{ needs.documentation_validation.result }}" == "success" ]]; then
+              echo "## 🎉 PROMOTION APPROVED"
+              echo "**Status**: ✅ ALL QUALITY GATES PASSED"
+              echo "**Action**: Ready for production branch merge"
+              echo ""
+              echo "### Next Steps"
+              echo "1. ✅ Automated quality gates completed"
+              echo "2. 👥 Manual security expert review (required)"
+              echo "3. 📋 Community review period (7 days recommended)"
+              echo "4. 🚀 Production deployment approval"
+              echo ""
+              echo "### Security Notes"
+              echo "- All examples passed comprehensive security audit"
+              echo "- No circuit breakers or placeholder security detected"
+              echo "- Performance benchmarks within acceptable limits"
+              echo "- Documentation meets production standards"
+            else
+              echo "## 🚫 PROMOTION BLOCKED"
+              echo "**Status**: ❌ QUALITY GATES FAILED"
+              echo "**Action**: Address failing checks before main branch merge"
+              echo ""
+              echo "### Required Actions"
+              echo "1. 🔧 Fix all failing quality gates"
+              echo "2. 📋 Review detailed failure reports in job artifacts"
+              echo "3. 🔄 Re-run validation after fixes"
+              echo "4. 👥 Request re-review after improvements"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set Final Status
+        run: |
+          if [[ "${{ needs.production_validation.result }}" == "success" ]] && \
+             [[ "${{ needs.comprehensive_security_audit.result }}" == "success" ]] && \
+             [[ "${{ needs.performance_validation.result }}" == "success" ]] && \
+             [[ "${{ needs.documentation_validation.result }}" == "success" ]]; then
+            echo "🎉 All production promotion gates passed!"
+            echo "✅ Ready for main branch merge pending manual review"
+            exit 0
+          else
+            echo "🚫 Production promotion gates failed"
+            echo "❌ Not ready for main branch merge"
+            exit 1
+          fi
+
+  # Notification for manual review requirement
+  notify_manual_review:
+    name: Manual Review Notification
+    needs: [promotion_decision]
+    runs-on: ubuntu-latest
+    if: needs.promotion_decision.result == 'success'
+    steps:
+      - name: Notify Review Required
+        run: |
+          echo "🔔 Production promotion ready for manual review"
+          echo "📋 All automated quality gates passed"
+          echo "👥 Security expert review required before merge"

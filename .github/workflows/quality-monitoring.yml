@@ -1,0 +1,321 @@
+name: Quality Monitoring
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6 AM UTC
+  workflow_dispatch:
+    inputs:
+      generate_report:
+        description: 'Generate comprehensive quality report'
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: quality-monitoring
+  cancel-in-progress: false
+
+jobs:
+  # Monitor main branch quality
+  main_branch_quality:
+    name: Main Branch Quality Assessment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install Aiken
+        run: |
+          cargo install aiken --locked
+          echo "Installed: $(aiken --version)"
+
+      - name: Assess Production Examples
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Main Branch Quality Assessment"
+          
+          mkdir -p quality-reports
+          
+          {
+            echo "# Main Branch Quality Report"
+            echo "**Date**: $(date -u '+%Y-%m-%d')"
+            echo "**Aiken Version**: $(aiken --version)"
+            echo ""
+            
+            total_examples=0
+            passing_examples=0
+            
+            for example_dir in examples/*/; do
+              if [ -d "$example_dir" ]; then
+                example_name=$(basename "$example_dir")
+                ((total_examples++))
+                
+                echo "## Example: $example_name"
+                
+                pushd "$example_dir" > /dev/null
+                
+                # Check basic validation
+                if aiken check > check.log 2>&1; then
+                  echo "✅ **Aiken Check**: PASSED"
+                  ((passing_examples++))
+                else
+                  echo "❌ **Aiken Check**: FAILED"
+                  echo "<details><summary>Error Details</summary>"
+                  echo ""
+                  echo '```'
+                  cat check.log
+                  echo '```'
+                  echo "</details>"
+                fi
+                
+                # Security check
+                if ! grep -r "fail @" . 2>/dev/null; then
+                  echo "✅ **Security**: No circuit breakers"
+                else
+                  echo "⚠️ **Security**: Circuit breakers found"
+                fi
+                
+                # Documentation check
+                if [ -f "README.md" ]; then
+                  echo "✅ **Documentation**: README present"
+                else
+                  echo "❌ **Documentation**: README missing"
+                fi
+                
+                # Performance check
+                if aiken bench > bench.log 2>&1; then
+                  echo "✅ **Performance**: Benchmarks available"
+                else
+                  echo "⚠️ **Performance**: No benchmarks or failed"
+                fi
+                
+                popd > /dev/null
+                echo ""
+              fi
+            done
+            
+            echo "## Summary"
+            echo "- **Total Examples**: $total_examples"
+            echo "- **Passing Examples**: $passing_examples"
+            echo "- **Success Rate**: $(( passing_examples * 100 / total_examples ))%"
+            
+            if [ $passing_examples -eq $total_examples ]; then
+              echo "- **Status**: 🟢 ALL EXAMPLES HEALTHY"
+            elif [ $passing_examples -gt $(( total_examples * 80 / 100 )) ]; then
+              echo "- **Status**: 🟡 MOSTLY HEALTHY"
+            else
+              echo "- **Status**: 🔴 QUALITY ISSUES DETECTED"
+            fi
+            
+          } > quality-reports/main-branch-report.md
+
+          echo "::endgroup::"
+
+      - name: Upload Quality Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-branch-quality-${{ github.run_number }}
+          path: quality-reports/
+          retention-days: 30
+
+  # Monitor development branch
+  development_branch_quality:
+    name: Development Branch Quality Assessment
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.generate_report == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: development
+          fetch-depth: 0
+
+      - name: Check Development Branch Exists
+        id: check_branch
+        run: |
+          if git show-ref --verify --quiet refs/remotes/origin/development; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Assess Development Examples
+        if: steps.check_branch.outputs.exists == 'true'
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Development Branch Quality Assessment"
+          
+          # Install Aiken
+          cargo install aiken --locked
+          
+          mkdir -p quality-reports
+          
+          {
+            echo "# Development Branch Quality Report"
+            echo "**Date**: $(date -u '+%Y-%m-%d')"
+            echo "**Branch**: development"
+            echo ""
+            
+            echo "## Recent Changes"
+            git log --oneline -10 development ^main || echo "No recent changes"
+            echo ""
+            
+            total_examples=0
+            functional_examples=0
+            
+            for example_dir in examples/*/; do
+              if [ -d "$example_dir" ]; then
+                example_name=$(basename "$example_dir")
+                ((total_examples++))
+                
+                echo "## Example: $example_name"
+                
+                pushd "$example_dir" > /dev/null
+                
+                if aiken check > /dev/null 2>&1; then
+                  echo "✅ **Functional**: Working"
+                  ((functional_examples++))
+                else
+                  echo "🔧 **Functional**: Issues detected"
+                fi
+                
+                popd > /dev/null
+                echo ""
+              fi
+            done
+            
+            echo "## Summary"
+            echo "- **Total Examples**: $total_examples"
+            echo "- **Functional Examples**: $functional_examples"
+            echo "- **Development Health**: $(( functional_examples * 100 / total_examples ))%"
+            
+          } > quality-reports/development-branch-report.md
+
+          echo "::endgroup::"
+
+  # Cross-version compatibility check
+  cross_version_compatibility:
+    name: Cross-Version Compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        aiken_version: ['1.1.15', '1.1.19']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Aiken ${{ matrix.aiken_version }}
+        run: |
+          if cargo install aiken --version ${{ matrix.aiken_version }} --locked 2>/dev/null; then
+            echo "Installed: $(aiken --version)"
+          else
+            echo "Version ${{ matrix.aiken_version }} not available, installing latest"
+            cargo install aiken --locked
+            echo "Installed: $(aiken --version)"
+          fi
+
+      - name: Test Compatibility
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Aiken ${{ matrix.aiken_version }} Compatibility"
+          
+          compatible_examples=0
+          total_examples=0
+          
+          for example_dir in examples/*/; do
+            if [ -d "$example_dir" ]; then
+              example_name=$(basename "$example_dir")
+              ((total_examples++))
+              
+              echo "Testing: $example_name with Aiken ${{ matrix.aiken_version }}"
+              
+              pushd "$example_dir" > /dev/null
+              if aiken check > /dev/null 2>&1; then
+                echo "✅ $example_name compatible"
+                ((compatible_examples++))
+              else
+                echo "❌ $example_name incompatible"
+              fi
+              popd > /dev/null
+            fi
+          done
+          
+          echo "Compatibility: $compatible_examples/$total_examples examples"
+          
+          if [ $compatible_examples -eq $total_examples ]; then
+            echo "✅ Full compatibility with Aiken ${{ matrix.aiken_version }}"
+          else
+            echo "⚠️ Compatibility issues with Aiken ${{ matrix.aiken_version }}"
+          fi
+          
+          echo "::endgroup::"
+
+  # Generate comprehensive quality summary
+  quality_summary:
+    name: Quality Summary
+    needs: [main_branch_quality, development_branch_quality, cross_version_compatibility]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Generate Quality Dashboard
+        run: |
+          {
+            echo "# 📊 Repository Quality Dashboard"
+            echo "**Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Monitoring Type**: ${{ github.event_name }}"
+            echo ""
+            
+            echo "## Branch Health Status"
+            
+            if [[ "${{ needs.main_branch_quality.result }}" == "success" ]]; then
+              echo "✅ **Main Branch**: Healthy"
+            else
+              echo "❌ **Main Branch**: Issues detected"
+            fi
+            
+            if [[ "${{ needs.development_branch_quality.result }}" == "success" ]]; then
+              echo "✅ **Development Branch**: Healthy"
+            elif [[ "${{ needs.development_branch_quality.result }}" == "skipped" ]]; then
+              echo "⏭️ **Development Branch**: Not assessed (branch may not exist)"
+            else
+              echo "❌ **Development Branch**: Issues detected"
+            fi
+            
+            echo ""
+            echo "## Cross-Version Compatibility"
+            
+            if [[ "${{ needs.cross_version_compatibility.result }}" == "success" ]]; then
+              echo "✅ **Aiken Compatibility**: All versions working"
+            else
+              echo "⚠️ **Aiken Compatibility**: Some version issues"
+            fi
+            
+            echo ""
+            echo "## Recommendations"
+            
+            case "${{ needs.main_branch_quality.result }}" in
+              success)
+                echo "🚀 **Main branch** is production-ready"
+                ;;
+              failure)
+                echo "🔧 **Main branch** needs attention - check quality reports"
+                ;;
+            esac
+            
+            if [[ "${{ needs.cross_version_compatibility.result }}" != "success" ]]; then
+              echo "📋 **Version compatibility** should be reviewed"
+            fi
+            
+            echo ""
+            echo "## Next Actions"
+            echo "1. Review detailed reports in job artifacts"
+            echo "2. Address any quality issues identified"
+            echo "3. Monitor trends over time"
+            echo "4. Update documentation as needed"
+            
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Quality Alert
+        if: needs.main_branch_quality.result != 'success'
+        run: |
+          echo "🚨 Quality alert: Main branch issues detected"
+          echo "📋 Review the quality reports for details"
+          echo "🔧 Immediate attention recommended"

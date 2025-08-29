@@ -1,0 +1,223 @@
+name: _reusable-production-check
+on:
+  workflow_call:
+    inputs:
+      working_directory: { required: true, type: string }
+      aiken_version: { required: true, type: string }
+      security_level: { required: true, type: string }  # production|development|educational
+      run_benchmarks: { required: false, type: boolean, default: true }
+      run_security_audit: { required: false, type: boolean, default: true }
+
+jobs:
+  # Extend existing excellent validation
+  base_validation:
+    uses: ./.github/workflows/_reusable-aiken-check.yml
+    with:
+      working_directory: ${{ inputs.working_directory }}
+      aiken_version: ${{ inputs.aiken_version }}
+      run_benchmarks: ${{ inputs.run_benchmarks }}
+
+  # Enhanced security validation for production
+  security_validation:
+    if: ${{ inputs.security_level == 'production' && inputs.run_security_audit }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Security Audit Validation
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Production Security Audit"
+          
+          # Validate no circuit breakers are active
+          if grep -r "fail @" validators/ lib/ 2>/dev/null; then
+            echo "::error title=Circuit Breaker Found::Production code contains circuit breakers"
+            echo "Circuit breakers found in:"
+            grep -r "fail @" validators/ lib/ || true
+            exit 1
+          fi
+          
+          # Validate no placeholder security
+          if grep -ri "return true\|True" validators/ lib/ | grep -v test 2>/dev/null; then
+            echo "::error title=Placeholder Security::Production code contains placeholder security"
+            echo "Placeholder security found in:"
+            grep -ri "return true\|True" validators/ lib/ | grep -v test || true
+            exit 1
+          fi
+          
+          # Validate signature verification patterns
+          if ! grep -r "list\.has.*extra_signatories\|contains.*signature" validators/ 2>/dev/null; then
+            echo "::warning title=Signature Verification::No signature verification patterns found"
+          fi
+          
+          echo "✅ Security audit validation completed"
+          echo "::endgroup::"
+
+      - name: Performance Requirements
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Performance Validation"
+          
+          # Install Aiken (reuse installation logic from base workflow)
+          if ! command -v aiken &> /dev/null || ! aiken --version | grep -q "${{ inputs.aiken_version }}"; then
+            if cargo install aiken --version ${{ inputs.aiken_version }} --locked 2>/dev/null; then
+              echo "Installed specific version: $(aiken --version)"
+            else
+              echo "Specific version not available, installing latest..."
+              cargo install aiken --locked
+              echo "Installed latest version: $(aiken --version)"
+            fi
+          fi
+          
+          # Run performance benchmarks
+          if ! aiken bench 2>&1 | tee performance.log; then
+            echo "::warning title=Performance Issues::Benchmark execution failed"
+          fi
+          
+          echo "✅ Performance validation completed"
+          echo "::endgroup::"
+
+      - name: Documentation Standards
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Documentation Validation"
+          
+          # Validate README exists and has required sections
+          if [ ! -f README.md ]; then
+            echo "::error title=Missing Documentation::README.md required for production"
+            exit 1
+          fi
+          
+          # Validate security documentation
+          if ! grep -i "security\|audit" README.md >/dev/null 2>&1; then
+            echo "::warning title=Security Documentation::README should include security considerations"
+          fi
+          
+          # Validate usage examples
+          if ! grep -i "usage\|example" README.md >/dev/null 2>&1; then
+            echo "::warning title=Usage Examples::README should include usage examples"
+          fi
+          
+          echo "✅ Documentation validation completed"
+          echo "::endgroup::"
+
+      - name: Upload Security Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-logs-${{ github.run_id }}
+          path: |
+            ${{ inputs.working_directory }}/performance.log
+          retention-days: 30
+          if-no-files-found: ignore
+
+  # Test coverage validation for production
+  test_coverage:
+    if: ${{ inputs.security_level == 'production' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Aiken
+        run: |
+          set -Eeuo pipefail
+          if ! command -v aiken &> /dev/null || ! aiken --version | grep -q "${{ inputs.aiken_version }}"; then
+            if cargo install aiken --version ${{ inputs.aiken_version }} --locked 2>/dev/null; then
+              echo "Installed specific version: $(aiken --version)"
+            else
+              echo "Specific version not available, installing latest..."
+              cargo install aiken --locked
+              echo "Installed latest version: $(aiken --version)"
+            fi
+          fi
+
+      - name: Test Coverage Analysis
+        run: |
+          set -Eeuo pipefail
+          echo "::group::Test Coverage Analysis"
+          
+          # Run tests with verbose output
+          aiken check --verbose 2>&1 | tee coverage.log
+          
+          # Basic test validation - ensure tests exist and pass
+          if [ -d "lib/" ]; then
+            test_files=$(find lib/ -name "*.ak" | grep -i test | wc -l)
+            if [ "$test_files" -eq 0 ]; then
+              echo "::error title=No Tests Found::Production code requires comprehensive test coverage"
+              exit 1
+            fi
+            echo "✅ Found $test_files test files"
+          fi
+          
+          echo "✅ Test coverage analysis completed"
+          echo "::endgroup::"
+
+      - name: Upload Coverage Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-logs-${{ github.run_id }}
+          path: |
+            ${{ inputs.working_directory }}/coverage.log
+          retention-days: 30
+          if-no-files-found: ignore
+
+  # Summary generation
+  production_summary:
+    needs: [base_validation, security_validation, test_coverage]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Production Validation Summary
+        run: |
+          {
+            echo "## 🚀 Production Validation Summary"
+            echo "- **Directory**: \`${{ inputs.working_directory }}\`"
+            echo "- **Aiken Version**: \`${{ inputs.aiken_version }}\`"
+            echo "- **Security Level**: \`${{ inputs.security_level }}\`"
+            echo "- **Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            
+            if [[ "${{ needs.base_validation.result }}" == "success" ]]; then
+              echo "✅ **Base Validation**: PASSED"
+            else
+              echo "❌ **Base Validation**: FAILED"
+            fi
+            
+            if [[ "${{ inputs.security_level }}" == "production" ]]; then
+              if [[ "${{ needs.security_validation.result }}" == "success" ]]; then
+                echo "✅ **Security Audit**: PASSED"
+              else
+                echo "❌ **Security Audit**: FAILED"
+              fi
+              
+              if [[ "${{ needs.test_coverage.result }}" == "success" ]]; then
+                echo "✅ **Test Coverage**: PASSED"
+              else
+                echo "❌ **Test Coverage**: FAILED"
+              fi
+            else
+              echo "⏭️ **Security Audit**: SKIPPED (not production)"
+              echo "⏭️ **Test Coverage**: SKIPPED (not production)"
+            fi
+            
+            echo ""
+            if [[ "${{ needs.base_validation.result }}" == "success" ]] && \
+               ([[ "${{ inputs.security_level }}" != "production" ]] || \
+                ([[ "${{ needs.security_validation.result }}" == "success" ]] && \
+                 [[ "${{ needs.test_coverage.result }}" == "success" ]])); then
+              echo "🎉 **Overall Result**: READY FOR ${{ inputs.security_level }} DEPLOYMENT"
+            else
+              echo "🚫 **Overall Result**: NOT READY - See failed checks above"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

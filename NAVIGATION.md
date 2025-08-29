@@ -1,24 +1,61 @@
 ---
-title: 'Repository Navigation Guide'
-description: 'Find exactly what you need in the Aiken Developer Reference Guide'
-tags: [navigation, guide, structure, aiken, reference, ai-optimized]
+title: 'Enhanced Repository Navigation Guide'
+description: 'Navigate the enhanced branch-based quality architecture'
+tags: [navigation, guide, structure, branches, quality, aiken, reference, ai-optimized]
 user_types: ['developers', 'ai-assistants', 'beginners', 'advanced']
+version: 'v2.0-enhanced'
 ---
 
-## Repository Navigation Guide
+# 🧭 Enhanced Repository Navigation Guide
 
-[![CI Core](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Core/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![CI Examples](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Examples/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Docs](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Docs/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
+[![CI Core](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Core/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![CI Examples Enhanced](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Examples%20Enhanced/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Production Promotion](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Production%20Promotion%20Gate/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Quality Monitoring](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Quality%20Monitoring/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)
 
-## 🗺️ **Complete Repository Map**
+## 🌟 **Enhanced Branch-Based Architecture**
 
-This guide provides clear navigation paths for different user types and use cases.
+This guide helps you navigate our enhanced branch-based quality architecture with maximum safety and clarity.
 
 ## 📋 **Version Information**
 
-- **Aiken Version**: v1.1.14+ (latest stable)
+- **Aiken Version**: v1.1.15+ (tested v1.1.15 & v1.1.19)
 - **Last Updated**: December 2024
-- **Status**: ✅ Production Ready
-- **Test Coverage**: All examples validated by CI/CD
+- **Status**: 🚀 **Enhanced Architecture** - Branch-based quality separation
+- **Quality Assurance**: Automated promotion gates with comprehensive validation
+
+---
+
+## 🎯 **Branch-First Navigation**
+
+### **🚀 I Want Production-Ready Code**
+**Use: `main` branch** - Enterprise-grade, audited examples
+- ✅ **Safe for mainnet deployment** (with proper security review)
+- ✅ **Comprehensive security audit** completed
+- ✅ **Performance benchmarked** and optimized
+- ✅ **Professional documentation** included
+
+**Current Production Examples**:
+- [`hello-world/`](examples/hello-world/) - Production validator with real signature verification
+- [`escrow-contract/`](examples/escrow-contract/) - Enterprise escrow with full security audit
+
+### **🔧 I Want Latest Features & Development**
+**Use: `development` branch** - Cutting-edge features in progress
+- ⚠️ **Functional but may have limitations** (clearly documented)
+- 🚀 **Latest Cardano integrations** and emerging patterns
+- 🔄 **Active development** with clear roadmaps
+
+**Development Examples**:
+- [`nft-one-shot/`](examples/token-contracts/nft-one-shot/) - Advanced NFT features in progress
+- [`new-patterns/`](examples/new-patterns/) - Emerging Cardano integrations
+
+### **📚 I Want Security Education & Learning**
+**Use: `educational` branch** - Comprehensive security tutorials
+- ❌ **Never deploy to production** (educational only)
+- 📖 **Step-by-step vulnerability tutorials** with explanations
+- ⚠️ **Intentional security demonstrations** for learning
+- 🎯 **Clear learning objectives** and progression
+
+**Educational Examples**:
+- [`security-tutorials/`](examples/security-tutorials/) - Step-by-step security education
+- [`fungible-token/`](examples/token-contracts/fungible-token/) - Security vulnerability demonstrations
 
 ---
 

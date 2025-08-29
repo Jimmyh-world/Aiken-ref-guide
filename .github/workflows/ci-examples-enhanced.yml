@@ -1,0 +1,256 @@
+name: CI – Examples (Enhanced)
+on:
+  pull_request:
+    branches: [main, development, educational]
+    paths:
+      - 'examples/**'
+      - '.github/workflows/**'
+  push:
+    branches: [main, development, educational]
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: 'Target branch to validate against'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - development
+          - educational
+
+concurrency:
+  group: ci-examples-enhanced-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Determine security level based on target branch
+  determine_security_level:
+    runs-on: ubuntu-latest
+    outputs:
+      security_level: ${{ steps.set_level.outputs.security_level }}
+      target_branch: ${{ steps.set_level.outputs.target_branch }}
+    steps:
+      - name: Determine Security Level
+        id: set_level
+        run: |
+          # Determine target branch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TARGET_BRANCH="${{ github.event.inputs.target_branch }}"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TARGET_BRANCH="${{ github.event.pull_request.base.ref }}"
+          else
+            TARGET_BRANCH="${{ github.ref_name }}"
+          fi
+          
+          # Set security level based on branch
+          case "$TARGET_BRANCH" in
+            main)
+              SECURITY_LEVEL="production"
+              ;;
+            development)
+              SECURITY_LEVEL="development"
+              ;;
+            educational)
+              SECURITY_LEVEL="educational"
+              ;;
+            *)
+              SECURITY_LEVEL="development"
+              ;;
+          esac
+          
+          echo "security_level=$SECURITY_LEVEL" >> $GITHUB_OUTPUT
+          echo "target_branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
+          
+          echo "🎯 Target Branch: $TARGET_BRANCH"
+          echo "🔒 Security Level: $SECURITY_LEVEL"
+
+  # Branch-specific example validation
+  validate_examples:
+    needs: determine_security_level
+    name: ${{ matrix.example.name }} (Aiken ${{ matrix.aiken }}) [${{ needs.determine_security_level.outputs.security_level }}]
+    strategy:
+      fail-fast: false
+      matrix:
+        aiken: ['1.1.15', '1.1.19']
+        example:
+          # Production candidates (main branch)
+          - { 
+              name: 'hello-world', 
+              path: 'examples/hello-world', 
+              branches: ['main', 'development', 'educational'],
+              timeout: 5 
+            }
+          - { 
+              name: 'escrow-contract', 
+              path: 'examples/escrow-contract', 
+              branches: ['main', 'development', 'educational'],
+              timeout: 15 
+            }
+          # Development candidates
+          - {
+              name: 'nft-one-shot',
+              path: 'examples/token-contracts/nft-one-shot',
+              branches: ['development', 'educational'],
+              timeout: 10,
+            }
+          # Educational content
+          - {
+              name: 'fungible-token',
+              path: 'examples/token-contracts/fungible-token',
+              branches: ['educational'],
+              timeout: 5,
+            }
+        exclude:
+          # Exclude examples not appropriate for target branch
+          - example: { name: 'nft-one-shot', branches: ['development', 'educational'] }
+            _exclude_condition: ${{ !contains(matrix.example.branches, needs.determine_security_level.outputs.target_branch) }}
+          - example: { name: 'fungible-token', branches: ['educational'] }
+            _exclude_condition: ${{ needs.determine_security_level.outputs.target_branch != 'educational' }}
+
+    uses: ./.github/workflows/_reusable-production-check.yml
+    with:
+      working_directory: ${{ matrix.example.path }}
+      aiken_version: ${{ matrix.aiken }}
+      security_level: ${{ needs.determine_security_level.outputs.security_level }}
+      run_benchmarks: ${{ needs.determine_security_level.outputs.security_level == 'production' }}
+      run_security_audit: ${{ needs.determine_security_level.outputs.security_level == 'production' }}
+
+  # Branch-specific quality gates
+  quality_gate_main:
+    if: ${{ needs.determine_security_level.outputs.target_branch == 'main' }}
+    needs: [determine_security_level, validate_examples]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Production Quality Gate
+        run: |
+          if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+            echo "✅ All production quality gates passed"
+            echo "🚀 Examples ready for main branch deployment"
+          else
+            echo "❌ Production quality gates failed"
+            echo "🚫 Examples not ready for main branch"
+            exit 1
+          fi
+
+  quality_gate_development:
+    if: ${{ needs.determine_security_level.outputs.target_branch == 'development' }}
+    needs: [determine_security_level, validate_examples]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Development Quality Gate
+        run: |
+          if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+            echo "✅ Development quality standards met"
+            echo "🔧 Examples ready for development branch"
+          else
+            echo "❌ Development quality standards not met"
+            exit 1
+          fi
+
+  quality_gate_educational:
+    if: ${{ needs.determine_security_level.outputs.target_branch == 'educational' }}
+    needs: [determine_security_level, validate_examples]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Educational Quality Gate
+        run: |
+          if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+            echo "✅ Educational quality standards met"
+            echo "📚 Examples ready for educational branch"
+          else
+            echo "❌ Educational quality standards not met"
+            exit 1
+          fi
+
+  # Enhanced summary with branch-specific guidance
+  examples_summary:
+    name: Examples Summary
+    needs: [determine_security_level, validate_examples, quality_gate_main, quality_gate_development, quality_gate_educational]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Generate Enhanced Summary
+        run: |
+          {
+            echo "## 🎯 Enhanced Examples Validation Summary"
+            echo "- **Target Branch**: \`${{ needs.determine_security_level.outputs.target_branch }}\`"
+            echo "- **Security Level**: \`${{ needs.determine_security_level.outputs.security_level }}\`"
+            echo "- **Aiken Versions**: v1.1.15, v1.1.19"
+            echo "- **Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            
+            case "${{ needs.determine_security_level.outputs.target_branch }}" in
+              main)
+                echo "### 🚀 Production Branch Validation"
+                echo "**Standards**: Enterprise-grade, production-ready"
+                echo "**Requirements**: Full security audit, comprehensive testing, documentation"
+                if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+                  echo "✅ **Status**: ALL PRODUCTION STANDARDS MET"
+                  echo "🎉 **Ready for mainnet deployment** (with proper security review)"
+                else
+                  echo "❌ **Status**: PRODUCTION STANDARDS NOT MET"
+                  echo "🔧 **Action**: Address failed quality gates before main branch merge"
+                fi
+                ;;
+              development)
+                echo "### 🔧 Development Branch Validation"
+                echo "**Standards**: Functional implementation, known limitations acceptable"
+                echo "**Requirements**: Basic testing, clear documentation of limitations"
+                if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+                  echo "✅ **Status**: DEVELOPMENT STANDARDS MET"
+                  echo "🚀 **Ready for development branch**"
+                else
+                  echo "❌ **Status**: DEVELOPMENT STANDARDS NOT MET"
+                fi
+                ;;
+              educational)
+                echo "### 📚 Educational Branch Validation"
+                echo "**Standards**: High educational value, clear safety warnings"
+                echo "**Requirements**: Comprehensive explanations, learning objectives"
+                if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+                  echo "✅ **Status**: EDUCATIONAL STANDARDS MET"
+                  echo "📖 **Ready for educational branch**"
+                else
+                  echo "❌ **Status**: EDUCATIONAL STANDARDS NOT MET"
+                fi
+                ;;
+            esac
+            
+            echo ""
+            echo "### 📋 Next Steps"
+            if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+              case "${{ needs.determine_security_level.outputs.target_branch }}" in
+                main)
+                  echo "1. ✅ All production quality gates passed"
+                  echo "2. 📋 Awaiting manual security expert review"
+                  echo "3. 👥 Community review period (7 days)"
+                  echo "4. 🚀 Production deployment approval"
+                  ;;
+                development)
+                  echo "1. ✅ Development standards met"
+                  echo "2. 👥 Single reviewer approval required"
+                  echo "3. 🔧 Ready for development branch merge"
+                  ;;
+                educational)
+                  echo "1. ✅ Educational standards met"
+                  echo "2. 👥 Single reviewer approval required"
+                  echo "3. 📚 Ready for educational branch merge"
+                  ;;
+              esac
+            else
+              echo "1. ❌ Quality gates failed - see individual job details"
+              echo "2. 🔧 Address failing checks"
+              echo "3. 🔄 Re-run validation after fixes"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set Final Status
+        run: |
+          if [[ "${{ needs.validate_examples.result }}" == "success" ]]; then
+            echo "✅ Enhanced examples validation completed successfully"
+            exit 0
+          else
+            echo "❌ Enhanced examples validation failed"
+            exit 1
+          fi
