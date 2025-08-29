@@ -1,0 +1,112 @@
+{
+  "preamble": {
+    "title": "jimmyh-world/nft-one-shot",
+    "description": "Production-grade NFT one-shot minting policy with comprehensive security",
+    "version": "2.0.0",
+    "plutusVersion": "v3",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.19+unknown"
+    },
+    "license": "MIT"
+  },
+  "validators": [
+    {
+      "title": "nft_policy.one_shot_nft.mint",
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/nft~1types~1NftAction"
+        }
+      },
+      "parameters": [
+        {
+          "title": "utxo_ref",
+          "schema": {
+            "$ref": "#/definitions/cardano~1transaction~1OutputReference"
+          }
+        }
+      ],
+      "compiledCode": "59024d010100229800aba2aba1aba0aab9faab9eaab9dab9a488888896600264653001300800198041804800cdc3a400130080024888966002600460106ea800e33001375c601860126ea800e33001222329800800c01200680088896600200510018994c004012602800798009bae300f0019bad3010001801200a401060240048082444653001001802400d0011112cc00400a200313298008024c05000f3001375c601e0033756602000300240148020c04800901048c034c038c038c038c0380066e3d22010048888c966002600e601a6ea80262b3001323300100137586024601e6ea801c896600200314a115980099baf301330103754602600202d14a313300200230140014038808a2b30013370f3001300137566006601c6ea801a90004888cdc0000cc00400a90004888cdc000080120104010900146600260046eb8c044c038dd5004d28528a0188a50403114a080622b3001337113001300137566006601c6ea801a90004888cdc0000cc00400a90004888cdc000080120104010900046600260046eb8c044c038dd5004d28528a0188a50403080608c8cc004004008896600200314bd6f7b63044ca60026eb8c0400066eacc044006602a0049112cc004cdc8a441000038acc004c02000e200310054049133016337606ea400cdd300119803003000a0241809800a0224c020dd50022444b30013005001899192cc004c04800a00916403c6eb8c040004c030dd5003c56600266e1d2002001899192cc004c04800a00916403c6eb8c040004c030dd5003c5900a20144590070c020004c00cdd5004452689b2b200201",
+      "hash": "efdc44f746cc13da6d4117c3d067e56a33bcffa5af22e3de308c0579"
+    },
+    {
+      "title": "nft_policy.one_shot_nft.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "parameters": [
+        {
+          "title": "utxo_ref",
+          "schema": {
+            "$ref": "#/definitions/cardano~1transaction~1OutputReference"
+          }
+        }
+      ],
+      "compiledCode": "59024d010100229800aba2aba1aba0aab9faab9eaab9dab9a488888896600264653001300800198041804800cdc3a400130080024888966002600460106ea800e33001375c601860126ea800e33001222329800800c01200680088896600200510018994c004012602800798009bae300f0019bad3010001801200a401060240048082444653001001802400d0011112cc00400a200313298008024c05000f3001375c601e0033756602000300240148020c04800901048c034c038c038c038c0380066e3d22010048888c966002600e601a6ea80262b3001323300100137586024601e6ea801c896600200314a115980099baf301330103754602600202d14a313300200230140014038808a2b30013370f3001300137566006601c6ea801a90004888cdc0000cc00400a90004888cdc000080120104010900146600260046eb8c044c038dd5004d28528a0188a50403114a080622b3001337113001300137566006601c6ea801a90004888cdc0000cc00400a90004888cdc000080120104010900046600260046eb8c044c038dd5004d28528a0188a50403080608c8cc004004008896600200314bd6f7b63044ca60026eb8c0400066eacc044006602a0049112cc004cdc8a441000038acc004c02000e200310054049133016337606ea400cdd300119803003000a0241809800a0224c020dd50022444b30013005001899192cc004c04800a00916403c6eb8c040004c030dd5003c56600266e1d2002001899192cc004c04800a00916403c6eb8c040004c030dd5003c5900a20144590070c020004c00cdd5004452689b2b200201",
+      "hash": "efdc44f746cc13da6d4117c3d067e56a33bcffa5af22e3de308c0579"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "title": "ByteArray",
+      "dataType": "bytes"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "cardano/transaction/OutputReference": {
+      "title": "OutputReference",
+      "description": "An `OutputReference` is a unique reference to an output on-chain. The `output_index`\n corresponds to the position in the output list of the transaction (identified by its id)\n that produced that output",
+      "anyOf": [
+        {
+          "title": "OutputReference",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "transaction_id",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "output_index",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "nft/types/NftAction": {
+      "title": "NftAction",
+      "description": "Actions that can be performed with this minting policy",
+      "anyOf": [
+        {
+          "title": "Mint",
+          "description": "Mint exactly one NFT token",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "token_name",
+              "description": "Name of the NFT token (must be non-empty)",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        },
+        {
+          "title": "Burn",
+          "description": "Burn NFT token (anyone can burn tokens they own)",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": [
+            {
+              "title": "token_name",
+              "description": "Name of the NFT token to burn",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

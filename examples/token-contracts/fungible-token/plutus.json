@@ -1,0 +1,100 @@
+{
+  "preamble": {
+    "title": "jimmyh-world/fungible-token",
+    "description": "Production-grade fungible token with real admin signature verification",
+    "version": "2.0.0",
+    "plutusVersion": "v3",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.19+unknown"
+    },
+    "license": "MIT"
+  },
+  "validators": [
+    {
+      "title": "fungible_token.controlled_minting.mint",
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/token~1types~1TokenAction"
+        }
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "5902a6010100229800aba2aba1aba0aab9faab9eaab9dab9a9bae0024888888896600264653001300900198049805000cdc3a400130090024888966002600460126ea800e33001375c601a60146ea800e33001222329800800c01200680088896600200510018994c004012602a00798009bae30100019bad3011001801200a40106026004808a444653001001802400d0011112cc00400a200313298008024c05400f3001375c60200033756602200300240148020c04c00901148c038c03cc03cc03cc03c0066e3d22010048888c966002600e601c6ea80262646644b300132330010013758602c602e602e602e602e602e602e602e602e60266ea8028896600200314a115980099b8f375c602e00202314a31330020023018001404880aa2b3001337109000000c56600330013005002a50a51404113370f300130043756600c60246ea802690004888cdc0000cc00400a90004888cdc00008012016401c00314a08082294101045282020375c60260026eb4c04cc050004c03cdd5004c4c8cc896600266e2000520008acc0066002600a0054a14a28082266e1e600260086eacc018c048dd5004d200091119b8000198008015200091119b80001002402c8038006294101045282020375c60260026eb4c04cc050004c03cdd5004a01a232330010010022259800800c52f5bded8c113298009bae30110019bab3012001980b0012444b3001337229101000038acc004c02000e20031005404d133017337606ea400cdd300119803003000a026180a000a0244c024dd50022444b300130050018991919912cc004c05400e00d1640486eb4c048004dd71809001180900098069baa0078acc004cdc3a400400313232332259800980a801c01a2c8090dd698090009bae30120023012001300d375400f16402c8059164020300900130043754013149a26cac8011",
+      "hash": "5a109b0e8e09951a73d772102aba0b6bd63e6c65d9c8e7c054e98c89"
+    },
+    {
+      "title": "fungible_token.controlled_minting.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "parameters": [
+        {
+          "title": "admin_pkh",
+          "schema": {
+            "$ref": "#/definitions/ByteArray"
+          }
+        }
+      ],
+      "compiledCode": "5902a6010100229800aba2aba1aba0aab9faab9eaab9dab9a9bae0024888888896600264653001300900198049805000cdc3a400130090024888966002600460126ea800e33001375c601a60146ea800e33001222329800800c01200680088896600200510018994c004012602a00798009bae30100019bad3011001801200a40106026004808a444653001001802400d0011112cc00400a200313298008024c05400f3001375c60200033756602200300240148020c04c00901148c038c03cc03cc03cc03c0066e3d22010048888c966002600e601c6ea80262646644b300132330010013758602c602e602e602e602e602e602e602e602e60266ea8028896600200314a115980099b8f375c602e00202314a31330020023018001404880aa2b3001337109000000c56600330013005002a50a51404113370f300130043756600c60246ea802690004888cdc0000cc00400a90004888cdc00008012016401c00314a08082294101045282020375c60260026eb4c04cc050004c03cdd5004c4c8cc896600266e2000520008acc0066002600a0054a14a28082266e1e600260086eacc018c048dd5004d200091119b8000198008015200091119b80001002402c8038006294101045282020375c60260026eb4c04cc050004c03cdd5004a01a232330010010022259800800c52f5bded8c113298009bae30110019bab3012001980b0012444b3001337229101000038acc004c02000e20031005404d133017337606ea400cdd300119803003000a026180a000a0244c024dd50022444b300130050018991919912cc004c05400e00d1640486eb4c048004dd71809001180900098069baa0078acc004cdc3a400400313232332259800980a801c01a2c8090dd698090009bae30120023012001300d375400f16402c8059164020300900130043754013149a26cac8011",
+      "hash": "5a109b0e8e09951a73d772102aba0b6bd63e6c65d9c8e7c054e98c89"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "token/types/TokenAction": {
+      "title": "TokenAction",
+      "description": "Actions that can be performed with this fungible token policy",
+      "anyOf": [
+        {
+          "title": "Mint",
+          "description": "Mint fungible tokens (requires admin signature)",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "token_name",
+              "description": "Name of the token to mint",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "amount",
+              "description": "Amount to mint (must be positive)",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        },
+        {
+          "title": "Burn",
+          "description": "Burn fungible tokens (anyone can burn their own tokens)",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": [
+            {
+              "title": "token_name",
+              "description": "Name of the token to burn",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "amount",
+              "description": "Amount to burn (must be negative)",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

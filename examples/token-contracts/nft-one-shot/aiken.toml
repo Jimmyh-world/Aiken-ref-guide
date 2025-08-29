@@ -1,0 +1,11 @@
+name = "jimmyh-world/nft-one-shot"
+version = "2.0.0"
+license = "MIT"
+plutus_version = "v2"
+tests = true
+description = "Production-grade NFT one-shot minting policy with comprehensive security"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "2.1.0"
+source = "github"
