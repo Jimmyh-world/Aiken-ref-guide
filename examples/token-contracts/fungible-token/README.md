@@ -1,187 +1,161 @@
-# Controlled Fungible Token Contract
+# 🎓 Fungible Token Security Tutorial
 
-## Overview
+[![Educational Content](https://img.shields.io/badge/Branch-Educational-red.svg)](../../../BRANCH_STRATEGY.md) [![Security Learning](https://img.shields.io/badge/Purpose-Security%20Education-red.svg)](../../../SECURITY_STATUS.md) [![Never Deploy](https://img.shields.io/badge/Deployment-NEVER%20DEPLOY-red.svg)](../../../SECURITY_STATUS.md)
 
-This contract implements a **controlled fungible token minting policy** that demonstrates admin-controlled token supply management. It follows the controlled minting pattern from the Aiken documentation and provides secure role-based access control for token operations.
+> **⚠️ EDUCATIONAL CONTENT ONLY - NEVER DEPLOY TO PRODUCTION**
 
-## Key Features
+## 🎯 Learning Objectives
 
-- **Admin-Controlled Minting**: Only the designated admin can mint new tokens
-- **Unrestricted Burning**: Anyone can burn their own tokens (negative amounts)
-- **Flexible Supply Management**: Admin can mint any positive quantity
-- **Role-Based Access Control**: Clear admin permissions with signature validation
-- **Security-First Design**: Implements all security best practices from the reference guide
+This tutorial demonstrates **security vulnerabilities in smart contracts** through a deliberately flawed fungible token implementation. You'll learn:
 
-## Architecture
+1. **Common Security Anti-Patterns** and why they're dangerous
+2. **Step-by-Step Vulnerability Analysis** with real code examples
+3. **How to Fix Security Issues** with production-ready alternatives
+4. **Security Validation Techniques** for smart contract auditing
 
-### Validator Structure
+## ⚠️ Critical Security Warning
 
+**THIS CONTRACT CONTAINS INTENTIONAL VULNERABILITIES FOR EDUCATIONAL PURPOSES**
+
+- ❌ **NEVER DEPLOY THIS CODE** to any blockchain
+- ❌ **ALL VALIDATION FUNCTIONS RETURN `True`** (anyone can mint unlimited tokens)
+- ❌ **NO REAL ACCESS CONTROL** implemented
+- ❌ **CIRCUIT BREAKER DISABLED** for educational branch safety
+
+## 📚 Security Tutorial Structure
+
+### **Module 1: Understanding the Vulnerabilities**
+
+**Current Implementation Analysis:**
 ```aiken
-validator(admin_pkh: ByteArray) {
-  mint(redeemer: Action, context: ScriptContext) -> Bool
+// 🚨 VULNERABILITY: Placeholder admin validation
+fn validate_admin_signature(_admin_pkh: ByteArray, _context: Transaction) -> Bool {
+  True  // ❌ ALWAYS RETURNS TRUE - ANYONE CAN MINT!
 }
 ```
 
-The validator is parameterized with the admin's public key hash, ensuring only the designated administrator can mint new tokens.
+**What's Wrong:**
+- **Placeholder Security**: Function always returns `True`
+- **No Signature Checking**: Admin signature never validated
+- **Unlimited Minting**: Any user can mint unlimited tokens
+- **Total Fund Loss Risk**: Could drain all value if deployed
 
-### Action Types
+### **Module 2: Real-World Impact**
 
+**If This Were Deployed:**
+1. **Attacker Action**: Call mint function with large amount
+2. **Validation Result**: `validate_admin_signature()` returns `True`
+3. **Outcome**: Unlimited tokens minted, destroying token value
+4. **Financial Impact**: Complete loss of all invested funds
+
+### **Module 3: Step-by-Step Security Fixes**
+
+**Security Fix #1: Real Signature Validation**
 ```aiken
-type Action {
-  Mint { amount: Int }  // Positive amount for minting
-  Burn { amount: Int }  // Negative amount for burning
+// ✅ SECURE: Real admin signature validation
+fn validate_admin_signature(admin_pkh: ByteArray, context: Transaction) -> Bool {
+  list.has(context.extra_signatories, admin_pkh)
 }
 ```
 
-## Admin Setup
-
-### Initial Configuration
-
-The contract requires an admin public key hash to be set during deployment:
-
+**Security Fix #2: Transaction Context Validation**
 ```aiken
-// Deploy with admin public key hash
-let admin_pkh = #"your_admin_public_key_hash_here"
-let validator = fungible_token_validator(admin_pkh)
+// ✅ SECURE: Validate mint amounts and transaction structure
+fn validate_mint_operation(amount: Int, context: Transaction) -> Bool {
+  and {
+    amount > 0,  // Positive amounts only for minting
+    // Additional business logic validation here
+  }
+}
 ```
 
-### Admin Requirements
-
-- **Public Key Hash**: Must be a valid Cardano public key hash
-- **Signature Validation**: Admin must sign all minting transactions
-- **Access Control**: Only the designated admin can mint new tokens
-
-## Security Model
-
-### Access Control
-
-- **Minting**: Requires admin signature validation
-- **Burning**: Unrestricted (ledger ensures token ownership)
-- **Amount Validation**: Positive amounts for minting, negative for burning
-
-### Security Checks
-
-1. **Admin Signature Validation**: Verifies admin signature in transaction
-2. **Positive Mint Validation**: Ensures only positive amounts are minted
-3. **Burn Logic Validation**: Ensures negative amounts for burning
-4. **No Unauthorized Minting**: Only admin can create new tokens
-
-## Usage Examples
-
-### Running Tests
-
-```bash
-# Check the project
-aiken check
-
-# Run tests with performance metrics
-aiken check --trace-level verbose
-
-# Build the project
-aiken build
-```
-
-### Admin Minting Tokens
-
+**Security Fix #3: Comprehensive Testing**
 ```aiken
-// Admin mints 1000 tokens
-let redeemer = Mint { amount: 1000 }
-let context = script_context_with_admin_signature(admin_pkh)
-let success = mint(redeemer, admin_pkh, context)
+// ✅ SECURE: Test negative scenarios
+test fail_mint_without_admin_signature() {
+  // Verify minting fails without proper admin signature
+  !validate_admin_signature(random_key, mock_context)
+}
 ```
 
-### User Burning Tokens
+## 🔍 Security Analysis Framework
 
-```aiken
-// User burns 500 tokens (negative amount)
-let redeemer = Burn { amount: -500 }
-let context = script_context_with_user_signature(user_pkh)
-let success = mint(redeemer, admin_pkh, context)
-```
+### **Red Flags to Watch For:**
 
-## Testing Strategy
+1. **Functions that always return `True`**
+   ```aiken
+   // 🚨 RED FLAG
+   fn some_validation() -> Bool { True }
+   ```
 
-### Test Coverage
+2. **Missing signature verification**
+   ```aiken
+   // 🚨 RED FLAG - No signature checking
+   fn check_permission(user: ByteArray) -> Bool { True }
+   ```
 
-- **Success Cases**: Valid admin minting and user burning
-- **Failure Cases**: Unauthorized minting, invalid amounts
-- **Property Tests**: Admin control invariants
-- **Performance Tests**: Large token amount operations
+3. **Placeholder comments with no implementation**
+   ```aiken
+   // TODO: Implement real validation
+   True  // 🚨 RED FLAG
+   ```
 
-### Test Categories
+### **Security Checklist:**
 
-1. **Unit Tests**: Individual function validation
-2. **Integration Tests**: End-to-end token operations
-3. **Property Tests**: Security invariant verification
-4. **Benchmark Tests**: Performance measurement
+Before deploying ANY smart contract:
 
-## Development Guidelines
+- [ ] **No functions return hardcoded `True`**
+- [ ] **All admin functions check signatures via `extra_signatories`**
+- [ ] **Input validation prevents negative/zero amounts where inappropriate**
+- [ ] **Comprehensive test suite includes failure scenarios**
+- [ ] **Security audit by qualified expert completed**
+- [ ] **Code review by multiple developers**
 
-### Code Quality Standards
+## 🛠️ Interactive Learning Exercises
 
-- Custom `Action` type for redeemer
-- Modular helper functions for validation
-- Comprehensive error handling
-- Clear naming conventions
-- Extensive test coverage
+### **Exercise 1: Identify All Vulnerabilities**
+Review [`validators/fungible_token.ak`](validators/fungible_token.ak) and list every security issue you find.
 
-### Security Checklist
+### **Exercise 2: Fix the Validator**
+Create a secure version by implementing real signature validation and proper input checking.
 
-- [x] Admin signature properly validated
-- [x] Mint amounts restricted to positive values
-- [x] Burn amounts properly handled as negative values
-- [x] No unauthorized token creation possible
-- [x] Comprehensive test coverage including property tests
-- [x] Performance within reasonable limits
+### **Exercise 3: Write Security Tests**
+Create comprehensive tests that verify the fixed validator properly rejects unauthorized operations.
 
-## Integration Notes
+## 📖 Related Security Resources
 
-### Off-Chain Integration
+### **Production Examples (Main Branch)**
+- [`hello-world/`](../../hello-world/) - Secure validator with real signature verification
+- [`escrow-contract/`](../../escrow-contract/) - Enterprise-grade multi-party contract
 
-This contract is designed for integration with:
+### **Security Documentation**
+- [Security Status Report](../../../SECURITY_STATUS.md) - Comprehensive security analysis
+- [Security Anti-Patterns](../../../docs/security/anti-patterns.md) - Common mistakes to avoid
+- [Audit Checklist](../../../docs/security/audit-checklist.md) - Pre-deployment validation
 
-- **Lucid**: JavaScript/TypeScript wallet integration
-- **Mesh**: React-based wallet integration
-- **Custom Wallets**: Any Cardano-compatible wallet
+### **Development Examples (Development Branch)**
+- [`nft-one-shot/`](../../nft-one-shot/) - Functional security with development roadmap
 
-### Deployment Considerations
+## 🎓 Learning Outcomes
 
-- **Testnet Testing**: Always test on testnet first
-- **Admin Key Security**: Secure admin private key storage
-- **Monitoring**: Track minting and burning operations
-- **Backup**: Maintain admin key backups
+After completing this tutorial, you should understand:
 
-## Performance Characteristics
+1. **Why placeholder security is dangerous** and how to identify it
+2. **How to implement real signature verification** using `extra_signatories`
+3. **The importance of comprehensive testing** including negative scenarios
+4. **How to conduct security audits** using systematic checklists
+5. **The difference between educational and production code**
 
-### Operation Costs
+## ⚠️ Final Warning
 
-- **Minting**: O(1) complexity for amount validation
-- **Burning**: O(1) complexity for amount validation
-- **Signature Verification**: O(n) where n is number of signatories
+**REMEMBER**: This educational content contains intentional vulnerabilities. The patterns shown here represent **what NOT to do** in production smart contracts. Always:
 
-### Optimization Features
+- ✅ Use production examples from the main branch for real development
+- ✅ Implement comprehensive security validation
+- ✅ Test extensively including failure scenarios  
+- ✅ Get professional security audits before mainnet deployment
 
-- Efficient amount validation
-- Minimal on-chain computation
-- Optimized asset calculation
+---
 
-## Related Documentation
-
-- [Token Minting Patterns](../../docs/patterns/token-minting.md)
-- [Security Validator Risks](../../docs/security/validator-risks.md)
-- [Testing Guidelines](../../docs/language/testing.md)
-- [Performance Optimization](../../docs/performance/optimization.md)
-
-## Contributing
-
-When contributing to this contract:
-
-1. Follow the established patterns and conventions
-2. Add comprehensive tests for new features
-3. Update documentation for any changes
-4. Ensure security considerations are addressed
-5. Run performance benchmarks for optimizations
-
-## License
-
-Apache-2.0 License - See LICENSE file for details.
+**Educational Branch Status**: Safe learning environment with clear vulnerability demonstrations  
+**Next Step**: Study production examples on main branch for secure implementation patterns
