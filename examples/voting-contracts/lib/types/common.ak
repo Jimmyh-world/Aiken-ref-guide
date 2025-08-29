@@ -103,6 +103,92 @@ pub type SecurityContext {
   check_nonce: Bool,
 }
 
+/// 🏛️ COUNCIL MEMBER: Represents a voting member with role and weight
+pub type CouncilMember {
+  /// Public key hash of the council member
+  member_id: ByteArray,
+  /// Role in the organization (Mayor, Councilperson, Secretary, etc.)
+  role: CouncilRole,
+  /// Voting weight (typically 1 for equal voting, higher for leadership roles)
+  voting_weight: Int,
+  /// When this member's term expires (POSIX timestamp)
+  term_expiry: Int,
+  /// Whether this member is currently active
+  is_active: Bool,
+}
+
+/// 🎯 COUNCIL ROLES: Different roles with specific permissions
+pub type CouncilRole {
+  /// Chief executive (Mayor, President, Chair)
+  ChiefExecutive
+  /// Regular council member (Councilperson, Board Member)
+  RegularMember
+  /// Secretary/Clerk (record keeping, administrative)
+  Secretary
+  /// Treasurer (financial oversight)
+  Treasurer
+  /// Legal Advisor (non-voting advisory role)
+  LegalAdvisor
+}
+
+/// 📋 MUNICIPAL PROPOSAL TYPES: Different categories of proposals
+pub type ProposalType {
+  /// Budget allocation or financial decisions
+  Budget { amount: Int, department: ByteArray }
+  /// Policy changes or new ordinances
+  Policy { policy_area: ByteArray, impact_level: PolicyImpact }
+  /// Personnel decisions (hiring, contracts)
+  Personnel { position: ByteArray, action: PersonnelAction }
+  /// Infrastructure projects (roads, utilities, facilities)
+  Infrastructure { project_type: ByteArray, estimated_cost: Int }
+  /// Zoning and land use decisions
+  Zoning { property_id: ByteArray, zoning_change: ByteArray }
+  /// Emergency declarations requiring immediate action
+  Emergency { emergency_type: ByteArray, duration_days: Int }
+}
+
+/// 📊 POLICY IMPACT LEVELS: For determining voting requirements
+pub type PolicyImpact {
+  /// Minor changes (simple majority)
+  Minor
+  /// Moderate changes (enhanced majority)
+  Moderate
+  /// Major changes (supermajority required)
+  Major
+  /// Constitutional changes (special requirements)
+  Constitutional
+}
+
+/// 👥 PERSONNEL ACTIONS: Different types of personnel decisions
+pub type PersonnelAction {
+  /// Hiring new staff
+  Hire
+  /// Promoting existing staff
+  Promote
+  /// Disciplinary action
+  Discipline
+  /// Termination
+  Terminate
+  /// Contract approval
+  Contract
+}
+
+/// ⚙️ COUNCIL CONFIGURATION: Governance parameters for the council
+pub type CouncilConfig {
+  /// Basic voting configuration
+  base_config: VotingConfig,
+  /// Minimum council members needed for quorum
+  min_quorum_members: Int,
+  /// Whether emergency proposals can skip normal procedures
+  allow_emergency_bypass: Bool,
+  /// Maximum voting weight any single member can have
+  max_member_weight: Int,
+  /// Whether the chief executive has veto power
+  executive_veto_power: Bool,
+  /// Organization name/identifier
+  organization_name: ByteArray,
+}
+
 /// Default voting configuration for simple majority voting
 pub fn default_voting_config() -> VotingConfig {
   VotingConfig {
@@ -173,5 +259,64 @@ pub fn validate_proposal(proposal: Proposal, config: VotingConfig) -> Bool {
     proposal.title_hash != "", 
     proposal.nonce > 0,
     validate_voting_period(proposal.period, config),
+  }
+}
+
+/// Get default council configuration for municipal governance
+pub fn default_municipal_config() -> CouncilConfig {
+  CouncilConfig {
+    base_config: default_voting_config(),
+    min_quorum_members: 3,              // Minimum 3 council members
+    allow_emergency_bypass: True,       // Allow emergency procedures
+    max_member_weight: 5,               // Maximum voting weight per member
+    executive_veto_power: True,         // Chief executive has veto power
+    organization_name: #"4d756e696369706172436f756e63696c", // "Municipal Council"
+  }
+}
+
+/// Create a sample council member for testing
+pub fn create_sample_council_member(member_id: ByteArray, role: CouncilRole) -> CouncilMember {
+  CouncilMember {
+    member_id: member_id,
+    role: role,
+    voting_weight: get_role_voting_weight(role),
+    term_expiry: 1000000 + 31536000, // 1 year from base time
+    is_active: True,
+  }
+}
+
+/// Get voting weight for different council roles
+pub fn get_role_voting_weight(role: CouncilRole) -> Int {
+  when role is {
+    ChiefExecutive -> 2    // Mayor/President gets double weight
+    RegularMember -> 1     // Standard council member
+    Secretary -> 1         // Secretary has voting rights
+    Treasurer -> 1         // Treasurer has voting rights
+    LegalAdvisor -> 0      // Legal advisor is non-voting
+  }
+}
+
+/// Get minimum threshold for proposal types
+pub fn get_proposal_threshold(proposal_type: ProposalType) -> Int {
+  when proposal_type is {
+    Budget { amount, .. } -> 
+      if amount > 1000000 { 6700 } else { 5100 } // Supermajority for large budgets
+    Policy { policy_area: _, impact_level } ->
+      when impact_level is {
+        Constitutional -> 7500  // 75% for constitutional changes
+        Major -> 6700          // 67% for major changes
+        Moderate -> 5500       // 55% for moderate changes
+        Minor -> 5100          // 51% for minor changes
+      }
+    Emergency { .. } -> 5100   // Standard majority for emergencies
+    Personnel { position: _, action } ->
+      when action is {
+        Terminate -> 6700      // Supermajority for termination
+        Discipline -> 6700     // Supermajority for discipline
+        _ -> 5100              // Standard majority for other personnel actions
+      }
+    Infrastructure { project_type: _, estimated_cost } ->
+      if estimated_cost > 5000000 { 6700 } else { 5100 } // Supermajority for major projects
+    Zoning { .. } -> 5500      // Enhanced majority for zoning changes
   }
 }
