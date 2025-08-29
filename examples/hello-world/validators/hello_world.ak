@@ -6,8 +6,7 @@
 // Flow: Lock → Spend (with correct redeemer + signature)
 
 use aiken/collection/list
-use cardano/transaction.{Transaction, OutputReference}
-
+use cardano/transaction.{OutputReference, Transaction}
 use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
 use hello_world/utils.{
   hello_world_message, validate_message, validate_signature,

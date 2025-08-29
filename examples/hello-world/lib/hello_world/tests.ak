@@ -74,12 +74,14 @@ test null_signatories_fails() {
 test prop_wrong_message_always_fails() {
   let wrong_messages = ["Wrong!", "hello world", "HELLO, WORLD!", ""]
   let expected = "Hello, World!"
-  
   // Test various wrong messages
-  !validate_message("Wrong!", expected) &&
-  !validate_message("hello world", expected) &&
-  !validate_message("HELLO, WORLD!", expected) &&
-  !validate_message("", expected)
+  !validate_message("Wrong!", expected) && !validate_message(
+    "hello world",
+    expected,
+  ) && !validate_message("HELLO, WORLD!", expected) && !validate_message(
+    "",
+    expected,
+  )
 }
 
 test prop_correct_message_always_succeeds() {
@@ -91,7 +93,6 @@ test prop_correct_message_always_succeeds() {
 test prop_signature_validation_consistent() {
   let owner = "test_owner"
   let signatories = ["test_owner", "other_sig"]
-  
   // Test that signature validation is consistent
   let has_owner = validate_signature(owner, signatories)
   has_owner == validate_signature(owner, signatories)
