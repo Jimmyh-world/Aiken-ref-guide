@@ -19,12 +19,14 @@ security_status: 'functional'
 **Target**: Enhanced NFT policy with advanced features for production readiness
 
 ### ✅ **Currently Implemented**
+
 - ✅ **UTxO-based uniqueness** guaranteeing true one-shot minting
 - ✅ **Basic security validation** with proper consumption checks
 - ✅ **Burn functionality** with negative mint validation
 - ✅ **Comprehensive testing** with 9 test cases
 
 ### 🚧 **In Development Roadmap**
+
 - 🔄 **Enhanced Metadata Validation**: Comprehensive token metadata requirements
 - 🔄 **Time Window Restrictions**: Configurable minting deadlines and windows
 - 🔄 **Admin Control Patterns**: Optional admin controls for enterprise use

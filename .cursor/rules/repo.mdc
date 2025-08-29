@@ -166,25 +166,26 @@ aiken-project/
 ### 1. Branch Protection Configuration
 
 #### Main Branch (Production Aiken Contracts)
+
 ```yaml
 protection_rules:
   require_pull_request: true
   required_reviewers: 2
   dismiss_stale_reviews: true
   require_code_owner_reviews: true
-  
+
   status_checks:
     require_all_pass: true
     require_up_to_date: true
     required_checks:
-      - "CI – Core"
-      - "CI – Examples / hello-world (Aiken 1.1.15)"
-      - "CI – Examples / hello-world (Aiken 1.1.19)"
-      - "CI – Examples / escrow-contract (Aiken 1.1.15)"
-      - "CI – Examples / escrow-contract (Aiken 1.1.19)"
-      - "Aiken Security Audit – Production"
-      - "Docs"
-  
+      - 'CI – Core'
+      - 'CI – Examples / hello-world (Aiken 1.1.15)'
+      - 'CI – Examples / hello-world (Aiken 1.1.19)'
+      - 'CI – Examples / escrow-contract (Aiken 1.1.15)'
+      - 'CI – Examples / escrow-contract (Aiken 1.1.19)'
+      - 'Aiken Security Audit – Production'
+      - 'Docs'
+
   additional_restrictions:
     require_signed_commits: true
     enforce_admins: true
@@ -194,38 +195,40 @@ protection_rules:
 ```
 
 #### Development Branch (Active Aiken Development)
+
 ```yaml
 protection_rules:
   require_pull_request: true
   required_reviewers: 1
   require_code_owner_reviews: true
-  
+
   status_checks:
     require_all_pass: true
     required_checks:
-      - "CI – Core"
-      - "Aiken Development Validation"
-      - "Aiken Security Scan – Development"
-      - "Docs"
-  
+      - 'CI – Core'
+      - 'Aiken Development Validation'
+      - 'Aiken Security Scan – Development'
+      - 'Docs'
+
   additional_restrictions:
     allow_force_pushes: true
     allow_deletions: true
 ```
 
 #### Educational Branch (Aiken Learning Examples)
+
 ```yaml
 protection_rules:
   require_pull_request: true
   required_reviewers: 1
   require_code_owner_reviews: true
-  
+
   status_checks:
     require_all_pass: true
     required_checks:
-      - "Aiken Educational Content Validation"
-      - "Circuit Breaker Verification"
-      - "Docs Educational Standards"
+      - 'Aiken Educational Content Validation'
+      - 'Circuit Breaker Verification'
+      - 'Docs Educational Standards'
 ```
 
 ### 2. CODEOWNERS Configuration
@@ -269,6 +272,7 @@ docs/search-index.md @aiken-maintainer @aiken-ai-team
 ### 3. Issue Templates
 
 #### Aiken Bug Report Template
+
 ```markdown
 ---
 name: Aiken Bug Report
@@ -278,25 +282,31 @@ labels: ['bug', 'aiken', 'needs-triage']
 ---
 
 ## Aiken Environment
+
 - **Aiken Version**: (e.g., v1.1.19)
 - **Example/Contract**: (e.g., hello-world, escrow-contract)
 - **Branch**: (main, development, educational)
 
 ## Bug Description
+
 Clear description of the Aiken-related issue.
 
 ## Expected Aiken Behavior
+
 What should happen with the Aiken contract.
 
-## Actual Aiken Behavior  
+## Actual Aiken Behavior
+
 What actually happens with the Aiken contract.
 
 ## Reproduction Steps
+
 1. Navigate to Aiken example: `cd examples/...`
 2. Run Aiken command: `aiken check`
 3. Observe issue...
 
 ## Additional Context
+
 - [ ] Issue affects contract compilation
 - [ ] Issue affects contract testing
 - [ ] Issue affects security validation
@@ -304,7 +314,8 @@ What actually happens with the Aiken contract.
 ```
 
 #### Aiken Security Issue Template
-```markdown
+
+````markdown
 ---
 name: Aiken Security Issue
 about: Report a security vulnerability in Aiken contracts
@@ -319,26 +330,33 @@ labels: ['security', 'aiken', 'critical']
 **Branch**: (main/development/educational)
 
 ## Vulnerability Description
+
 Detailed description of the security issue in the Aiken contract.
 
 ## Impact Assessment
+
 Potential consequences if this vulnerability is exploited.
 
 ## Affected Aiken Code
+
 ```aiken
 // Include specific Aiken code that demonstrates the vulnerability
 ```
+````
 
 ## Suggested Fix
+
 Proposed solution or mitigation for the Aiken security issue.
 
 ## Additional Security Context
+
 - [ ] Affects production contracts (main branch)
 - [ ] Affects development contracts
 - [ ] Affects educational examples
 - [ ] Could lead to fund loss
 - [ ] Could lead to contract exploitation
-```
+
+````
 
 ### 4. Automated Quality Gates
 
@@ -358,12 +376,12 @@ jobs:
     steps:
       - name: Install Aiken
         run: cargo install aiken --version 1.1.19 --locked
-        
+
       - name: Aiken Security Checklist
         run: |
           python scripts/security/aiken-comprehensive-audit.py
           python scripts/security/aiken-vulnerability-scan.py --strict
-          
+
       - name: Aiken Circuit Breaker Check
         run: |
           python scripts/security/aiken-circuit-breaker-check.py
@@ -397,11 +415,12 @@ jobs:
         run: |
           python scripts/docs/aiken-completeness-check.py --production
           python scripts/docs/aiken-ai-optimization-validator.py
-```
+````
 
 ## 🎯 **Aiken Repository Implementation Checklist**
 
 ### **Phase 1: Aiken Core Structure + Monitoring**
+
 - [ ] **Install Aiken**: `aiken --version` ✅ (v1.1.15+ required)
 - [ ] **Install GitHub CLI**: `gh --version` ✅ (required for monitoring)
 - [ ] **Authenticate GitHub**: `gh auth login`
@@ -411,6 +430,7 @@ jobs:
 - [ ] **Test Aiken access**: `aiken check` works in examples
 
 ### **Phase 2: Aiken Documentation Excellence**
+
 - [ ] Complete docs/language/ with Aiken syntax and validators
 - [ ] Document Aiken patterns in docs/patterns/
 - [ ] Create Aiken security documentation in docs/security/
@@ -418,6 +438,7 @@ jobs:
 - [ ] Set up Aiken AI optimization in docs/search-index.md
 
 ### **Phase 3: Aiken Examples by Quality**
+
 - [ ] **Main branch examples** (Production-ready):
   - [ ] hello-world Aiken validator with security audit
   - [ ] escrow-contract with comprehensive testing
@@ -427,12 +448,14 @@ jobs:
   - [ ] fungible-token with circuit breakers
 
 ### **Phase 4: Aiken AI Optimization**
+
 - [ ] Add Aiken-specific YAML frontmatter to all documentation
 - [ ] Cross-reference all Aiken concepts and patterns
 - [ ] Test documentation with AI assistants for Aiken accuracy
 - [ ] Validate Aiken context loading priorities
 
 ### **Phase 5: Aiken Production + Live Monitoring**
+
 - [ ] Deploy Aiken CI/CD workflows with matrix testing
 - [ ] Configure Aiken security scanning automation
 - [ ] Set up Aiken performance benchmarking
@@ -445,7 +468,7 @@ jobs:
 Repositories following these Aiken rules should achieve:
 
 - **🔍 Enhanced Aiken Discoverability**: AI systems easily find and cite Aiken examples
-- **⚡ Faster Aiken Onboarding**: Developers productive with Aiken in under 5 minutes  
+- **⚡ Faster Aiken Onboarding**: Developers productive with Aiken in under 5 minutes
 - **🔒 Aiken Security Excellence**: Security considerations integrated throughout all examples
 - **📚 Self-Documenting Aiken**: Documentation stays current with working Aiken examples
 - **🤝 Aiken Community Ready**: Clear contribution paths for Aiken development
