@@ -110,7 +110,7 @@ mandatory_requirements:
 Extend existing `_reusable-aiken-check.yml` with production validation:
 
 ```yaml
-# .github/workflows/_reusable-production-check.yml
+## .github/workflows/_reusable-production-check.yml
 name: _reusable-production-check
 on:
   workflow_call:
@@ -133,7 +133,7 @@ jobs:
 #### **1.2 Branch Protection Rules**
 
 ```yaml
-# Branch protection configuration
+## Branch protection configuration
 main:
   required_status_checks:
     - "CI – Core"
@@ -197,7 +197,7 @@ educational:
 #### **3.1 Production Promotion Workflow**
 
 ```yaml
-# .github/workflows/production-promotion.yml
+## .github/workflows/production-promotion.yml
 name: Production Promotion Gate
 on:
   pull_request:
@@ -249,7 +249,7 @@ jobs:
 #### **3.2 Automated Quality Monitoring**
 
 ```yaml
-# .github/workflows/quality-monitoring.yml
+## .github/workflows/quality-monitoring.yml
 name: Quality Monitoring
 on:
   schedule:
@@ -277,7 +277,7 @@ jobs:
 Update all documentation to reflect new branch structure:
 
 ```markdown
-# Updated README.md structure
+## Updated README.md structure
 ## 🚀 Production-Ready Examples (`main` branch)
 - ✅ **escrow-contract**: Enterprise-grade escrow with full security audit
 - ✅ **hello-world**: Production-ready validator with comprehensive testing
@@ -296,7 +296,7 @@ Update all documentation to reflect new branch structure:
 Create clear contribution processes:
 
 ```markdown
-# CONTRIBUTING.md enhancement
+## CONTRIBUTING.md enhancement
 
 ## Branch Strategy
 

@@ -21,11 +21,6 @@ jobs:
         example:
           - { name: 'hello-world', path: 'examples/hello-world', timeout: 5 }
           - {
-              name: 'nft-one-shot',
-              path: 'examples/token-contracts/nft-one-shot',
-              timeout: 10,
-            }
-          - {
               name: 'escrow-contract',
               path: 'examples/escrow-contract',
               timeout: 15,

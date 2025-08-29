@@ -40,7 +40,6 @@ tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 
 → [examples/hello-world/validators/hello_world.ak](../examples/hello-world/validators/hello_world.ak) (secure)
 → [examples/escrow-contract/validators/escrow.ak](../examples/escrow-contract/validators/escrow.ak) (production-ready)
-→ [examples/token-contracts/nft-one-shot/validators/nft_policy.ak](../examples/token-contracts/nft-one-shot/validators/nft_policy.ak) (functional)
 
 ### "What are Aiken security considerations?"
 
@@ -90,14 +89,14 @@ tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 ### **For NFT/Token Development**
 
 1. [docs/patterns/token-minting.md](patterns/token-minting.md) - Modern token patterns
-2. [examples/token-contracts/nft-one-shot/](../examples/token-contracts/nft-one-shot/) - Working NFT
-3. [docs/security/validator-risks.md](security/validator-risks.md) - Token-specific risks
+2. [docs/security/validator-risks.md](security/validator-risks.md) - Token-specific risks
+3. See development/educational branches for token examples
 
 ### **For Performance Optimization**
 
 1. [docs/performance/optimization.md](performance/optimization.md) - Performance techniques
 2. [docs/performance/benchmarking.md](performance/benchmarking.md) - Measurement approaches
-3. [examples/token-contracts/fungible-token/performance_results.txt](../examples/token-contracts/fungible-token/performance_results.txt) - Real data
+3. See development/educational branches for performance data
 
 ## Documentation Categories
 
@@ -105,7 +104,7 @@ tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 
 - **Beginner**: [docs/overview/](overview/) → [docs/language/](language/) → [examples/hello-world/](../examples/hello-world/)
 - **Intermediate**: [docs/patterns/](patterns/) → [examples/escrow-contract/](../examples/escrow-contract/)
-- **Advanced**: [docs/patterns/composability.md](patterns/composability.md) → [examples/token-contracts/](../examples/token-contracts/)
+- **Advanced**: [docs/patterns/composability.md](patterns/composability.md) → See development/educational branches
 
 ### **🔒 Security Resources**
 
@@ -168,7 +167,7 @@ tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 - [docs/performance/](performance/) - For optimization queries
 - [docs/integration/](integration/) - For deployment queries
 - [examples/escrow-contract/](../examples/escrow-contract/) - For complex implementations
-- [examples/token-contracts/](../examples/token-contracts/) - For token development
+- Token examples available in development/educational branches
 
 ### **Low Priority (Reference only)**
 
