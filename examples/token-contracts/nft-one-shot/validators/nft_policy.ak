@@ -1,11 +1,16 @@
-// NFT One-Shot Minting Policy
-// This policy ensures exactly one NFT can be minted once, preventing re-mints and policy misuse
+// ❌ WARNING: EDUCATIONAL EXAMPLE ONLY - NOT PRODUCTION READY
+// 
+// 🚨 CRITICAL: DO NOT DEPLOY TO MAINNET
+// This example contains placeholder security that WILL NOT protect your funds
 //
-// Security Features:
-// 1. Exactly one token minted (no partials/multiples)
-// 2. Reference to a specific UTxO to prevent replay attacks
-// 3. Optional issuer signature requirement
-// 4. Validity interval enforcement
+// ISSUES:
+// ❌ All security validations return hardcoded `True` values  
+// ❌ No actual UTxO reference validation
+// ❌ No actual time constraint enforcement
+// ❌ No actual issuer signature verification
+// ❌ Allows unlimited minting despite "one-shot" claims
+//
+// STATUS: Example for learning concepts only - requires complete rewrite for production
 
 // Policy parameters - these are baked into the policy script
 pub type NftPolicyParams {
@@ -32,25 +37,11 @@ pub type NftMintRedeemer {
 // Main minting policy function
 pub fn nft_mint_policy(
   _params: NftPolicyParams,
-  redeemer: NftMintRedeemer,
+  _redeemer: NftMintRedeemer,
   _context: __ScriptContext,
 ) -> Bool {
-  // 1. Validate minting quantity (exactly one token)
-  let valid_quantity = redeemer.quantity == 1
-  // 2. Check validity interval (simplified for demo)
-  let valid_time = True
-  // TODO: Implement proper time validation
-  // 3. Validate that the reference UTxO is being consumed (simplified)
-  let reference_consumed = True
-  // TODO: Implement proper UTxO validation
-  // 4. Check issuer signature (simplified)
-  let issuer_signed = True
-  // TODO: Implement proper signature validation
-  // 5. Validate minted assets (simplified)
-  let valid_mint = True
-  // TODO: Implement proper asset validation
-  // All conditions must be true
-  valid_quantity && valid_time && reference_consumed && issuer_signed && valid_mint
+  // 🚨 CIRCUIT BREAKER: Prevent accidental mainnet deployment
+  fail @"SECURITY BREACH: This example is NOT production ready. All security validations are placeholders. DO NOT DEPLOY to mainnet - you WILL lose funds. See SECURITY_STATUS.md for safe alternatives."
 }
 
 // Helper function to create policy parameters

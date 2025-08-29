@@ -1,3 +1,16 @@
+// ❌ WARNING: EDUCATIONAL EXAMPLE ONLY - NOT PRODUCTION READY
+// 
+// 🚨 CRITICAL: DO NOT DEPLOY TO MAINNET
+// This validator contains placeholder security that WILL NOT protect your funds
+//
+// ISSUES:
+// ❌ Admin signature validation hardcoded to `True` - ANYONE CAN MINT
+// ❌ No actual transaction context validation
+// ❌ Allows unlimited minting by any user
+// ❌ Claims "controlled minting" but has no controls
+//
+// STATUS: Example for learning concepts only - requires complete rewrite for production
+
 // Redeemer defines possible actions for the fungible token
 pub type Action {
   Mint { amount: Int }
@@ -6,24 +19,9 @@ pub type Action {
 
 // Parameterized with admin's public key hash for controlled minting
 validator fungible_token(_admin_pkh: ByteArray) {
-  mint(redeemer: Action, _datum: Void, _context: __ScriptContext) {
-    when redeemer is {
-      Mint { amount } -> {
-        // 1. Check admin signature in transaction (simplified for demo)
-        let admin_signed = True
-        // TODO: Implement proper signature validation
-        // 2. Validate positive amount for minting
-        let positive_amount = amount > 0
-        and {
-          admin_signed,
-          positive_amount,
-        }
-      }
-      Burn { amount } ->
-        // Allow unrestricted burning - ledger ensures token ownership
-        // Amount must be negative for burning
-        amount < 0
-    }
+  mint(_redeemer: Action, _datum: Void, _context: __ScriptContext) {
+    // 🚨 CIRCUIT BREAKER: Prevent accidental mainnet deployment
+    fail @"SECURITY BREACH: This token validator is NOT production ready. Admin signature validation is disabled - ANYONE CAN MINT unlimited tokens. DO NOT DEPLOY to mainnet. See SECURITY_STATUS.md for safe alternatives."
   }
 
   else(_) {

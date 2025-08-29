@@ -6,9 +6,18 @@ Welcome to the AI-optimized knowledge base for the Aiken smart contract language
 
 ## Version Compatibility
 
-**Aiken Version**: This guide is compatible with Aiken **v1.1.14+**  
+**Aiken Version**: This guide is compatible with Aiken **v1.1.15+** (tested v1.1.15 & v1.1.19)  
 **Last Updated**: December 2024  
-**Status**: ✅ **Production Ready** - All examples tested and validated
+**Status**: ⚠️ **MIXED SECURITY** - See [SECURITY_STATUS.md](SECURITY_STATUS.md) before deploying ANY example
+
+## 🚨 **CRITICAL SECURITY WARNING**
+
+**NOT ALL EXAMPLES ARE PRODUCTION READY!** This repository contains examples with mixed security implementations:
+
+- ✅ **hello-world, escrow-contract**: Secure (with proper audit for production)
+- ❌ **nft-one-shot, fungible-token**: Educational placeholders - **NEVER DEPLOY**
+
+**➡️ CHECK [SECURITY_STATUS.md](SECURITY_STATUS.md) BEFORE USING ANY EXAMPLE**
 
 ## Mission
 
