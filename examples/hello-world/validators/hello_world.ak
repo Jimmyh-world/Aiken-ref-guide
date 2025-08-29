@@ -17,19 +17,21 @@ validator hello_world {
       Some(hello_datum) -> {
         // 1. Message validation - must be exact match
         let valid_message = redeemer.message == "Hello, World!"
-        
         // 2. Signature validation - owner must sign transaction
         let owner_signed = list.has(self.extra_signatories, hello_datum.owner)
-        
         // 3. Security checks - prevent common attacks
         and {
-          valid_message,                    // Correct message required
-          owner_signed,                     // Owner signature required
-          hello_datum.owner != "",          // Non-empty owner required
+          valid_message,
+          // Correct message required
+          owner_signed,
+          // Owner signature required
+          hello_datum.owner != "",
         }
       }
-      None -> False  // Datum required
+      // Non-empty owner required
+      None -> False
     }
+    // Datum required
   }
 
   else(_) {

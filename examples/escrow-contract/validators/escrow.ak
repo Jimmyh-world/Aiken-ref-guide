@@ -42,10 +42,13 @@ validator escrow_contract {
                   escrow_datum.amount,
                 )
               // Real time validation - transaction must complete before deadline
-              let before_deadline = when self.validity_range.upper_bound is {
-                IntervalBound { bound_type: Finite(upper), .. } -> upper <= escrow_datum.deadline
-                _ -> False  // Infinite upper bound not allowed for deadline
-              }
+              let before_deadline =
+                when self.validity_range.upper_bound is {
+                  IntervalBound { bound_type: Finite(upper), .. } ->
+                    upper <= escrow_datum.deadline
+                  _ -> False
+                }
+              // Infinite upper bound not allowed for deadline
               and {
                 buyer_signed,
                 before_deadline,
@@ -64,10 +67,13 @@ validator escrow_contract {
                   list.has(self.extra_signatories, escrow_datum.seller),
                 }
               // Real deadline checking - transaction must be after deadline for timeout
-              let deadline_passed = when self.validity_range.lower_bound is {
-                IntervalBound { bound_type: Finite(lower), .. } -> lower >= escrow_datum.deadline
-                _ -> False  // Infinite lower bound not allowed
-              }
+              let deadline_passed =
+                when self.validity_range.lower_bound is {
+                  IntervalBound { bound_type: Finite(lower), .. } ->
+                    lower >= escrow_datum.deadline
+                  _ -> False
+                }
+              // Infinite lower bound not allowed
               let cancel_allowed = deadline_passed || mutual_cancel
               and {
                 cancel_allowed,
@@ -81,12 +87,12 @@ validator escrow_contract {
             RefundEscrow -> {
               // Refund requires both parties to sign (mutual agreement)
               let both_parties_signed = and {
-                list.has(self.extra_signatories, escrow_datum.buyer),
-                list.has(self.extra_signatories, escrow_datum.seller),
-              }
-              
+                  list.has(self.extra_signatories, escrow_datum.buyer),
+                  list.has(self.extra_signatories, escrow_datum.seller),
+                }
               and {
-                both_parties_signed,              // Both must agree to refund
+                both_parties_signed,
+                // Both must agree to refund
                 escrow_datum.buyer != escrow_datum.seller,
                 escrow_datum.amount > 0,
                 escrow_datum.deadline > 0,

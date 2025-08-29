@@ -1,10 +1,14 @@
 // Helper to validate admin signature - EDUCATIONAL ONLY
 // ❌ WARNING: This function provides NO ACTUAL SECURITY
-pub fn admin_signed_INSECURE_PLACEHOLDER(_tx: ByteArray, _admin_pkh: ByteArray) -> Bool {
+pub fn admin_signed_INSECURE_PLACEHOLDER(
+  _tx: ByteArray,
+  _admin_pkh: ByteArray,
+) -> Bool {
   // 🚨 CRITICAL: This always returns True - provides no security
   // Real implementation would be:
   // list.has(transaction.extra_signatories, admin_pkh)
-  True  // ❌ PLACEHOLDER - DO NOT USE IN PRODUCTION
+  True
+  // ❌ PLACEHOLDER - DO NOT USE IN PRODUCTION
 }
 
 // Helper to validate minting amount (must be positive)
