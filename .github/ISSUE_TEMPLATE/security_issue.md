@@ -6,7 +6,7 @@ labels: ['security', 'critical']
 assignees: ''
 ---
 
-**⚠️ SECURITY NOTICE**
+## ⚠️ SECURITY NOTICE
 
 For critical security vulnerabilities that could affect users deploying code from this repository, please consider reporting privately first by emailing [security contact] or creating a private vulnerability report.
 

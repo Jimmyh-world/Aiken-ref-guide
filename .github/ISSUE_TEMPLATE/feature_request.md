@@ -6,7 +6,7 @@ labels: ['enhancement']
 assignees: ''
 ---
 
-**Feature Category**
+## Feature Category
 
 - [ ] New example/pattern
 - [ ] Documentation improvement
@@ -16,20 +16,20 @@ assignees: ''
 - [ ] Developer experience
 - [ ] AI/LLM optimization
 
-**Problem Statement**
+## Problem Statement
 A clear and concise description of what problem this feature would solve.
 Ex: "I'm always frustrated when [...]"
 
-**Proposed Solution**
+## Proposed Solution
 A clear and concise description of what you want to happen.
 
-**Alternative Solutions**
+## Alternative Solutions
 A clear and concise description of any alternative solutions or features you've considered.
 
-**Implementation Details**
+## Implementation Details
 If you have specific ideas about how this could be implemented:
 
-**Affected Areas**
+## Affected Areas
 Which parts of the repository would this feature touch?
 
 - [ ] Documentation (`docs/`)
@@ -38,31 +38,31 @@ Which parts of the repository would this feature touch?
 - [ ] Scripts (`scripts/`)
 - [ ] Root documentation (README, etc.)
 
-**Use Case**
+## Use Case
 Describe how this feature would be used:
 
 1. Developer scenario: [...]
 2. AI assistant scenario: [...]
 3. Learning scenario: [...]
 
-**Priority**
+## Priority
 
 - [ ] Critical (blocks development)
 - [ ] High (significantly improves experience)
 - [ ] Medium (nice to have)
 - [ ] Low (future consideration)
 
-**Security Implications**
+## Security Implications
 
 - [ ] This feature affects security-critical documentation
 - [ ] This feature affects example security
 - [ ] This feature requires security review
 - [ ] No security implications
 
-**Additional Context**
+## Additional Context
 Add any other context, mockups, or examples about the feature request here.
 
-**Related Work**
+## Related Work
 
 - Links to similar implementations
 - References to Aiken/Cardano documentation

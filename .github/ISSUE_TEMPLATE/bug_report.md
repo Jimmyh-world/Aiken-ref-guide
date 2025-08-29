@@ -6,52 +6,52 @@ labels: ['bug']
 assignees: ''
 ---
 
-**Bug Description**
+## Bug Description
 A clear and concise description of what the bug is.
 
-**Location**
+## Location
 
 - **File/Example**: Which documentation file or example is affected?
 - **Section**: Specific section or line numbers if applicable
 
-**Expected Behavior**
+## Expected Behavior
 A clear and concise description of what you expected to happen.
 
-**Actual Behavior**
+## Actual Behavior
 A clear and concise description of what actually happened.
 
-**Reproduction Steps**
+## Reproduction Steps
 Steps to reproduce the behavior:
 
 1. Go to '...'
 2. Try to run '...'
 3. See error
 
-**Environment**
+## Environment
 
 - **Aiken Version**: [e.g., 1.1.19]
 - **OS**: [e.g., Ubuntu 22.04, macOS 13]
 - **Platform**: [e.g., Local development, CI/CD, Docker]
 
-**Code Sample**
+## Code Sample
 
 ```aiken
 // If applicable, add code that demonstrates the issue
 ```
 
-**Error Output**
+## Error Output
 
 ```
 Paste any error messages or logs here
 ```
 
-**Security Consideration**
+## Security Consideration
 
 - [ ] This bug affects security-critical code
 - [ ] This bug affects documentation accuracy
 - [ ] This bug affects example usability
 
-**Additional Context**
+## Additional Context
 Add any other context about the problem here, including:
 
 - Related issues or discussions

@@ -15,16 +15,19 @@ tags: [github, branch-protection, ci-cd, governance]
 Navigate to your repository settings → Branches → Add rule for `main`:
 
 #### **Branch Protection Settings**
+
 - ✅ **Require a pull request before merging**
   - ✅ Require approvals: `1`
   - ✅ Dismiss stale PR approvals when new commits are pushed
   - ✅ Require review from code owners
 
 #### **Status Checks**
+
 - ✅ **Require status checks to pass before merging**
 - ✅ **Require branches to be up to date before merging**
 
 **Required Status Checks:**
+
 - `CI – Core`
 - `CI – Examples / hello-world (Aiken 1.1.15)`
 - `CI – Examples / hello-world (Aiken 1.1.19)`
@@ -35,6 +38,7 @@ Navigate to your repository settings → Branches → Add rule for `main`:
 - `Docs`
 
 #### **Additional Rules**
+
 - ✅ **Require signed commits** (recommended)
 - ✅ **Include administrators** (apply rules to admins)
 - ✅ **Allow force pushes**: ❌ Disabled
@@ -43,16 +47,19 @@ Navigate to your repository settings → Branches → Add rule for `main`:
 ## 🔧 **Setup Instructions**
 
 1. **Navigate to Repository Settings**
+
    ```
    Your Repository → Settings → Branches
    ```
 
 2. **Add Branch Protection Rule**
+
    ```
    Click "Add rule" → Enter "main" as branch name pattern
    ```
 
 3. **Configure Protection Settings**
+
    - Enable all recommended settings above
    - Add all required status checks
    - Save the rule
@@ -64,6 +71,7 @@ Navigate to your repository settings → Branches → Add rule for `main`:
 ## ✅ **Current Repository Status**
 
 **As of December 2024, this repository already has:**
+
 - ✅ Comprehensive CI/CD testing all examples
 - ✅ CODEOWNERS file for automatic review assignment
 - ✅ Security-focused issue templates
