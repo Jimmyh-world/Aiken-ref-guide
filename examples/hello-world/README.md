@@ -7,6 +7,7 @@
 **This validator is production-ready and safe for mainnet deployment** after proper security review. It has passed comprehensive security audit and demonstrates industry-grade smart contract patterns.
 
 ### ⚡ Quick Stats
+
 - **Security Grade**: A (Secure for production)
 - **Test Coverage**: 16 comprehensive tests
 - **Performance**: Optimized for minimal execution costs
@@ -229,7 +230,7 @@ This validator provides:
 ✅ **Owner Signature Verification**: Uses real signature checking with `extra_signatories`  
 ✅ **Message Validation**: Exact string matching prevents unauthorized spending  
 ✅ **Input Validation**: Non-empty owner field prevents bypass attacks  
-✅ **No Circuit Breakers**: Production code with no safety placeholders  
+✅ **No Circuit Breakers**: Production code with no safety placeholders
 
 ### **Performance Characteristics**
 
@@ -241,6 +242,7 @@ This validator provides:
 ### **Integration Examples**
 
 See the `offchain/` directory for working integration examples:
+
 - **TypeScript/Mesh**: [`offchain/mesh.ts`](offchain/mesh.ts)
 - **Python/PyCardano**: [`offchain/pycardano.py`](offchain/pycardano.py)
 
@@ -253,6 +255,7 @@ See the `offchain/` directory for working integration examples:
 ### **Security Contact**
 
 For security issues or questions about production deployment:
+
 - Review: [Security Status Documentation](../../SECURITY_STATUS.md)
 - Report: Use [security issue template](../../.github/ISSUE_TEMPLATE/security_issue.md)
 
