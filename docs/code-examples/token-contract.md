@@ -19,48 +19,69 @@ This policy ensures that an NFT can only be minted once.
 ### `validators/nft_policy.ak`
 
 ```aiken
-use aiken/list
-use cardano/transaction.{OutputReference}
+// Modern one-shot NFT policy reflecting actual working implementation
+use aiken/collection/list
+use aiken/collection/dict
+use cardano/assets
+use cardano/transaction.{OutputReference, Transaction}
 
-// The redeemer defines the two possible actions: Mint or Burn.
-pub type Action {
-  Mint
-  Burn
+// The redeemer defines minting/burning actions with token names
+pub type NftAction {
+  Mint { token_name: ByteArray }
+  Burn { token_name: ByteArray }
 }
 
 // The validator is parameterized with the UTxO that must be spent.
-validator(utxo_ref: OutputReference) {
-  mint(redeemer: Action, context: ScriptContext) -> Bool {
-    let tx = context.transaction
-    let policy_id = context.purpose.policy_id
-
+validator one_shot_nft(utxo_ref: OutputReference) {
+  mint(redeemer: NftAction, _datum: Void, self: Transaction) -> Bool {
     when redeemer is {
-      Mint -> {
-        // 1. Ensure the unique UTxO is being spent.
-        let utxo_consumed = list.any(tx.inputs, fn(input) {
+      Mint { token_name } -> {
+        // 1. SECURITY: Ensure the unique UTxO is being consumed
+        let utxo_consumed = list.any(self.inputs, fn(input) {
           input.output_reference == utxo_ref
         })
 
-        // 2. Ensure only one token is minted (with any name).
-        let minted_value = assets.without_lovelace(tx.mint)
-        let total_minted =
-          minted_value
-            |> assets.to_map
-            |> dict.values
-            |> list.foldl(0, fn(acc, assets_map) {
-              acc + list.foldl(dict.values(assets_map), 0, fn(sum, q) { sum + q })
+        // 2. SECURITY: Validate exactly one token is minted (total across all policies)
+        let minted_value = assets.without_lovelace(self.mint)
+        let policy_dict = assets.to_dict(minted_value)
+        let total_minted = policy_dict
+          |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
+                sum + quantity 
+              })
             })
 
+        // 3. SECURITY: Basic validation that we're minting something
+        let valid_token_name = token_name != ""
+
         and {
-          utxo_consumed,
-          total_minted == 1,
+          utxo_consumed,        // UTxO reference consumed (uniqueness)
+          total_minted == 1,    // Exactly 1 token minted total
+          valid_token_name,     // Valid token name
         }
       }
-      Burn -> {
-        // Burning is always allowed. The ledger ensures the user owns the tokens.
-        True
+      
+      Burn { token_name } -> {
+        // SECURITY: Burning is allowed - ledger ensures user owns the tokens
+        let minted_value = assets.without_lovelace(self.mint)
+        let policy_dict = assets.to_dict(minted_value)
+        let total_burned = policy_dict
+          |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
+                sum + quantity 
+              })
+            })
+        
+        and {
+          total_burned < 0,     // Must be negative for burning
+          token_name != "",     // Valid token name
+        }
       }
     }
+  }
+
+  else(_) {
+    fail
   }
 }
 ```

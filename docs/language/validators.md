@@ -57,12 +57,15 @@ Validators can be parameterized with compile-time data, making them highly reusa
 // This minting policy is parameterized with a specific UTxO reference
 // to ensure it can only be used once.
 validator one_shot_policy(utxo_ref: OutputReference) {
-  mint(_: Void, context: ScriptContext) -> Bool {
-    let tx = context.transaction
+  mint(_: Void, _datum: Void, self: Transaction) -> Bool {
     // Ensure the specific UTxO is consumed in the transaction
-    list.any(tx.inputs, fn(input) {
+    list.any(self.inputs, fn(input) {
       input.output_reference == utxo_ref
     })
+  }
+
+  else(_) {
+    fail
   }
 }
 ```

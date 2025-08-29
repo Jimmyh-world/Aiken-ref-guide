@@ -13,37 +13,58 @@ This example demonstrates a basic "Hello World" spending validator in Aiken. It 
 
 ## Code Example
 
-### `validators/hello_world.ak`
+### `lib/hello_world/types.ak`
 
 ```aiken
-use aiken/collection/list
-use cardano/transaction.{Transaction, OutputReference}
-
-// The datum holds the public key hash of the UTxO's owner.
-type Datum {
+// Custom types for type-safe validation
+pub type HelloWorldDatum {
   owner: ByteArray,
 }
 
+pub type HelloWorldRedeemer {
+  message: ByteArray,
+}
+```
+
+### `validators/hello_world.ak`
+
+```aiken
+// Production-Grade Hello World Validator
+// Demonstrates modern Aiken patterns with secure transaction validation
+
+use aiken/collection/list
+use cardano/transaction.{OutputReference, Transaction}
+use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
+
+// Hello World validator - demonstrates basic eUTxO model with security
 validator hello_world {
-  // This is a spending validator.
-  spend(datum: Option<Datum>, redeemer: ByteArray, _own_ref: OutputReference, self: Transaction) -> Bool {
+  spend(
+    datum: Option<HelloWorldDatum>,
+    redeemer: HelloWorldRedeemer,
+    _own_ref: OutputReference,
+    self: Transaction,
+  ) {
     when datum is {
-      Some(owner_datum) -> {
-
-    // Condition 1: The redeemer message must be "Hello, World!"
-    let must_say_hello = redeemer == "Hello, World!"
-
-        // Condition 2: The transaction must be signed by the owner.
-        let must_be_signed = list.has(self.extra_signatories, owner_datum.owner)
-
-        // Both conditions must be true for the validator to succeed.
+      Some(hello_datum) -> {
+        // 1. Message validation - must be exact match
+        let valid_message = redeemer.message == "Hello, World!"
+        
+        // 2. Signature validation - owner must sign transaction
+        let owner_signed = list.has(self.extra_signatories, hello_datum.owner)
+        
+        // 3. Security checks - prevent common attacks
         and {
-          must_say_hello,
-          must_be_signed,
+          valid_message,                    // Correct message required
+          owner_signed,                     // Owner signature required
+          hello_datum.owner != "",          // Non-empty owner required
         }
       }
-      None -> False
+      None -> False  // Datum required
     }
+  }
+
+  else(_) {
+    fail
   }
 }
 ```
@@ -106,3 +127,4 @@ test spend_fails_with_wrong_message() fail {
 ## References
 
 - [Aiken Language Tour: Hello World](https://aiken-lang.org/example--hello-world/basics)
+
