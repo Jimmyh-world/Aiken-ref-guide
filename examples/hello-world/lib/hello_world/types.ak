@@ -1,24 +1,15 @@
-// Hello World Validator Types
-// All custom data types used by the hello world validator
+// Hello World Types - Production Grade
+// Clean, focused type definitions
 
-// Datum: Contains the owner's public key hash
+// Datum: Contains the owner who can spend the UTxO
 pub type HelloWorldDatum {
   owner: ByteArray,
 }
 
-// Redeemer: Must be "Hello, World!" to spend
+// Public key hash of the owner
+
+// Redeemer: The message that must match exactly
 pub type HelloWorldRedeemer {
   message: ByteArray,
 }
-
-// Mock context for testing purposes
-pub type MockContext {
-  signatories: List<ByteArray>,
-  validity_range: ValidityRange,
-}
-
-// Validity range for transaction testing
-pub type ValidityRange {
-  lower_bound: Option<Int>,
-  upper_bound: Option<Int>,
-}
+// Must be "Hello, World!" to succeed

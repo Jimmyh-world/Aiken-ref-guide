@@ -1,36 +1,39 @@
-// Hello World Validator
-// This validator demonstrates the basic eUTxO model:
-// 1. Lock tADA to this script with a datum
-// 2. Spend only if redeemer == "Hello, World!" AND owner signs
-//
-// Flow: Lock → Spend (with correct redeemer + signature)
+// Production-Grade Hello World Validator
+// Demonstrates modern Aiken patterns with secure transaction validation
 
 use aiken/collection/list
 use cardano/transaction.{OutputReference, Transaction}
 use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
-use hello_world/utils.{
-  hello_world_message, validate_message, validate_signature,
-}
 
-// Main validator function
-validator hello_world(_owner_pkh: ByteArray) {
+// Hello World validator - demonstrates basic eUTxO model with security
+validator hello_world {
   spend(
     datum: Option<HelloWorldDatum>,
     redeemer: HelloWorldRedeemer,
     _own_ref: OutputReference,
     self: Transaction,
   ) {
-    // 1. Validate the redeemer message
-    let valid_message =
-      validate_message(redeemer.message, hello_world_message())
-    // 2. Check that the owner signed this transaction
-    let owner_signed =
-      when datum is {
-        Some(d) -> list.has(self.extra_signatories, d.owner)
-        None -> False
+    when datum is {
+      Some(hello_datum) -> {
+        // 1. Message validation - must be exact match
+        let valid_message = redeemer.message == "Hello, World!"
+        // 2. Signature validation - owner must sign transaction
+        let owner_signed = list.has(self.extra_signatories, hello_datum.owner)
+        // 3. Security checks - prevent common attacks
+        and {
+          valid_message,
+          // Correct message required
+          owner_signed,
+          // Owner signature required
+          hello_datum.owner != "",
+          // Non-empty owner
+          redeemer.message != "",
+        }
       }
-    // 3. Both conditions must be true
-    valid_message && owner_signed
+      // Non-empty message
+      None -> False
+    }
+    // Datum required
   }
 
   else(_) {

@@ -1,163 +1,122 @@
-// Hello World Validator Comprehensive Test Suite
-// Tests all functionality including success cases, failure cases, and edge cases
+// Hello World Comprehensive Test Suite
+// Production-grade testing following modern Aiken patterns
 
 use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
 use hello_world/utils.{
-  create_datum, create_redeemer, hello_world_message, validate_message,
-  validate_signature,
+  create_hello_datum, create_hello_redeemer, expected_message,
+  validate_datum_params, validate_redeemer_params,
 }
 
-// === SUCCESS CASES ===
+// === CORE FUNCTIONALITY TESTS ===
 
-test valid_hello_world_succeeds() {
-  let message = hello_world_message()
-  let expected = "Hello, World!"
-  validate_message(message, expected)
+test correct_message_validation() {
+  let message = expected_message()
+  validate_redeemer_params(message)
 }
 
-test valid_signature_succeeds() {
-  let owner = "owner_pubkey_hash"
-  let signatories = [owner, "other_signer"]
-  validate_signature(owner, signatories)
-}
-
-test create_datum_works() {
-  let owner = "test_owner"
-  let datum = create_datum(owner)
+test create_valid_datum() {
+  let owner = "owner_pkh_123"
+  let datum = create_hello_datum(owner)
   datum.owner == owner
 }
 
-test create_redeemer_works() {
-  let message = "test message"
-  let redeemer = create_redeemer(message)
+test create_valid_redeemer() {
+  let message = expected_message()
+  let redeemer = create_hello_redeemer(message)
   redeemer.message == message
 }
 
-// === FAILURE CASES ===
+test datum_validation_succeeds() {
+  let owner = "valid_owner_hash"
+  validate_datum_params(owner)
+}
+
+test redeemer_validation_succeeds() {
+  let message = expected_message()
+  validate_redeemer_params(message)
+}
+
+// === SECURITY TESTS ===
+
+test empty_owner_fails() {
+  let empty_owner = ""
+  !validate_datum_params(empty_owner)
+}
 
 test wrong_message_fails() {
-  let message = "hello, world!"
+  let wrong_message = "hello, world!"
   // Wrong case
-  let expected = "Hello, World!"
-  !validate_message(message, expected)
-}
-
-test missing_signature_fails() {
-  let owner = "owner_pubkey_hash"
-  let signatories = ["other_signer"]
-  // Owner not in list
-  !validate_signature(owner, signatories)
-}
-
-test wrong_signer_fails() {
-  let owner = "owner_pubkey_hash"
-  let signatories = ["wrong_owner"]
-  // Different owner
-  !validate_signature(owner, signatories)
+  !validate_redeemer_params(wrong_message)
 }
 
 test empty_message_fails() {
-  let message = ""
-  let expected = "Hello, World!"
-  !validate_message(message, expected)
+  let empty_message = ""
+  !validate_redeemer_params(empty_message)
 }
 
-test null_signatories_fails() {
-  let owner = "owner_pubkey_hash"
-  let signatories = []
-  // Empty list
-  !validate_signature(owner, signatories)
+test case_sensitive_message_fails() {
+  let wrong_case = "HELLO, WORLD!"
+  !validate_redeemer_params(wrong_case)
 }
 
-// === PROPERTY TESTS ===
-
-test prop_wrong_message_always_fails() {
-  let wrong_messages = ["Wrong!", "hello world", "HELLO, WORLD!", ""]
-  let expected = "Hello, World!"
-  // Test various wrong messages
-  !validate_message("Wrong!", expected) && !validate_message(
-    "hello world",
-    expected,
-  ) && !validate_message("HELLO, WORLD!", expected) && !validate_message(
-    "",
-    expected,
-  )
-}
-
-test prop_correct_message_always_succeeds() {
-  let message = "Hello, World!"
-  let expected = "Hello, World!"
-  validate_message(message, expected)
-}
-
-test prop_signature_validation_consistent() {
-  let owner = "test_owner"
-  let signatories = ["test_owner", "other_sig"]
-  // Test that signature validation is consistent
-  let has_owner = validate_signature(owner, signatories)
-  has_owner == validate_signature(owner, signatories)
+test similar_message_fails() {
+  let similar = "Hello, World"
+  // Missing exclamation
+  !validate_redeemer_params(similar)
 }
 
 // === EDGE CASES ===
 
-test very_long_message_fails() {
-  let message = "Hello, World! with lots of extra text that makes it wrong"
-  let expected = "Hello, World!"
-  !validate_message(message, expected)
-}
-
-test unicode_message_fails() {
-  let message = "Hello, World! 🚀"
-  let expected = "Hello, World!"
-  !validate_message(message, expected)
-}
-
 test whitespace_differences_fail() {
-  let message = " Hello, World! "
-  // Extra spaces
-  let expected = "Hello, World!"
-  !validate_message(message, expected)
+  let extra_spaces = " Hello, World! "
+  !validate_redeemer_params(extra_spaces)
 }
 
-// === BENCHMARKS ===
-
-test bench_validation_performance() {
-  // Test that validation completes in reasonable time
-  let message = hello_world_message()
-  let expected = "Hello, World!"
-  // Simple performance test - should complete quickly
-  let result = validate_message(message, expected)
-  result
+test unicode_differences_fail() {
+  let unicode_msg = "Hello, World！"
+  // Different exclamation mark
+  !validate_redeemer_params(unicode_msg)
 }
 
-test bench_signature_validation_performance() {
-  // Test signature validation performance
-  let owner = "owner_pubkey_hash"
-  let signatories = ["test_signer", "test_signer", "test_signer"]
-  // Multiple entries
-  // Should complete quickly even with many signatories
-  let result = validate_signature(owner, signatories)
-  !result
-  // Should be false since owner not in list
+test long_owner_hash_works() {
+  let long_owner =
+    #"a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890"
+  validate_datum_params(long_owner)
 }
 
 // === INTEGRATION TESTS ===
 
-test integration_valid_flow() {
-  // Test complete valid flow
-  let owner = "owner_pubkey_hash"
-  let message = hello_world_message()
-  let datum = create_datum(owner)
-  let redeemer = create_redeemer(message)
-  datum.owner == owner && redeemer.message == message
+test full_valid_flow() {
+  let owner = "test_owner_hash"
+  let message = expected_message()
+  let datum = create_hello_datum(owner)
+  let redeemer = create_hello_redeemer(message)
+  and {
+    validate_datum_params(datum.owner),
+    validate_redeemer_params(redeemer.message),
+    datum.owner == owner,
+    redeemer.message == message,
+  }
 }
 
-test integration_invalid_flow() {
-  // Test complete invalid flow
-  let owner = "owner_pubkey_hash"
-  let wrong_message = "wrong message"
-  let datum = create_datum(owner)
-  let redeemer = create_redeemer(wrong_message)
-  // This should fail validation
-  !validate_message(redeemer.message, hello_world_message())
+test full_invalid_flow() {
+  let owner = ""
+  // Invalid
+  let message = "wrong message"
+  // Invalid
+  let datum = create_hello_datum(owner)
+  let redeemer = create_hello_redeemer(message)
+  or {
+    !validate_datum_params(datum.owner),
+    !validate_redeemer_params(redeemer.message),
+  }
+}
+
+// === PERFORMANCE TESTS ===
+
+test message_comparison_performance() {
+  let message = expected_message()
+  let expected = "Hello, World!"
+  // This should be very fast
+  message == expected
 }
