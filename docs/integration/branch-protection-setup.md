@@ -4,7 +4,7 @@ description: 'Instructions for setting up GitHub branch protection rules'
 tags: [github, branch-protection, ci-cd, governance]
 ---
 
-# 🛡️ Branch Protection Setup Guide
+## 🛡️ Branch Protection Setup Guide
 
 > **Instructions for setting up GitHub branch protection rules to ensure code quality and security**
 

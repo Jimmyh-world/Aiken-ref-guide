@@ -87,13 +87,13 @@ tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 2. [docs/security/](security/) - Complete security documentation
 3. [docs/security/anti-patterns.md](security/anti-patterns.md) - Real vulnerabilities found
 
-### **For NFT/Token Development**:
+### **For NFT/Token Development**
 
 1. [docs/patterns/token-minting.md](patterns/token-minting.md) - Modern token patterns
 2. [examples/token-contracts/nft-one-shot/](../examples/token-contracts/nft-one-shot/) - Working NFT
 3. [docs/security/validator-risks.md](security/validator-risks.md) - Token-specific risks
 
-### **For Performance Optimization**:
+### **For Performance Optimization**
 
 1. [docs/performance/optimization.md](performance/optimization.md) - Performance techniques
 2. [docs/performance/benchmarking.md](performance/benchmarking.md) - Measurement approaches

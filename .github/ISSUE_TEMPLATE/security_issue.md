@@ -10,14 +10,14 @@ assignees: ''
 
 For critical security vulnerabilities that could affect users deploying code from this repository, please consider reporting privately first by emailing [security contact] or creating a private vulnerability report.
 
-**Affected Component**
+## Affected Component
 
 - [ ] Example code (specify which example)
 - [ ] Documentation (specify which file)
 - [ ] CI/CD pipeline
 - [ ] Dependencies
 
-**Vulnerability Type**
+## Vulnerability Type
 
 - [ ] Code execution vulnerability in example
 - [ ] Misleading security documentation
@@ -26,36 +26,36 @@ For critical security vulnerabilities that could affect users deploying code fro
 - [ ] CI/CD security issue
 - [ ] Other: [specify]
 
-**Severity Assessment**
+## Severity Assessment
 
 - [ ] **Critical**: Could lead to fund loss in production
 - [ ] **High**: Misleading security guidance
 - [ ] **Medium**: Missing security warnings
 - [ ] **Low**: Documentation clarity issue
 
-**Description**
+## Description
 A clear description of the security issue:
 
-**Location**
+## Location
 
 - **File**: [exact file path]
 - **Lines**: [specific line numbers if applicable]
 - **Function/Section**: [specific area]
 
-**Impact**
+## Impact
 Describe the potential impact if this vulnerability were exploited:
 
-**Reproduction**
+## Reproduction
 If applicable, steps to demonstrate the issue:
 
 1. [Step 1]
 2. [Step 2]
 3. [Observe vulnerability]
 
-**Suggested Fix**
+## Suggested Fix
 If you have suggestions for how to fix this issue:
 
-**Affected Users**
+## Affected Users
 Who might be affected by this vulnerability:
 
 - [ ] Developers copying example code
@@ -63,20 +63,20 @@ Who might be affected by this vulnerability:
 - [ ] New Aiken developers
 - [ ] Production deployments
 
-**Current Mitigation**
+## Current Mitigation
 Are there any existing warnings or mitigations in place?
 
-**References**
+## References
 
 - Links to relevant security documentation
 - References to similar vulnerabilities
 - Cardano/Aiken security resources
 
-**Disclosure Timeline**
+## Disclosure Timeline
 
 - [ ] I'm comfortable with public disclosure immediately
 - [ ] I'd prefer coordinated disclosure with a timeline
 - [ ] This requires immediate action
 
-**Additional Context**
+## Additional Context
 Any other relevant information about this security issue.
