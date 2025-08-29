@@ -34,30 +34,34 @@ Welcome to the AI-optimized knowledge base for the Aiken smart contract language
 
 ### **📊 Choose Your Branch Based on Your Needs**
 
-| 🎯 **Your Goal** | 🌟 **Use This Branch** | 📋 **What You'll Find** | ⚠️ **Deployment Safety** |
-|------------------|----------------------|-------------------------|--------------------------|
-| **Deploy to Production** | [`main`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/main) | ✅ Audited, production-ready examples | **✅ Safe for mainnet** (with proper review) |
-| **Explore New Features** | [`development`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/development) | 🔧 Latest features, functional implementations | **⚠️ Development/testnet only** |
-| **Learn Smart Contract Security** | [`educational`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/educational) | 📚 Security tutorials, vulnerability demonstrations | **❌ Never deploy** (learning only) |
+| 🎯 **Your Goal**                  | 🌟 **Use This Branch**                                                            | 📋 **What You'll Find**                             | ⚠️ **Deployment Safety**                     |
+| --------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------- |
+| **Deploy to Production**          | [`main`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/main)               | ✅ Audited, production-ready examples               | **✅ Safe for mainnet** (with proper review) |
+| **Explore New Features**          | [`development`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/development) | 🔧 Latest features, functional implementations      | **⚠️ Development/testnet only**              |
+| **Learn Smart Contract Security** | [`educational`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/educational) | 📚 Security tutorials, vulnerability demonstrations | **❌ Never deploy** (learning only)          |
 
 ### **🚀 Quick Start for New Visitors**
 
 **1. For Production Development** → **You're in the right place!** (main branch)
-   - ✅ Production-ready examples: `hello-world`, `escrow-contract`
-   - ✅ Enterprise-grade security and documentation
-   - ✅ Safe for mainnet deployment with proper review
+
+- ✅ Production-ready examples: `hello-world`, `escrow-contract`
+- ✅ Enterprise-grade security and documentation
+- ✅ Safe for mainnet deployment with proper review
 
 **2. For Learning** → Switch to [`educational` branch](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/educational)
-   - 📚 Comprehensive security tutorials
-   - 🎓 Step-by-step vulnerability analysis
-   - ⚠️ Safe learning environment with intentional flaws for education
+
+- 📚 Comprehensive security tutorials
+- 🎓 Step-by-step vulnerability analysis
+- ⚠️ Safe learning environment with intentional flaws for education
 
 **3. For Advanced Features** → Check [`development` branch](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/development)
-   - 🔧 Cutting-edge Aiken patterns
-   - 🆕 Features in active development
-   - ⚠️ Functional but may have limitations
+
+- 🔧 Cutting-edge Aiken patterns
+- 🆕 Features in active development
+- ⚠️ Functional but may have limitations
 
 ### **📖 Architecture Documentation**
+
 - **Branch Strategy**: [`BRANCH_STRATEGY.md`](BRANCH_STRATEGY.md)
 - **Repository Navigation**: [`NAVIGATION.md`](NAVIGATION.md)
 - **Security Status**: [`SECURITY_STATUS.md`](SECURITY_STATUS.md)
