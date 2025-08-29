@@ -68,6 +68,54 @@ let result =
 - **`String`**: A UTF-8 encoded string, primarily for error messages and comments. Not usable for on-chain logic.
 - **`Void`**: The unit type, representing the absence of a value.
 
+## Imports and Module System
+
+Modern Aiken development requires importing the standard library for transaction validation and list operations.
+
+### Essential Imports for Validators
+```aiken
+// Core transaction types and operations
+use cardano/transaction.{Transaction, OutputReference, Output}
+
+// List operations (required for checking signatories, outputs, etc.)
+use aiken/collection/list
+
+// Address types for payment validation
+use cardano/address.{VerificationKey}
+
+// Asset operations for checking ADA amounts
+use cardano/assets.{ada_policy_id, ada_asset_name, quantity_of}
+
+// Interval types for time validation
+use aiken/interval.{IntervalBound, Finite}
+```
+
+### Project Configuration
+Every Aiken project must include the standard library dependency in `aiken.toml`:
+
+```toml
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "2.1.0"
+source = "github"
+```
+
+### Common Import Patterns
+```aiken
+// Import specific functions
+use aiken/collection/list.{has, any, filter}
+
+// Import types with custom alias
+use cardano/transaction.{Transaction as Tx}
+
+// Import everything from a module (use sparingly)
+use aiken/collection/list
+
+// Import with module prefix
+use aiken/collection/list as List
+// Usage: List.has(my_list, element)
+```
+
 ## Security Considerations
 
 - **Integer Overflows**: Aiken's `Int` type has arbitrary precision, which prevents traditional integer overflow and underflow vulnerabilities.

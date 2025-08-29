@@ -14,22 +14,50 @@ This document details common vulnerabilities found in Cardano smart contracts an
 ### Code Example
 
 ```aiken
+use aiken/collection/list
+use cardano/transaction.{Transaction, OutputReference, Output}
+use cardano/address.{VerificationKey}
+use cardano/assets.{ada_policy_id, ada_asset_name, quantity_of}
+
 // VULNERABLE: Checks for a valid payment but doesn't link it to a specific input.
 validator vulnerable_swap {
-  spend(datum: SwapDatum, _, context: ScriptContext) -> Bool {
-    // This check is ambiguous if multiple inputs from this script are spent.
-    check_payment_to(context.transaction, datum.seller, datum.price)
+  spend(datum: Option<SwapDatum>, _, _own_ref: OutputReference, self: Transaction) -> Bool {
+    when datum is {
+      Some(swap_datum) -> {
+        // This check is ambiguous if multiple inputs from this script are spent.
+        check_payment_to(self.outputs, swap_datum.seller, swap_datum.price)
+      }
+      None -> False
+    }
   }
 }
 
-// SECURE: Uses the Tagged Output Pattern.
+// SECURE: Uses the Tagged Output Pattern with modern Transaction syntax.
 validator secure_swap {
-  spend(datum: SwapDatum, _, own_ref: OutputReference, context: ScriptContext) -> Bool {
-    // Find the single output tagged with this input's OutputReference.
-    let tagged_output = find_tagged_output(context.transaction.outputs, own_ref)
-    // Perform validation only on that specific output.
-    validate_payment_from_tagged(tagged_output, datum.seller, datum.price)
+  spend(datum: Option<SwapDatum>, _, own_ref: OutputReference, self: Transaction) -> Bool {
+    when datum is {
+      Some(swap_datum) -> {
+        // Find the single output tagged with this input's OutputReference.
+        let tagged_output = find_tagged_output(self.outputs, own_ref)
+        // Perform validation only on that specific output.
+        validate_payment_from_tagged(tagged_output, swap_datum.seller, swap_datum.price)
+      }
+      None -> False
+    }
   }
+}
+
+// Helper function for payment validation
+fn check_payment_to(outputs: List<Output>, recipient: ByteArray, min_amount: Int) -> Bool {
+  list.any(outputs, fn(output) {
+    when output.address.payment_credential is {
+      VerificationKey(hash) -> {
+        let ada_amount = quantity_of(output.value, ada_policy_id, ada_asset_name)
+        hash == recipient && ada_amount >= min_amount
+      }
+      _ -> False
+    }
+  })
 }
 ```
 
@@ -43,14 +71,29 @@ validator secure_swap {
 ### Code Example
 
 ```aiken
-validator anti_replay_state_machine {
-  spend(datum: StateDatum, _, context: ScriptContext) -> Bool {
-    // Find the continuing output going back to the script address.
-    expect Some(continuing_output) = find_continuing_output(context.transaction)
-    expect InlineDatum(new_datum: StateDatum) = continuing_output.datum
+use aiken/collection/list
+use cardano/transaction.{Transaction, OutputReference, Output}
 
-    // The core check: ensure the nonce is strictly increasing.
-    new_datum.nonce == datum.nonce + 1
+validator anti_replay_state_machine {
+  spend(datum: Option<StateDatum>, _, _own_ref: OutputReference, self: Transaction) -> Bool {
+    when datum is {
+      Some(state_datum) -> {
+        // Find the continuing output going back to the script address.
+        when find_continuing_output(self.outputs) is {
+          Some(continuing_output) -> {
+            when continuing_output.datum is {
+              InlineDatum(new_datum) -> {
+                // The core check: ensure the nonce is strictly increasing.
+                new_datum.nonce == state_datum.nonce + 1
+              }
+              _ -> False
+            }
+          }
+          None -> False
+        }
+      }
+      None -> False
+    }
   }
 }
 ```
@@ -65,14 +108,22 @@ validator anti_replay_state_machine {
 ### Code Example
 
 ```aiken
-validator time_locked_vesting {
-  spend(datum: VestingDatum, _, context: ScriptContext) -> Bool {
-    let tx_range = context.transaction.validity_range
+use aiken/interval.{Finite}
+use cardano/transaction.{Transaction, OutputReference}
 
-    // To unlock, the transaction's validity must START AFTER the unlock time.
-    when tx_range.lower_bound is {
-      Finite(lower_time) -> lower_time >= datum.unlock_time
-      _ -> False // Infinite lower bound is invalid
+validator time_locked_vesting {
+  spend(datum: Option<VestingDatum>, _, _own_ref: OutputReference, self: Transaction) -> Bool {
+    when datum is {
+      Some(vesting_datum) -> {
+        let tx_range = self.validity_range
+        
+        // To unlock, the transaction's validity must START AFTER the unlock time.
+        when tx_range.lower_bound is {
+          Finite(lower_time) -> lower_time >= vesting_datum.unlock_time
+          _ -> False // Infinite lower bound is invalid
+        }
+      }
+      None -> False
     }
   }
 }

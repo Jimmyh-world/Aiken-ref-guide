@@ -5,29 +5,26 @@
 //
 // Flow: Lock → Spend (with correct redeemer + signature)
 
-// Datum: Contains the owner's public key hash
-pub type HelloWorldDatum {
-  owner: ByteArray,
-}
-
-// Redeemer: Must be "Hello, World!" to spend
-pub type HelloWorldRedeemer {
-  message: ByteArray,
-}
+use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
+use hello_world/utils.{validate_signature, validate_message, hello_world_message}
 
 // Main validator function
 validator hello_world(_owner_pkh: ByteArray) {
   spend(
-    _datum: Option<HelloWorldDatum>,
+    datum: Option<HelloWorldDatum>,
     redeemer: HelloWorldRedeemer,
     _own_ref: __OutputReference,
-    _context: __ScriptContext,
+    context: __ScriptContext,
   ) {
     // 1. Validate the redeemer message
-    let valid_message = redeemer.message == "Hello, World!"
+    let valid_message = validate_message(redeemer.message, hello_world_message())
+    
     // 2. Check that the owner signed this transaction
-    let owner_signed = True
-    // TODO: Implement proper signature validation
+    let owner_signed = when datum is {
+      Some(d) -> list.has(context.tx.extra_signatories, d.owner)
+      None -> False
+    }
+    
     // 3. Both conditions must be true
     valid_message && owner_signed
   }

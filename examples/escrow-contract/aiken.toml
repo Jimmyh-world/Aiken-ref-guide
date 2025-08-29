@@ -4,6 +4,11 @@ license = "MIT"
 plutus_version = "v2"
 tests = true
 
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "2.1.0"
+source = "github"
+
 [[migrations]]
 name = "escrow"
 path = "validators/escrow.ak"

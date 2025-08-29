@@ -8,7 +8,7 @@ This example demonstrates a basic "Hello World" spending validator in Aiken. It 
 
 - **Datum**: Stores the owner's public key hash.
 - **Redeemer**: Carries the message that must be validated.
-- **`ScriptContext`**: Used to access the transaction's signatories.
+- **`Transaction`**: Used to access the transaction's signatories and validation data.
 - **Combined Logic**: Uses an `and` block to ensure multiple conditions are met.
 
 ## Code Example
@@ -16,28 +16,33 @@ This example demonstrates a basic "Hello World" spending validator in Aiken. It 
 ### `validators/hello_world.ak`
 
 ```aiken
-use aiken/list
+use aiken/collection/list
+use cardano/transaction.{Transaction, OutputReference}
 
 // The datum holds the public key hash of the UTxO's owner.
 type Datum {
   owner: ByteArray,
 }
 
-validator {
+validator hello_world {
   // This is a spending validator.
-  spend(datum: Datum, redeemer: ByteArray, context: ScriptContext) -> Bool {
-    let tx = context.transaction
+  spend(datum: Option<Datum>, redeemer: ByteArray, _own_ref: OutputReference, self: Transaction) -> Bool {
+    when datum is {
+      Some(owner_datum) -> {
 
     // Condition 1: The redeemer message must be "Hello, World!"
     let must_say_hello = redeemer == "Hello, World!"
 
-    // Condition 2: The transaction must be signed by the owner.
-    let must_be_signed = list.has(tx.extra_signatories, datum.owner)
+        // Condition 2: The transaction must be signed by the owner.
+        let must_be_signed = list.has(self.extra_signatories, owner_datum.owner)
 
-    // Both conditions must be true for the validator to succeed.
-    and {
-      must_say_hello,
-      must_be_signed,
+        // Both conditions must be true for the validator to succeed.
+        and {
+          must_say_hello,
+          must_be_signed,
+        }
+      }
+      None -> False
     }
   }
 }

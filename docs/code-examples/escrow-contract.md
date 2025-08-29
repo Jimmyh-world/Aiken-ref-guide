@@ -16,9 +16,11 @@ This example implements a secure escrow contract in Aiken. It allows a buyer to 
 ### `validators/escrow.ak`
 
 ```aiken
-use aiken/list
-use cardano/address.{Address}
-use cardano/transaction.{Output}
+use aiken/collection/list
+use cardano/transaction.{Transaction, OutputReference, Output}
+use cardano/address.{VerificationKey}
+use cardano/assets.{ada_policy_id, ada_asset_name, quantity_of}
+use aiken/interval.{Finite}
 
 // The datum holds all the parameters of the escrow agreement.
 type EscrowDatum {
@@ -34,76 +36,96 @@ type EscrowAction {
   Cancel
 }
 
-validator {
-  spend(datum: EscrowDatum, action: EscrowAction, context: ScriptContext) -> Bool {
-    let tx = context.transaction
+validator escrow_contract {
+  spend(datum: Option<EscrowDatum>, action: EscrowAction, _own_ref: OutputReference, self: Transaction) -> Bool {
+    when datum is {
+      Some(escrow_datum) -> {
+        when action is {
+          // The 'Complete' action releases funds to the seller.
+          Complete -> {
+            // 1. Must be signed by the buyer.
+            let buyer_signed = list.has(self.extra_signatories, escrow_datum.buyer)
 
-    when action is {
-      // The 'Complete' action releases funds to the seller.
-      Complete -> {
-        // 1. Must be signed by the buyer.
-        let buyer_signed = list.has(tx.extra_signatories, datum.buyer)
+            // 2. The seller must be paid the correct price.
+            let seller_paid = check_payment_to(self.outputs, escrow_datum.seller, escrow_datum.price)
 
-        // 2. The seller must be paid the correct price.
-        let seller_address = address.from_verification_key(datum.seller, None)
-        let seller_paid =
-          check_payment_to(tx.outputs, seller_address, datum.price)
+            // 3. Must happen before the deadline.
+            let before_deadline = is_before(self, escrow_datum.deadline)
 
-        // 3. Must happen before the deadline.
-        let before_deadline = is_before(tx, datum.deadline)
+            and {
+              buyer_signed,
+              seller_paid,
+              before_deadline,
+            }
+          }
 
-        and {
-          buyer_signed,
-          seller_paid,
-          before_deadline,
+          // The 'Cancel' action refunds the funds.
+          Cancel -> {
+            // Cancellation is allowed under two conditions:
+            // 1. The deadline has passed.
+            let deadline_passed = is_after(self, escrow_datum.deadline)
+
+            // 2. Both buyer and seller agree to cancel.
+            let both_signed = and {
+              list.has(self.extra_signatories, escrow_datum.buyer),
+              list.has(self.extra_signatories, escrow_datum.seller),
+            }
+
+            // Either condition is sufficient.
+            or {
+              deadline_passed,
+              both_signed,
+            }
+          }
         }
       }
-
-      // The 'Cancel' action refunds the funds.
-      Cancel -> {
-        // Cancellation is allowed under two conditions:
-        // 1. The deadline has passed.
-        let deadline_passed = is_after(tx, datum.deadline)
-
-        // 2. Both buyer and seller agree to cancel.
-        let both_signed = and {
-          list.has(tx.extra_signatories, datum.buyer),
-          list.has(tx.extra_signatories, datum.seller),
-        }
-
-        // Either condition is sufficient.
-        or {
-          deadline_passed,
-          both_signed,
-        }
-      }
+      None -> False
     }
   }
 }
 
-// Helper to check if the transaction is submitted before a time.
-fn is_before(tx: Transaction, time: Int) -> Bool {
-  when tx.validity_range.upper_bound is {
-    Finite(upper) -> upper <= time
+// Helper function to check if seller receives payment
+fn check_payment_to(outputs: List<Output>, recipient: ByteArray, min_amount: Int) -> Bool {
+  list.any(outputs, fn(output) {
+    when output.address.payment_credential is {
+      VerificationKey(hash) -> {
+        let ada_amount = quantity_of(output.value, ada_policy_id, ada_asset_name)
+        hash == recipient && ada_amount >= min_amount
+      }
+      _ -> False
+    }
+  })
+}
+
+// Helper function to check if transaction is before deadline
+fn is_before(self: Transaction, deadline: Int) -> Bool {
+  when self.validity_range.upper_bound is {
+    Finite(upper) -> upper <= deadline
     _ -> False
   }
 }
 
-// Helper to check if the transaction is submitted after a time.
-fn is_after(tx: Transaction, time: Int) -> Bool {
-  when tx.validity_range.lower_bound is {
-    Finite(lower) -> lower > time
+// Helper function to check if transaction is after deadline  
+fn is_after(self: Transaction, deadline: Int) -> Bool {
+  when self.validity_range.lower_bound is {
+    Finite(lower) -> lower >= deadline
     _ -> False
   }
 }
+```
 
-// Helper to check for a minimum payment to an address.
-fn check_payment_to(outputs: List<Output>, recipient: Address, amount: Int) -> Bool {
-  outputs
-    |> list.any(fn(output) {
-      output.address == recipient && assets.lovelace_of(output.value) >= amount
-    })
-}
+### `aiken.toml`
+
+```toml
+name = "my-project/escrow-contract"
+version = "1.0.0"
+license = "MIT"
+plutus_version = "v2"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "2.1.0"
+source = "github"
 ```
 
 ## Security Considerations

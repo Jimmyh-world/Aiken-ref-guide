@@ -39,12 +39,6 @@ pub type EscrowAction {
 
 // ✅ Seller authorizes refund
 
-// Tagged output datum for double satisfaction protection
-pub type TaggedEscrowDatum {
-  original_datum: EscrowDatum,
-  input_ref: __OutputReference,
-}
-
 // Configuration for escrow parameters
 pub type EscrowConfig {
   min_amount: Int,
@@ -72,29 +66,17 @@ pub fn default_config() -> EscrowConfig {
   // 5 days maximum
 }
 
-// Validation result type
-pub type ValidationResult {
-  Valid
-  Invalid(ByteArray)
-}
-
 // ✅ SECURE: Validate escrow datum parameters
 pub fn validate_escrow_datum(
   datum: EscrowDatum,
   config: EscrowConfig,
-) -> ValidationResult {
-  if datum.amount < config.min_amount {
-    Invalid("Escrow amount below minimum")
-  } else if datum.amount > config.max_amount {
-    Invalid("Escrow amount above maximum")
-  } else if datum.buyer == datum.seller {
-    Invalid("Buyer and seller cannot be the same")
-  } else if datum.deadline <= 0 {
-    Invalid("Deadline must be positive")
-  } else if datum.nonce <= 0 {
-    Invalid("Nonce must be positive")
-  } else {
-    Valid
+) -> Bool {
+  and {
+    datum.amount >= config.min_amount,
+    datum.amount <= config.max_amount,
+    datum.buyer != datum.seller,
+    datum.deadline > 0,
+    datum.nonce > 0,
   }
 }
 
@@ -102,13 +84,13 @@ pub fn validate_escrow_datum(
 pub fn validate_state_transition(
   current_state: EscrowState,
   action: EscrowAction,
-) -> ValidationResult {
+) -> Bool {
   when (current_state, action) is {
-    (Active, CompleteEscrow) -> Valid
-    (Active, CancelEscrow { .. }) -> Valid
-    (Active, RefundEscrow) -> Valid
-    (Complete, _) -> Invalid("Cannot modify completed escrow")
-    (Cancel, _) -> Invalid("Cannot modify cancelled escrow")
+    (Active, CompleteEscrow) -> True
+    (Active, CancelEscrow { .. }) -> True
+    (Active, RefundEscrow) -> True
+    (Complete, _) -> False
+    (Cancel, _) -> False
   }
 }
 
@@ -168,19 +150,11 @@ pub fn validate_escrow_params(
   and {
     buyer != seller,
     // No self-dealing
-    amount > 1_000_000,
+    amount >= 1_000_000,
     // Minimum 1 ADA
     deadline > 0,
     // Valid deadline
     nonce > 0,
   }
   // Valid nonce
-}
-
-// ✅ SECURE: Helper to create tagged datum for outputs
-pub fn create_tagged_datum(
-  original_datum: EscrowDatum,
-  input_ref: __OutputReference,
-) -> TaggedEscrowDatum {
-  TaggedEscrowDatum { original_datum, input_ref }
 }
