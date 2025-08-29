@@ -9,9 +9,27 @@ security_status: 'functional'
 
 ## 🎨 One-Shot NFT Policy
 
-> **Production-ready NFT minting policy guaranteeing true uniqueness through UTxO consumption**
+> **Development branch: Advanced NFT features in active development**
 
-[![Security Status](https://img.shields.io/badge/Security-Functional-yellow.svg)](../../../SECURITY_STATUS.md) [![Tests](https://img.shields.io/badge/Tests-9%20Passing-brightgreen.svg)](#-test-results) [![Performance](https://img.shields.io/badge/Performance-Optimized-blue.svg)](#-performance-metrics)
+[![Development Status](https://img.shields.io/badge/Status-Development-orange.svg)](../../../BRANCH_STRATEGY.md) [![Security Status](https://img.shields.io/badge/Security-Functional-yellow.svg)](../../../SECURITY_STATUS.md) [![Tests](https://img.shields.io/badge/Tests-9%20Passing-brightgreen.svg)](#-test-results) [![Branch](https://img.shields.io/badge/Branch-Development-orange.svg)](../../../BRANCH_STRATEGY.md)
+
+## 🔧 Development Branch Features
+
+**Current Status**: Functional NFT minting with good security foundation  
+**Target**: Enhanced NFT policy with advanced features for production readiness
+
+### ✅ **Currently Implemented**
+- ✅ **UTxO-based uniqueness** guaranteeing true one-shot minting
+- ✅ **Basic security validation** with proper consumption checks
+- ✅ **Burn functionality** with negative mint validation
+- ✅ **Comprehensive testing** with 9 test cases
+
+### 🚧 **In Development Roadmap**
+- 🔄 **Enhanced Metadata Validation**: Comprehensive token metadata requirements
+- 🔄 **Time Window Restrictions**: Configurable minting deadlines and windows
+- 🔄 **Admin Control Patterns**: Optional admin controls for enterprise use
+- 🔄 **Performance Optimization**: Script size and execution cost improvements
+- 🔄 **Extended Testing**: Property-based tests and edge case coverage
 
 ## 🚀 **60-Second Quickstart**
 
