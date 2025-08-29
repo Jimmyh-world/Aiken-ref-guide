@@ -28,24 +28,43 @@ Welcome to the AI-optimized knowledge base for the Aiken smart contract language
 **Last Updated**: December 2024  
 **Status**: 🚀 **ENHANCED ARCHITECTURE** - Branch-based quality separation implemented
 
-## 🚀 **ENHANCED BRANCH ARCHITECTURE**
+## 🏗️ **REPOSITORY STRUCTURE FOR VISITORS**
 
-**This repository uses branch-based quality separation for maximum safety and clarity:**
+**This repository uses a unique branch-based quality architecture to ensure maximum safety and learning value:**
 
-### **📊 Branch Overview**
+### **📊 Choose Your Branch Based on Your Needs**
 
-| Branch | Purpose | Security Level | Deployment Safety |
-|--------|---------|----------------|-------------------|
-| **`main`** | 🚀 **Production Examples** | ✅ **Audited** | **Safe for mainnet** (with review) |
-| **`development`** | 🔧 **Work in Progress** | ⚠️ **Functional** | **Development only** |
-| **`educational`** | 📚 **Learning Content** | ❌ **Educational** | **Never deploy** |
+| 🎯 **Your Goal**                  | 🌟 **Use This Branch**                                                            | 📋 **What You'll Find**                             | ⚠️ **Deployment Safety**                     |
+| --------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------- |
+| **Deploy to Production**          | [`main`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/main)               | ✅ Audited, production-ready examples               | **✅ Safe for mainnet** (with proper review) |
+| **Explore New Features**          | [`development`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/development) | 🔧 Latest features, functional implementations      | **⚠️ Development/testnet only**              |
+| **Learn Smart Contract Security** | [`educational`](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/educational) | 📚 Security tutorials, vulnerability demonstrations | **❌ Never deploy** (learning only)          |
 
-### **🎯 Quick Navigation**
-- **Production Ready**: Use `main` branch for production deployments
-- **Latest Features**: Check `development` branch for cutting-edge patterns
-- **Security Learning**: Explore `educational` branch for vulnerability education
+### **🚀 Quick Start for New Visitors**
 
-**➡️ See [BRANCH_STRATEGY.md](BRANCH_STRATEGY.md) for complete architecture details**
+**1. For Production Development** → **You're in the right place!** (main branch)
+
+- ✅ Production-ready examples: `hello-world`, `escrow-contract`
+- ✅ Enterprise-grade security and documentation
+- ✅ Safe for mainnet deployment with proper review
+
+**2. For Learning** → Switch to [`educational` branch](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/educational)
+
+- 📚 Comprehensive security tutorials
+- 🎓 Step-by-step vulnerability analysis
+- ⚠️ Safe learning environment with intentional flaws for education
+
+**3. For Advanced Features** → Check [`development` branch](https://github.com/Jimmyh-world/Aiken-ref-guide/tree/development)
+
+- 🔧 Cutting-edge Aiken patterns
+- 🆕 Features in active development
+- ⚠️ Functional but may have limitations
+
+### **📖 Architecture Documentation**
+
+- **Branch Strategy**: [`BRANCH_STRATEGY.md`](BRANCH_STRATEGY.md)
+- **Repository Navigation**: [`NAVIGATION.md`](NAVIGATION.md)
+- **Security Status**: [`SECURITY_STATUS.md`](SECURITY_STATUS.md)
 
 ## Mission
 
@@ -105,7 +124,7 @@ gh run view --log  # View detailed logs for troubleshooting
 │   └── escrow-contract/       # ✅ Enterprise-grade escrow
 └── docs/                      # Production documentation
 
-🔧 development (Active Innovation)  
+🔧 development (Active Innovation)
 ├── examples/
 │   ├── nft-one-shot/          # 🔄 Advanced NFT features in progress
 │   └── new-patterns/          # 🆕 Emerging Cardano integrations
