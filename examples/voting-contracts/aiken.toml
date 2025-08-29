@@ -1,0 +1,13 @@
+name = "aiken-lang/voting-contracts"
+version = "1.0.0"
+license = "Apache-2.0"
+plutus_version = "v2"
+tests = true
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "2.1.0"
+source = "github"
+
+[config.fmt]
+width = 80

@@ -1,0 +1,416 @@
+{
+  "preamble": {
+    "title": "aiken-lang/voting-contracts",
+    "version": "1.0.0",
+    "plutusVersion": "v3",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.19+unknown"
+    },
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "simple_voting.simple_voting.spend",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/simple_voting~1SimpleProposalDatum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/simple_voting~1SimpleVoteAction"
+        }
+      },
+      "compiledCode": "5908a501010029800aba2aba1aba0aab9faab9eaab9dab9a488888896600264653001300800198041804800cdc3a400530080024888966002600460106ea800e3300130093754007370e90004dc3a40093008375400891111991192cc004c018012264646644b30013018003802c59015192cc004c04c0062b30013371290021809000c5a260186024002808a2c80a0dd5180a8009bae30150023015001301037540171598009804802456600260206ea802e0031640451598009802802456600260206ea802e00316404515980099b87480180122b3001301037540170018b20228b201c4038807100e0acc004c014c038dd5000c660026024601e6ea8006460266028602860286028003230133014301400191809980a180a180a000c8c04cc050c050c050c050c0500064602660280029111112cc0056600330019800980c180a9baa0069801980a9baa0069802980a9baa0069b8f4890048888c96600330013002375c603a60346ea8016942945018456600330013002375c600c60346ea8016942945018456600330013002375c601260346ea8016942945018456600266e212000375a603a603c603c603c603c603c603c60346ea80162b30013371090001bad301d301a3754600e60346ea80162b3001337106eb4c074c068dd51803980d1baa005375a600c60346ea8c01cc068dd5002c56600266e24dd69803180d1baa3007301a375400a6eb4c024c068dd51803980d1baa0058acc004cdc49bad3008301a37540080031337120026eb4c024c068dd5002452820308a50406114a080c22941018452820308a50406114a080c2294101819b81375a600a60326ea8c018c064dd50021bad301c30193754600c60326ea80114a14a2809a2946330013375e6004602a6ea801802294294501320268a508cc0048c064c068c068c068c068c068c068c06800660286ea804244646600200200644b30010018a508acc004c966002601e60326ea8006266ebcc074c068dd500080245282030300830193754603800314a3133002002301d001405c80d244646600200200644b30010018a508acc004cdc79bae301c0010038a51899801001180e800a02e4069374a9000244444664466446644b3001301600a89919912cc004cc018c040c08cdd5181318119baa01401b8acc00566002660166eb0c048c08cdd500a0014566002603860446ea8c098c08cdd5180998119baa01489980200100dc528a0428a504085159800a518acc0066002602660466ea8c098c08cdd500a530103d8798000800cc044c08cdd500a4c040c08cdd5181318119baa01480da00a8998061bac3012302337540366460166604c604e0026604c0046050605000260466ea80522941021452820428a50408514a08108dd7181200099912cc004c070c088dd518131813801c4c028cc094dd418009bad3026302337540046604a604c604e60466ea8008cc094dd418009bad3012302337540046604a6ea0c004dd6980898119baa0024bd7044c028cc094c098c08cdd5001198129ba83001375a601e60466ea8008cc094dd418009bad3012302337540046604a6ea0c004dd6980898119baa0024bd702042300d302137540246e01200230203754037159800980c805456600266008601a60406ea8c08cc080dd500880c456600266ebcc040c080dd5181198101baa0114c0103d87a80008acc004c8c966002603000314a11337126eb4c038c088dd5180818111baa0133370666e08dd6981298111baa00248282700400502019b80375a604860426ea8004dd6980698109baa001300c30203754023159800cc005300103d87a8000a60103d87c8000980618101baa011980718101baa011980698101baa30233020375402301840091330093758601e60406ea8060c01ccc088c8c8c8c8c02ccc098c09c010cc098c09c00ccc098c09c008cc098c09c004cc09930103d87c80003028302800130270013026001302500130203754604660406ea8044c090c080dd5008c528203c8a50407914a080f2294101e4566002602a015159800998009bae300c30203754604660406ea80440622b300133005375a601860406ea8c034c080dd5181198101baa0110188acc004cdd7980818101baa30233020375402298103d87980008acc006600298103d8798000a60103d87d8000980618101baa011980718101baa011980698101baa30233020375402301840091330093758601e60406ea8060c01ccc088c8c8c8c8c02ccc098c09c010cc098c09c00ccc098c09c008cc098c09c004cc09930103d87d80003028302800130270013026001302500130203754604660406ea8044c090c080dd5008c528203c8a50407914a080f2294101e456600266ebcc040c080dd5181198101baa0114c0103d87b8000899802180698101baa30233020375402203114a080f101e203c4078444444646644b3001301d0028992cc004c07800626601600c00b1598009810800c5660026601c6eb4c050c0a0dd5003002c56600266e20dd6980a18141baa008375a605660506ea8022294629410264528204c8acc004c0740062b30013300e375a602860506ea8018016266e24dd6981598141baa008375a602860506ea80222941026456600266e1d20080018998069bad30143028375400c00b00240988131026204c30263754605460560071598009810001456600266e1d2006302637546054605600713300b005004800a04a800a04a409460486ea8c0a00045281981300319813002a5eb8088cc020dd618119812181218121812181218121812181218101baa0010022259800998021bad300a301e3754004003133003375a601a603c6ea8008006294101c112cc004cc010dd69810980f1baa0020018998019bad300a301e375400400314a080e088c966002602c60386ea8006266e2000cdd69810180e9baa0018a50406c603e60386ea8c07cc070dd51803980e1baa001223259800980b180e1baa001899b89375a6040603a6ea800400e294101b180f980e1baa3008301c3754600e60386ea8004809914a08068c040010c040c04401116401c300800130033754011149a26cac80081",
+      "hash": "0350db74d938af79fef5eeadd7e27a255e399521e82f187da150ab4f"
+    },
+    {
+      "title": "simple_voting.simple_voting.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "compiledCode": "5908a501010029800aba2aba1aba0aab9faab9eaab9dab9a488888896600264653001300800198041804800cdc3a400530080024888966002600460106ea800e3300130093754007370e90004dc3a40093008375400891111991192cc004c018012264646644b30013018003802c59015192cc004c04c0062b30013371290021809000c5a260186024002808a2c80a0dd5180a8009bae30150023015001301037540171598009804802456600260206ea802e0031640451598009802802456600260206ea802e00316404515980099b87480180122b3001301037540170018b20228b201c4038807100e0acc004c014c038dd5000c660026024601e6ea8006460266028602860286028003230133014301400191809980a180a180a000c8c04cc050c050c050c050c0500064602660280029111112cc0056600330019800980c180a9baa0069801980a9baa0069802980a9baa0069b8f4890048888c96600330013002375c603a60346ea8016942945018456600330013002375c600c60346ea8016942945018456600330013002375c601260346ea8016942945018456600266e212000375a603a603c603c603c603c603c603c60346ea80162b30013371090001bad301d301a3754600e60346ea80162b3001337106eb4c074c068dd51803980d1baa005375a600c60346ea8c01cc068dd5002c56600266e24dd69803180d1baa3007301a375400a6eb4c024c068dd51803980d1baa0058acc004cdc49bad3008301a37540080031337120026eb4c024c068dd5002452820308a50406114a080c22941018452820308a50406114a080c2294101819b81375a600a60326ea8c018c064dd50021bad301c30193754600c60326ea80114a14a2809a2946330013375e6004602a6ea801802294294501320268a508cc0048c064c068c068c068c068c068c068c06800660286ea804244646600200200644b30010018a508acc004c966002601e60326ea8006266ebcc074c068dd500080245282030300830193754603800314a3133002002301d001405c80d244646600200200644b30010018a508acc004cdc79bae301c0010038a51899801001180e800a02e4069374a9000244444664466446644b3001301600a89919912cc004cc018c040c08cdd5181318119baa01401b8acc00566002660166eb0c048c08cdd500a0014566002603860446ea8c098c08cdd5180998119baa01489980200100dc528a0428a504085159800a518acc0066002602660466ea8c098c08cdd500a530103d8798000800cc044c08cdd500a4c040c08cdd5181318119baa01480da00a8998061bac3012302337540366460166604c604e0026604c0046050605000260466ea80522941021452820428a50408514a08108dd7181200099912cc004c070c088dd518131813801c4c028cc094dd418009bad3026302337540046604a604c604e60466ea8008cc094dd418009bad3012302337540046604a6ea0c004dd6980898119baa0024bd7044c028cc094c098c08cdd5001198129ba83001375a601e60466ea8008cc094dd418009bad3012302337540046604a6ea0c004dd6980898119baa0024bd702042300d302137540246e01200230203754037159800980c805456600266008601a60406ea8c08cc080dd500880c456600266ebcc040c080dd5181198101baa0114c0103d87a80008acc004c8c966002603000314a11337126eb4c038c088dd5180818111baa0133370666e08dd6981298111baa00248282700400502019b80375a604860426ea8004dd6980698109baa001300c30203754023159800cc005300103d87a8000a60103d87c8000980618101baa011980718101baa011980698101baa30233020375402301840091330093758601e60406ea8060c01ccc088c8c8c8c8c02ccc098c09c010cc098c09c00ccc098c09c008cc098c09c004cc09930103d87c80003028302800130270013026001302500130203754604660406ea8044c090c080dd5008c528203c8a50407914a080f2294101e4566002602a015159800998009bae300c30203754604660406ea80440622b300133005375a601860406ea8c034c080dd5181198101baa0110188acc004cdd7980818101baa30233020375402298103d87980008acc006600298103d8798000a60103d87d8000980618101baa011980718101baa011980698101baa30233020375402301840091330093758601e60406ea8060c01ccc088c8c8c8c8c02ccc098c09c010cc098c09c00ccc098c09c008cc098c09c004cc09930103d87d80003028302800130270013026001302500130203754604660406ea8044c090c080dd5008c528203c8a50407914a080f2294101e456600266ebcc040c080dd5181198101baa0114c0103d87b8000899802180698101baa30233020375402203114a080f101e203c4078444444646644b3001301d0028992cc004c07800626601600c00b1598009810800c5660026601c6eb4c050c0a0dd5003002c56600266e20dd6980a18141baa008375a605660506ea8022294629410264528204c8acc004c0740062b30013300e375a602860506ea8018016266e24dd6981598141baa008375a602860506ea80222941026456600266e1d20080018998069bad30143028375400c00b00240988131026204c30263754605460560071598009810001456600266e1d2006302637546054605600713300b005004800a04a800a04a409460486ea8c0a00045281981300319813002a5eb8088cc020dd618119812181218121812181218121812181218101baa0010022259800998021bad300a301e3754004003133003375a601a603c6ea8008006294101c112cc004cc010dd69810980f1baa0020018998019bad300a301e375400400314a080e088c966002602c60386ea8006266e2000cdd69810180e9baa0018a50406c603e60386ea8c07cc070dd51803980e1baa001223259800980b180e1baa001899b89375a6040603a6ea800400e294101b180f980e1baa3008301c3754600e60386ea8004809914a08068c040010c040c04401116401c300800130033754011149a26cac80081",
+      "hash": "0350db74d938af79fef5eeadd7e27a255e399521e82f187da150ab4f"
+    }
+  ],
+  "definitions": {
+    "Bool": {
+      "title": "Bool",
+      "anyOf": [
+        {
+          "title": "False",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "True",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "List$ByteArray": {
+      "dataType": "list",
+      "items": {
+        "$ref": "#/definitions/ByteArray"
+      }
+    },
+    "Option$ByteArray": {
+      "title": "Option",
+      "anyOf": [
+        {
+          "title": "Some",
+          "description": "An optional value.",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        },
+        {
+          "title": "None",
+          "description": "Nothing.",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "cardano/transaction/OutputReference": {
+      "title": "OutputReference",
+      "description": "An `OutputReference` is a unique reference to an output on-chain. The `output_index`\n corresponds to the position in the output list of the transaction (identified by its id)\n that produced that output",
+      "anyOf": [
+        {
+          "title": "OutputReference",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "transaction_id",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "output_index",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "simple_voting/SimpleProposalDatum": {
+      "title": "SimpleProposalDatum",
+      "description": "📋 PROPOSAL DATUM: Complete state of a voting proposal",
+      "anyOf": [
+        {
+          "title": "SimpleProposalDatum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "proposal",
+              "description": "Core proposal information",
+              "$ref": "#/definitions/types~1common~1Proposal"
+            },
+            {
+              "title": "vote_count",
+              "description": "Current vote tallies",
+              "$ref": "#/definitions/types~1common~1VoteCount"
+            },
+            {
+              "title": "authorized_voters",
+              "description": "List of authorized voter public key hashes",
+              "$ref": "#/definitions/List$ByteArray"
+            },
+            {
+              "title": "config",
+              "description": "Voting configuration parameters",
+              "$ref": "#/definitions/types~1common~1VotingConfig"
+            },
+            {
+              "title": "security_context",
+              "description": "Security validation context",
+              "$ref": "#/definitions/types~1common~1SecurityContext"
+            },
+            {
+              "title": "output_tag",
+              "description": "Unique tag for preventing double satisfaction (tagged output pattern)",
+              "$ref": "#/definitions/cardano~1transaction~1OutputReference"
+            }
+          ]
+        }
+      ]
+    },
+    "simple_voting/SimpleVoteAction": {
+      "title": "SimpleVoteAction",
+      "description": "⚡ VOTING ACTIONS: All possible operations on a proposal",
+      "anyOf": [
+        {
+          "title": "Vote",
+          "description": "Cast a vote (equal weight for all authorized voters)",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "voter_id",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "in_favor",
+              "$ref": "#/definitions/Bool"
+            }
+          ]
+        },
+        {
+          "title": "Execute",
+          "description": "Execute proposal after voting period ends (if passed)",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        },
+        {
+          "title": "Cancel",
+          "description": "Cancel proposal (only by proposer, before voting ends)",
+          "dataType": "constructor",
+          "index": 2,
+          "fields": []
+        },
+        {
+          "title": "Close",
+          "description": "Close failed proposal (cleanup after voting period)",
+          "dataType": "constructor",
+          "index": 3,
+          "fields": []
+        }
+      ]
+    },
+    "types/common/Proposal": {
+      "title": "Proposal",
+      "description": "Standard proposal structure",
+      "anyOf": [
+        {
+          "title": "Proposal",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "proposal_id",
+              "description": "Unique identifier for the proposal",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "proposer",
+              "description": "Address of who created the proposal",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "title_hash",
+              "description": "Title/description hash",
+              "$ref": "#/definitions/ByteArray"
+            },
+            {
+              "title": "description_hash",
+              "description": "Detailed description hash (IPFS/Arweave)",
+              "$ref": "#/definitions/Option$ByteArray"
+            },
+            {
+              "title": "state",
+              "description": "Current state of the proposal",
+              "$ref": "#/definitions/types~1common~1VotingState"
+            },
+            {
+              "title": "period",
+              "description": "Voting time constraints",
+              "$ref": "#/definitions/types~1common~1VotingPeriod"
+            },
+            {
+              "title": "nonce",
+              "description": "Nonce for uniqueness (tagged output pattern)",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "types/common/SecurityContext": {
+      "title": "SecurityContext",
+      "description": "Security context for vote validation",
+      "anyOf": [
+        {
+          "title": "SecurityContext",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "require_signatures",
+              "description": "Whether to enforce signature verification",
+              "$ref": "#/definitions/Bool"
+            },
+            {
+              "title": "require_token_ownership",
+              "description": "Whether to validate token ownership",
+              "$ref": "#/definitions/Bool"
+            },
+            {
+              "title": "validate_delegation",
+              "description": "Whether to check delegation authorization",
+              "$ref": "#/definitions/Bool"
+            },
+            {
+              "title": "check_nonce",
+              "description": "Anti-replay nonce checking",
+              "$ref": "#/definitions/Bool"
+            }
+          ]
+        }
+      ]
+    },
+    "types/common/VoteCount": {
+      "title": "VoteCount",
+      "description": "Aggregated voting results",
+      "anyOf": [
+        {
+          "title": "VoteCount",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "votes_for",
+              "description": "Total votes in favor",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "votes_against",
+              "description": "Total votes against",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "total_voters",
+              "description": "Total unique voters participated",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "total_power",
+              "description": "Total voting power used",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "types/common/VotingConfig": {
+      "title": "VotingConfig",
+      "description": "Configuration parameters for voting contracts",
+      "anyOf": [
+        {
+          "title": "VotingConfig",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "quorum_threshold",
+              "description": "Minimum participation required (percentage * 100, e.g., 5000 = 50%)",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "approval_threshold",
+              "description": "Minimum votes required to pass (percentage * 100, e.g., 5100 = 51%)",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "max_voting_duration",
+              "description": "Maximum voting period duration in seconds",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "min_voting_duration",
+              "description": "Minimum voting period duration in seconds",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "types/common/VotingPeriod": {
+      "title": "VotingPeriod",
+      "description": "Time constraints for voting operations",
+      "anyOf": [
+        {
+          "title": "VotingPeriod",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "voting_start",
+              "description": "Start time for voting (POSIX timestamp)",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "voting_end",
+              "description": "End time for voting (POSIX timestamp)",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "execution_deadline",
+              "description": "Deadline for proposal execution",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "types/common/VotingState": {
+      "title": "VotingState",
+      "description": "Represents different states in the voting lifecycle",
+      "anyOf": [
+        {
+          "title": "Active",
+          "description": "Proposal is open for voting",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "Passed",
+          "description": "Voting period ended, proposal passed",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        },
+        {
+          "title": "Failed",
+          "description": "Voting period ended, proposal failed",
+          "dataType": "constructor",
+          "index": 2,
+          "fields": []
+        },
+        {
+          "title": "Executed",
+          "description": "Proposal was executed successfully",
+          "dataType": "constructor",
+          "index": 3,
+          "fields": []
+        },
+        {
+          "title": "Cancelled",
+          "description": "Proposal was cancelled before completion",
+          "dataType": "constructor",
+          "index": 4,
+          "fields": []
+        }
+      ]
+    }
+  }
+}
