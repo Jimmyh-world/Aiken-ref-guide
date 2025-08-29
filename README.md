@@ -34,13 +34,14 @@ Welcome to the AI-optimized knowledge base for the Aiken smart contract language
 
 ### **📊 Branch Overview**
 
-| Branch | Purpose | Security Level | Deployment Safety |
-|--------|---------|----------------|-------------------|
-| **`main`** | 🚀 **Production Examples** | ✅ **Audited** | **Safe for mainnet** (with review) |
-| **`development`** | 🔧 **Work in Progress** | ⚠️ **Functional** | **Development only** |
-| **`educational`** | 📚 **Learning Content** | ❌ **Educational** | **Never deploy** |
+| Branch            | Purpose                    | Security Level     | Deployment Safety                  |
+| ----------------- | -------------------------- | ------------------ | ---------------------------------- |
+| **`main`**        | 🚀 **Production Examples** | ✅ **Audited**     | **Safe for mainnet** (with review) |
+| **`development`** | 🔧 **Work in Progress**    | ⚠️ **Functional**  | **Development only**               |
+| **`educational`** | 📚 **Learning Content**    | ❌ **Educational** | **Never deploy**                   |
 
 ### **🎯 Quick Navigation**
+
 - **Production Ready**: Use `main` branch for production deployments
 - **Latest Features**: Check `development` branch for cutting-edge patterns
 - **Security Learning**: Explore `educational` branch for vulnerability education
@@ -105,7 +106,7 @@ gh run view --log  # View detailed logs for troubleshooting
 │   └── escrow-contract/       # ✅ Enterprise-grade escrow
 └── docs/                      # Production documentation
 
-🔧 development (Active Innovation)  
+🔧 development (Active Innovation)
 ├── examples/
 │   ├── nft-one-shot/          # 🔄 Advanced NFT features in progress
 │   └── new-patterns/          # 🆕 Emerging Cardano integrations
