@@ -27,6 +27,7 @@ This tutorial demonstrates **security vulnerabilities in smart contracts** throu
 ### **Module 1: Understanding the Vulnerabilities**
 
 **Current Implementation Analysis:**
+
 ```aiken
 // 🚨 VULNERABILITY: Placeholder admin validation
 fn validate_admin_signature(_admin_pkh: ByteArray, _context: Transaction) -> Bool {
@@ -35,6 +36,7 @@ fn validate_admin_signature(_admin_pkh: ByteArray, _context: Transaction) -> Boo
 ```
 
 **What's Wrong:**
+
 - **Placeholder Security**: Function always returns `True`
 - **No Signature Checking**: Admin signature never validated
 - **Unlimited Minting**: Any user can mint unlimited tokens
@@ -43,6 +45,7 @@ fn validate_admin_signature(_admin_pkh: ByteArray, _context: Transaction) -> Boo
 ### **Module 2: Real-World Impact**
 
 **If This Were Deployed:**
+
 1. **Attacker Action**: Call mint function with large amount
 2. **Validation Result**: `validate_admin_signature()` returns `True`
 3. **Outcome**: Unlimited tokens minted, destroying token value
@@ -51,6 +54,7 @@ fn validate_admin_signature(_admin_pkh: ByteArray, _context: Transaction) -> Boo
 ### **Module 3: Step-by-Step Security Fixes**
 
 **Security Fix #1: Real Signature Validation**
+
 ```aiken
 // ✅ SECURE: Real admin signature validation
 fn validate_admin_signature(admin_pkh: ByteArray, context: Transaction) -> Bool {
@@ -59,6 +63,7 @@ fn validate_admin_signature(admin_pkh: ByteArray, context: Transaction) -> Bool 
 ```
 
 **Security Fix #2: Transaction Context Validation**
+
 ```aiken
 // ✅ SECURE: Validate mint amounts and transaction structure
 fn validate_mint_operation(amount: Int, context: Transaction) -> Bool {
@@ -70,6 +75,7 @@ fn validate_mint_operation(amount: Int, context: Transaction) -> Bool {
 ```
 
 **Security Fix #3: Comprehensive Testing**
+
 ```aiken
 // ✅ SECURE: Test negative scenarios
 test fail_mint_without_admin_signature() {
@@ -83,12 +89,14 @@ test fail_mint_without_admin_signature() {
 ### **Red Flags to Watch For:**
 
 1. **Functions that always return `True`**
+
    ```aiken
    // 🚨 RED FLAG
    fn some_validation() -> Bool { True }
    ```
 
 2. **Missing signature verification**
+
    ```aiken
    // 🚨 RED FLAG - No signature checking
    fn check_permission(user: ByteArray) -> Bool { True }
@@ -114,26 +122,32 @@ Before deploying ANY smart contract:
 ## 🛠️ Interactive Learning Exercises
 
 ### **Exercise 1: Identify All Vulnerabilities**
+
 Review [`validators/fungible_token.ak`](validators/fungible_token.ak) and list every security issue you find.
 
 ### **Exercise 2: Fix the Validator**
+
 Create a secure version by implementing real signature validation and proper input checking.
 
 ### **Exercise 3: Write Security Tests**
+
 Create comprehensive tests that verify the fixed validator properly rejects unauthorized operations.
 
 ## 📖 Related Security Resources
 
 ### **Production Examples (Main Branch)**
+
 - [`hello-world/`](../../hello-world/) - Secure validator with real signature verification
 - [`escrow-contract/`](../../escrow-contract/) - Enterprise-grade multi-party contract
 
 ### **Security Documentation**
+
 - [Security Status Report](../../../SECURITY_STATUS.md) - Comprehensive security analysis
 - [Security Anti-Patterns](../../../docs/security/anti-patterns.md) - Common mistakes to avoid
 - [Audit Checklist](../../../docs/security/audit-checklist.md) - Pre-deployment validation
 
 ### **Development Examples (Development Branch)**
+
 - [`nft-one-shot/`](../../nft-one-shot/) - Functional security with development roadmap
 
 ## 🎓 Learning Outcomes
@@ -152,7 +166,7 @@ After completing this tutorial, you should understand:
 
 - ✅ Use production examples from the main branch for real development
 - ✅ Implement comprehensive security validation
-- ✅ Test extensively including failure scenarios  
+- ✅ Test extensively including failure scenarios
 - ✅ Get professional security audits before mainnet deployment
 
 ---
