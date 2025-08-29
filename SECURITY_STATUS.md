@@ -6,11 +6,11 @@ last_updated: '2024-12-30'
 audit_version: 'v2.0'
 ---
 
-# 🔒 Security Status Report
+## 🔒 Security Status Report
 
 > **Comprehensive security audit status and threat/control mapping for all examples in the Aiken Developer's Reference Guide**
 
-[![Security Audit](https://img.shields.io/badge/Security-Audited-green.svg)](#audit-methodology) [![Threat Analysis](https://img.shields.io/badge/Threat%20Analysis-Complete-blue.svg)](#threat-model) [![Last Updated](https://img.shields.io/badge/Updated-Dec%202024-brightgreen.svg)](#)
+[![Security Audit](https://img.shields.io/badge/Security-Audited-green.svg)](#-audit-methodology) [![Threat Analysis](https://img.shields.io/badge/Threat%20Analysis-Complete-blue.svg)](#-comprehensive-threat-model) [![Last Updated](https://img.shields.io/badge/Updated-Dec%202024-brightgreen.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide)
 
 ## 🎯 **Executive Summary**
 

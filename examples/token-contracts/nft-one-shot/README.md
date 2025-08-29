@@ -7,7 +7,7 @@ estimated_time: '10 minutes'
 security_status: 'functional'
 ---
 
-# 🎨 One-Shot NFT Policy
+## 🎨 One-Shot NFT Policy
 
 > **Production-ready NFT minting policy guaranteeing true uniqueness through UTxO consumption**
 

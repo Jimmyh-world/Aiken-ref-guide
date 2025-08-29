@@ -8,7 +8,7 @@ prerequisites: ['Rust toolchain', 'Git', 'Basic terminal knowledge']
 version_compatibility: 'v1.1.15+'
 ---
 
-# Quick Start Guide - Aiken in 5 Minutes
+## Quick Start Guide - Aiken in 5 Minutes
 
 ## 🚀 **Get Started with Aiken Smart Contracts**
 

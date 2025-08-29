@@ -7,7 +7,7 @@ estimated_time: '15 minutes'
 security_status: 'audited'
 ---
 
-# 🔒 Production-Ready Escrow Contract
+## 🔒 Production-Ready Escrow Contract
 
 > **Secure multi-party escrow with signature validation, time controls, and comprehensive security measures**
 
@@ -34,6 +34,7 @@ cd offchain && node mesh-escrow.js
 This escrow contract enables **secure, trustless transactions** between two parties with the following features:
 
 ### **Core Functionality**
+
 - 🔐 **Multi-Signature**: Requires buyer signature for completion
 - ⏰ **Time Controls**: Deadline-based transaction windows
 - 💰 **Payment Validation**: Ensures seller receives correct amount
@@ -41,6 +42,7 @@ This escrow contract enables **secure, trustless transactions** between two part
 - 🔄 **State Management**: Complete escrow lifecycle tracking
 
 ### **Security Features**
+
 - ✅ **Signature Verification**: Real cryptographic validation
 - ✅ **Payment Verification**: On-chain output validation
 - ✅ **Time Validation**: Deadline enforcement with interval bounds
@@ -50,6 +52,7 @@ This escrow contract enables **secure, trustless transactions** between two part
 ## 🏗️ **Architecture Overview**
 
 ### **Contract Structure**
+
 ```
 escrow-contract/
 ├── validators/escrow.ak           # Main validator logic
@@ -64,6 +67,7 @@ escrow-contract/
 ```
 
 ### **Data Types**
+
 ```aiken
 // Escrow state management
 pub type EscrowState {
@@ -95,31 +99,33 @@ pub type EscrowAction {
 
 ## ✅ ALL 11 TESTS PASSING
 
-| Test | Memory | CPU | Description |
-|------|--------|-----|-------------|
-| `successful_completion` | 20.41 K | 7.21 M | Valid escrow completion |
-| `prevent_self_dealing` | 15.19 K | 5.09 M | Blocks buyer == seller |
-| `prevent_zero_amount` | 6.48 K | 1.94 M | Rejects zero value escrows |
-| `prevent_negative_deadline` | 17.92 K | 6.13 M | Validates positive deadlines |
-| `prevent_zero_nonce` | 20.41 K | 7.21 M | Requires valid nonce |
-| `valid_state_transitions` | 69.47 K | 20.11 M | State machine validation |
-| `final_state_detection` | 12.00 K | 3.24 M | End state recognition |
-| `create_valid_datum` | 23.67 K | 10.26 M | Datum creation validation |
-| `validate_parameters` | 3.20 K | 800.29 K | Parameter validation |
-| `validate_parameters_fails_for_invalid` | 22.13 K | 5.42 M | Invalid parameter rejection |
-| `minimum_amount_validation` | 17.52 K | 4.25 M | Minimum value checks |
+| Test                                    | Memory  | CPU      | Description                  |
+| --------------------------------------- | ------- | -------- | ---------------------------- |
+| `successful_completion`                 | 20.41 K | 7.21 M   | Valid escrow completion      |
+| `prevent_self_dealing`                  | 15.19 K | 5.09 M   | Blocks buyer == seller       |
+| `prevent_zero_amount`                   | 6.48 K  | 1.94 M   | Rejects zero value escrows   |
+| `prevent_negative_deadline`             | 17.92 K | 6.13 M   | Validates positive deadlines |
+| `prevent_zero_nonce`                    | 20.41 K | 7.21 M   | Requires valid nonce         |
+| `valid_state_transitions`               | 69.47 K | 20.11 M  | State machine validation     |
+| `final_state_detection`                 | 12.00 K | 3.24 M   | End state recognition        |
+| `create_valid_datum`                    | 23.67 K | 10.26 M  | Datum creation validation    |
+| `validate_parameters`                   | 3.20 K  | 800.29 K | Parameter validation         |
+| `validate_parameters_fails_for_invalid` | 22.13 K | 5.42 M   | Invalid parameter rejection  |
+| `minimum_amount_validation`             | 17.52 K | 4.25 M   | Minimum value checks         |
 
 **Total Test Coverage**: 11 scenarios covering all critical security paths
 
 ## 📊 **Performance Metrics**
 
 ### **Execution Units**
+
 - **Average Memory**: 18.95 K units
-- **Average CPU**: 6.24 M units  
+- **Average CPU**: 6.24 M units
 - **Peak Usage**: 69.47 K mem, 20.11 M cpu (state transitions)
 - **Minimum Usage**: 3.20 K mem, 800.29 K cpu (basic validation)
 
 ### **Real-World Performance**
+
 - **CI/CD Build Time**: ~15 seconds
 - **Test Execution**: <2 seconds
 - **Contract Size**: Optimized for Cardano limits
@@ -128,17 +134,18 @@ pub type EscrowAction {
 
 ### **Threat Model Coverage**
 
-| Threat | Mitigation | Implementation |
-|--------|------------|----------------|
-| **Unauthorized Completion** | Signature verification | `list.has(self.extra_signatories, buyer)` |
-| **Payment Bypass** | Output validation | `check_seller_payment()` with amount verification |
-| **Time Manipulation** | Deadline enforcement | `IntervalBound` pattern with finite upper bound |
-| **Self-Dealing** | Identity validation | `buyer != seller` check |
-| **Replay Attacks** | Nonce system | Unique `nonce` per escrow |
-| **Zero Value Exploits** | Amount validation | `amount > 0` requirement |
-| **State Corruption** | State machine | Proper `EscrowState` transitions |
+| Threat                      | Mitigation             | Implementation                                    |
+| --------------------------- | ---------------------- | ------------------------------------------------- |
+| **Unauthorized Completion** | Signature verification | `list.has(self.extra_signatories, buyer)`         |
+| **Payment Bypass**          | Output validation      | `check_seller_payment()` with amount verification |
+| **Time Manipulation**       | Deadline enforcement   | `IntervalBound` pattern with finite upper bound   |
+| **Self-Dealing**            | Identity validation    | `buyer != seller` check                           |
+| **Replay Attacks**          | Nonce system           | Unique `nonce` per escrow                         |
+| **Zero Value Exploits**     | Amount validation      | `amount > 0` requirement                          |
+| **State Corruption**        | State machine          | Proper `EscrowState` transitions                  |
 
 ### **Security Audit Status**
+
 - ✅ **Code Review**: Complete
 - ✅ **Automated Testing**: 11 comprehensive tests
 - ✅ **Manual Security Review**: Completed
@@ -148,11 +155,12 @@ pub type EscrowAction {
 ## 🔧 **Usage Examples**
 
 ### **1. Basic Escrow Creation**
+
 ```aiken
 // Create escrow datum
 let escrow_datum = EscrowDatum {
   buyer: #"buyer_public_key_hash",
-  seller: #"seller_public_key_hash", 
+  seller: #"seller_public_key_hash",
   amount: 1000000,  // 1 ADA in Lovelace
   deadline: 1672531200,  // Future timestamp
   nonce: 1,
@@ -161,6 +169,7 @@ let escrow_datum = EscrowDatum {
 ```
 
 ### **2. Complete Escrow Transaction**
+
 ```aiken
 // Buyer completes escrow (requires signature)
 let action = CompleteEscrow
@@ -172,6 +181,7 @@ let action = CompleteEscrow
 ```
 
 ### **3. Cancel Escrow**
+
 ```aiken
 // Buyer cancels before deadline
 let action = CancelEscrow
@@ -181,7 +191,9 @@ let action = CancelEscrow
 ## 🚨 **Common Pitfalls & Solutions**
 
 ### **1. Collateral Setup**
+
 **Problem**: Transaction fails with "collateral required"
+
 ```bash
 # Solution: Set collateral in wallet
 cardano-cli transaction build \
@@ -190,21 +202,27 @@ cardano-cli transaction build \
 ```
 
 ### **2. Time Validation Errors**
+
 **Problem**: "deadline validation failed"
+
 ```javascript
 // Solution: Use future timestamps
 const deadline = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
 ```
 
 ### **3. Signature Validation**
+
 **Problem**: "buyer signature required"
+
 ```javascript
 // Solution: Ensure wallet signs transaction
 await wallet.signTx(tx, true); // true = partial sign OK
 ```
 
 ### **4. Payment Validation**
+
 **Problem**: "seller payment validation failed"
+
 ```javascript
 // Solution: Include correct output to seller
 .payToAddress(sellerAddress, { lovelace: escrowAmount })
@@ -213,11 +231,13 @@ await wallet.signTx(tx, true); // true = partial sign OK
 ## 🔄 **Off-Chain Integration**
 
 ### **Available Scripts**
+
 - **`offchain/mesh-escrow.js`**: Complete Mesh.js integration
 - **`offchain/pycardano-escrow.py`**: Python PyCardano example
 - **`offchain/cardano-cli-escrow.sh`**: Raw cardano-cli commands
 
 ### **Quick Integration**
+
 ```javascript
 // Mesh.js example
 import { MeshWallet, BlockfrostProvider } from '@meshsdk/core';

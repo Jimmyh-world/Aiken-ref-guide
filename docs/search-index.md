@@ -4,7 +4,7 @@ description: 'Optimized search index for AI assistants and LLMs working with Aik
 tags: [ai, search, index, llm, aiken, cardano, smart-contracts]
 ---
 
-# 🤖 AI Search Index
+## 🤖 AI Search Index
 
 > **Optimized navigation for AI assistants and Large Language Models working with Aiken smart contracts**
 

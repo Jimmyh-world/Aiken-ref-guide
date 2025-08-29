@@ -16,7 +16,7 @@ last_updated: 'December 2024'
 status: 'mixed-security'
 ---
 
-# Aiken Developer's Reference Guide for AI Coding Assistants
+## Aiken Developer's Reference Guide for AI Coding Assistants
 
 [![CI Core](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Core/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![CI Examples](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Examples/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Docs](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Docs/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
