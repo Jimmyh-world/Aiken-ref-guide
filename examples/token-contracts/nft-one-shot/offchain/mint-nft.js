@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * NFT One-Shot Policy Integration with Mesh.js
- * 
+ *
  * Complete example showing how to mint and burn NFTs using the Aiken one-shot
  * policy with Mesh.js for transaction building and wallet integration.
- * 
+ *
  * Prerequisites:
  * - npm install @meshsdk/core @meshsdk/wallet
  * - Cardano wallet (Nami, Eternl, etc.)
@@ -49,8 +49,8 @@ class NftOneShot {
   loadNftScript() {
     // This would load from ../plutus.json in real implementation
     return {
-      code: "590a4d590a4a0100003...", // Compiled plutus script
-      version: "V2"
+      code: '590a4d590a4a0100003...', // Compiled plutus script
+      version: 'V2',
     };
   }
 
@@ -62,11 +62,11 @@ class NftOneShot {
     switch (action) {
       case 'mint':
         return Data.to({
-          Mint: { token_name: tokenName }
+          Mint: { token_name: tokenName },
         });
       case 'burn':
         return Data.to({
-          Burn: { token_name: tokenName }
+          Burn: { token_name: tokenName },
         });
       default:
         throw new Error(`Unknown NFT action: ${action}`);
@@ -102,12 +102,13 @@ class NftOneShot {
     try {
       const address = await this.wallet.getChangeAddress();
       const utxos = await this.wallet.getUtxos();
-      
+
       // Select the first UTxO with enough ADA for fees
-      const suitableUtxo = utxos.find(utxo => {
-        const lovelace = parseInt(utxo.output.amount.find(
-          asset => asset.unit === 'lovelace'
-        )?.quantity || '0');
+      const suitableUtxo = utxos.find((utxo) => {
+        const lovelace = parseInt(
+          utxo.output.amount.find((asset) => asset.unit === 'lovelace')
+            ?.quantity || '0'
+        );
         return lovelace >= 2_000_000; // 2 ADA minimum
       });
 
@@ -115,9 +116,10 @@ class NftOneShot {
         throw new Error('No suitable UTxO found for one-shot minting');
       }
 
-      console.log(`🎯 Selected UTxO for uniqueness: ${suitableUtxo.input.txHash}#${suitableUtxo.input.outputIndex}`);
+      console.log(
+        `🎯 Selected UTxO for uniqueness: ${suitableUtxo.input.txHash}#${suitableUtxo.input.outputIndex}`
+      );
       return suitableUtxo;
-
     } catch (error) {
       console.error('❌ Failed to find unique UTxO:', error);
       throw error;
@@ -136,12 +138,12 @@ class NftOneShot {
       const uniqueUtxo = await this.findUniqueUtxo();
       const utxoRef = {
         txHash: uniqueUtxo.input.txHash,
-        outputIndex: uniqueUtxo.input.outputIndex
+        outputIndex: uniqueUtxo.input.outputIndex,
       };
 
       // Step 2: Get policy ID for this specific UTxO
       const policyId = this.getPolicyId(utxoRef);
-      
+
       // Step 3: Create mint redeemer
       const mintRedeemer = this.createNftRedeemer('mint', tokenName);
 
@@ -161,7 +163,7 @@ class NftOneShot {
       // Add NFT minting
       const asset = {
         unit: policyId + Buffer.from(tokenName).toString('hex'),
-        quantity: '1'
+        quantity: '1',
       };
 
       tx.mintAsset(forgeScript, asset);
@@ -170,8 +172,8 @@ class NftOneShot {
       if (metadata) {
         tx.setMetadata(721, {
           [policyId]: {
-            [tokenName]: metadata
-          }
+            [tokenName]: metadata,
+          },
         });
       }
 
@@ -191,9 +193,8 @@ class NftOneShot {
         policyId,
         tokenName,
         assetId: asset.unit,
-        uniqueUtxo: utxoRef
+        uniqueUtxo: utxoRef,
       };
-
     } catch (error) {
       console.error('❌ Failed to mint NFT:', error);
       throw error;
@@ -220,7 +221,7 @@ class NftOneShot {
       // Add NFT burning (negative quantity)
       const asset = {
         unit: policyId + Buffer.from(tokenName).toString('hex'),
-        quantity: '-1'
+        quantity: '-1',
       };
 
       tx.burnAsset(forgeScript, asset, burnRedeemer);
@@ -235,7 +236,6 @@ class NftOneShot {
       console.log(`   Asset burned: ${asset.unit}`);
 
       return { txHash, assetId: asset.unit };
-
     } catch (error) {
       console.error('❌ Failed to burn NFT:', error);
       throw error;
@@ -263,7 +263,7 @@ class NftOneShot {
               policyId,
               tokenName,
               assetId: asset.unit,
-              utxo: utxo.input
+              utxo: utxo.input,
             });
           }
         }
@@ -275,7 +275,6 @@ class NftOneShot {
       });
 
       return nfts;
-
     } catch (error) {
       console.error('❌ Failed to list NFTs:', error);
       throw error;
@@ -300,7 +299,6 @@ class NftOneShot {
         console.log('✅ UTxO consumed - NFT uniqueness guaranteed');
         return true;
       }
-
     } catch (error) {
       // Error usually means UTxO doesn't exist (consumed)
       console.log('✅ UTxO consumed - NFT uniqueness guaranteed');
@@ -330,16 +328,16 @@ async function exampleUsage() {
     // Example 1: Mint unique NFT
     console.log('🎨 Step 1: Minting unique NFT...');
     const metadata = {
-      name: "My Unique NFT #001",
-      description: "A truly unique NFT created with Aiken one-shot policy",
-      image: "ipfs://QmYourImageHash",
+      name: 'My Unique NFT #001',
+      description: 'A truly unique NFT created with Aiken one-shot policy',
+      image: 'ipfs://QmYourImageHash',
       attributes: [
-        { trait_type: "Rarity", value: "Legendary" },
-        { trait_type: "Color", value: "Gold" }
-      ]
+        { trait_type: 'Rarity', value: 'Legendary' },
+        { trait_type: 'Color', value: 'Gold' },
+      ],
     };
 
-    const mintResult = await nft.mintNft("MyCollection001", metadata);
+    const mintResult = await nft.mintNft('MyCollection001', metadata);
 
     // Example 2: Verify uniqueness
     console.log('\n🔍 Step 2: Verifying NFT uniqueness...');
@@ -358,7 +356,6 @@ async function exampleUsage() {
     }
 
     console.log('\n🎉 NFT example completed successfully!');
-
   } catch (error) {
     console.error('\n💥 Example failed:', error);
   }
@@ -370,7 +367,7 @@ async function exampleUsage() {
  */
 if (import.meta.url === new URL(process.argv[1], 'file:').href) {
   const command = process.argv[2];
-  
+
   switch (command) {
     case 'example':
       exampleUsage();
