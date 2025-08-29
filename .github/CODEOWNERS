@@ -1,0 +1,39 @@
+# CODEOWNERS file for the Aiken Developer's Reference Guide
+# 
+# This file defines code ownership for automatic review assignment
+# When a pull request is opened, GitHub will automatically request 
+# reviews from the appropriate code owners.
+#
+# Format: path/pattern @username @team
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global ownership - James Q Barclay owns everything by default
+* @Jimmyh-world
+
+# Critical security files require extra review
+SECURITY_STATUS.md @Jimmyh-world
+LICENSE @Jimmyh-world
+.github/ISSUE_TEMPLATE/security_issue.md @Jimmyh-world
+
+# Core documentation - requires careful review for accuracy
+docs/security/ @Jimmyh-world
+docs/patterns/ @Jimmyh-world
+docs/language/validators.md @Jimmyh-world
+
+# Examples require security-focused review
+examples/*/validators/ @Jimmyh-world
+examples/*/lib/ @Jimmyh-world
+
+# CI/CD changes need infrastructure review  
+.github/workflows/ @Jimmyh-world
+scripts/ @Jimmyh-world
+
+# Repository structure and governance
+README.md @Jimmyh-world
+CONTRIBUTING.md @Jimmyh-world
+NAVIGATION.md @Jimmyh-world
+QUICK_START.md @Jimmyh-world
+
+# AI optimization files
+docs/search-index.md @Jimmyh-world
+.cursor/ @Jimmyh-world
