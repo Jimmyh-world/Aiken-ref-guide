@@ -11,7 +11,7 @@ security_status: 'audited'
 
 > **Secure multi-party escrow with signature validation, time controls, and comprehensive security measures**
 
-[![Security Status](https://img.shields.io/badge/Security-Audited-green.svg)](../../SECURITY_STATUS.md) [![Tests](https://img.shields.io/badge/Tests-11%20Passing-brightgreen.svg)](#test-results) [![Performance](https://img.shields.io/badge/Performance-Optimized-blue.svg)](#performance-metrics)
+[![Security Status](https://img.shields.io/badge/Security-Audited-green.svg)](../../SECURITY_STATUS.md) [![Tests](https://img.shields.io/badge/Tests-11%20Passing-brightgreen.svg)](#-test-results) [![Performance](https://img.shields.io/badge/Performance-Optimized-blue.svg)](#-performance-metrics)
 
 ## 🚀 **60-Second Quickstart**
 
@@ -93,7 +93,7 @@ pub type EscrowAction {
 
 ## 🧪 **Test Results**
 
-**✅ ALL 11 TESTS PASSING**
+## ✅ ALL 11 TESTS PASSING
 
 | Test | Memory | CPU | Description |
 |------|--------|-----|-------------|

@@ -11,7 +11,7 @@ security_status: 'functional'
 
 > **Production-ready NFT minting policy guaranteeing true uniqueness through UTxO consumption**
 
-[![Security Status](https://img.shields.io/badge/Security-Functional-yellow.svg)](../../../SECURITY_STATUS.md) [![Tests](https://img.shields.io/badge/Tests-9%20Passing-brightgreen.svg)](#test-results) [![Performance](https://img.shields.io/badge/Performance-Optimized-blue.svg)](#performance-metrics)
+[![Security Status](https://img.shields.io/badge/Security-Functional-yellow.svg)](../../../SECURITY_STATUS.md) [![Tests](https://img.shields.io/badge/Tests-9%20Passing-brightgreen.svg)](#-test-results) [![Performance](https://img.shields.io/badge/Performance-Optimized-blue.svg)](#-performance-metrics)
 
 ## 🚀 **60-Second Quickstart**
 
@@ -98,7 +98,7 @@ and {
 
 ## 🧪 **Test Results**
 
-**✅ ALL 9 TESTS PASSING**
+## ✅ ALL 9 TESTS PASSING
 
 | Test                         | Memory  | CPU      | Description                   |
 | ---------------------------- | ------- | -------- | ----------------------------- |
