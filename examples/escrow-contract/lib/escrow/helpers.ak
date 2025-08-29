@@ -67,10 +67,7 @@ pub fn default_config() -> EscrowConfig {
 }
 
 // ✅ SECURE: Validate escrow datum parameters
-pub fn validate_escrow_datum(
-  datum: EscrowDatum,
-  config: EscrowConfig,
-) -> Bool {
+pub fn validate_escrow_datum(datum: EscrowDatum, config: EscrowConfig) -> Bool {
   and {
     datum.amount >= config.min_amount,
     datum.amount <= config.max_amount,

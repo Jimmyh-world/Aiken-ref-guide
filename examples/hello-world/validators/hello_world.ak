@@ -6,7 +6,9 @@
 // Flow: Lock → Spend (with correct redeemer + signature)
 
 use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
-use hello_world/utils.{validate_signature, validate_message, hello_world_message}
+use hello_world/utils.{
+  hello_world_message, validate_message, validate_signature,
+}
 
 // Main validator function
 validator hello_world(_owner_pkh: ByteArray) {
@@ -17,14 +19,14 @@ validator hello_world(_owner_pkh: ByteArray) {
     context: __ScriptContext,
   ) {
     // 1. Validate the redeemer message
-    let valid_message = validate_message(redeemer.message, hello_world_message())
-    
+    let valid_message =
+      validate_message(redeemer.message, hello_world_message())
     // 2. Check that the owner signed this transaction
-    let owner_signed = when datum is {
-      Some(d) -> list.has(context.tx.extra_signatories, d.owner)
-      None -> False
-    }
-    
+    let owner_signed =
+      when datum is {
+        Some(d) -> list.has(context.tx.extra_signatories, d.owner)
+        None -> False
+      }
     // 3. Both conditions must be true
     valid_message && owner_signed
   }

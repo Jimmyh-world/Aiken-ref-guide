@@ -7,12 +7,20 @@ use hello_world/types.{HelloWorldDatum, HelloWorldRedeemer}
 fn list_has(list: List<ByteArray>, item: ByteArray) -> Bool {
   when list is {
     [] -> False
-    [head, ..tail] -> if head == item { True } else { list_has(tail, item) }
+    [head, ..tail] ->
+      if head == item {
+        True
+      } else {
+        list_has(tail, item)
+      }
   }
 }
 
 // Validate that the owner signed this transaction
-pub fn validate_signature(owner: ByteArray, signatories: List<ByteArray>) -> Bool {
+pub fn validate_signature(
+  owner: ByteArray,
+  signatories: List<ByteArray>,
+) -> Bool {
   list_has(signatories, owner)
 }
 

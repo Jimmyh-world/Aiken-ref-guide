@@ -105,7 +105,7 @@ fn is_before(self: Transaction, deadline: Int) -> Bool {
   }
 }
 
-// Helper function to check if transaction is after deadline  
+// Helper function to check if transaction is after deadline
 fn is_after(self: Transaction, deadline: Int) -> Bool {
   when self.validity_range.lower_bound is {
     Finite(lower) -> lower >= deadline
