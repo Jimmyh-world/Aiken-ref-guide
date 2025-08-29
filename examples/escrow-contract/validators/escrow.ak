@@ -2,6 +2,7 @@
 // Implements secure multi-party escrow with signature and payment validation
 
 use aiken/collection/list
+use aiken/interval.{Finite, IntervalBound}
 use cardano/address.{VerificationKey}
 use cardano/assets.{ada_asset_name, ada_policy_id, quantity_of}
 use cardano/transaction.{Output, OutputReference, Transaction}
@@ -40,8 +41,11 @@ validator escrow_contract {
                   escrow_datum.seller,
                   escrow_datum.amount,
                 )
-              // TODO: Time validation needs interval syntax research
-              let before_deadline = True
+              // Real time validation - transaction must complete before deadline
+              let before_deadline = when self.validity_range.upper_bound is {
+                IntervalBound { bound_type: Finite(upper), .. } -> upper <= escrow_datum.deadline
+                _ -> False  // Infinite upper bound not allowed for deadline
+              }
               and {
                 buyer_signed,
                 before_deadline,
@@ -59,8 +63,11 @@ validator escrow_contract {
                   list.has(self.extra_signatories, escrow_datum.buyer),
                   list.has(self.extra_signatories, escrow_datum.seller),
                 }
-              // TODO: Add deadline checking when interval syntax is resolved
-              let deadline_passed = False
+              // Real deadline checking - transaction must be after deadline for timeout
+              let deadline_passed = when self.validity_range.lower_bound is {
+                IntervalBound { bound_type: Finite(lower), .. } -> lower >= escrow_datum.deadline
+                _ -> False  // Infinite lower bound not allowed
+              }
               let cancel_allowed = deadline_passed || mutual_cancel
               and {
                 cancel_allowed,
@@ -71,15 +78,22 @@ validator escrow_contract {
                 escrow_datum.state == Active,
               }
             }
-            RefundEscrow ->
-              // Basic parameter validation for refund
+            RefundEscrow -> {
+              // Refund requires both parties to sign (mutual agreement)
+              let both_parties_signed = and {
+                list.has(self.extra_signatories, escrow_datum.buyer),
+                list.has(self.extra_signatories, escrow_datum.seller),
+              }
+              
               and {
+                both_parties_signed,              // Both must agree to refund
                 escrow_datum.buyer != escrow_datum.seller,
                 escrow_datum.amount > 0,
                 escrow_datum.deadline > 0,
                 escrow_datum.nonce > 0,
                 escrow_datum.state == Active,
               }
+            }
           }
         }
       }
