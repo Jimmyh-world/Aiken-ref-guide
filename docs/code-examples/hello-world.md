@@ -48,10 +48,10 @@ validator hello_world {
       Some(hello_datum) -> {
         // 1. Message validation - must be exact match
         let valid_message = redeemer.message == "Hello, World!"
-        
+
         // 2. Signature validation - owner must sign transaction
         let owner_signed = list.has(self.extra_signatories, hello_datum.owner)
-        
+
         // 3. Security checks - prevent common attacks
         and {
           valid_message,                    // Correct message required
@@ -127,4 +127,3 @@ test spend_fails_with_wrong_message() fail {
 ## References
 
 - [Aiken Language Tour: Hello World](https://aiken-lang.org/example--hello-world/basics)
-

@@ -66,7 +66,7 @@ validator dangerous_token {
   mint(redeemer: Action, _datum: Void, self: Transaction) -> Bool {
     // Placeholder admin check - ANYONE CAN MINT!
     let admin_signed = True  // ❌ CRITICAL SECURITY FLAW
-    
+
     when redeemer is {
       Mint { amount } -> admin_signed && amount > 0
       Burn { amount } -> amount < 0
@@ -109,7 +109,7 @@ validator outdated_nft(utxo_ref: OutputReference) {
   mint(redeemer: Void, context: ScriptContext) -> Bool {  // ❌ Deprecated
     let tx = context.transaction
     let policy_id = context.purpose.policy_id  // ❌ Not available
-    
+
     list.any(tx.inputs, fn(input) {
       input.output_reference == utxo_ref
     })
@@ -125,17 +125,17 @@ validator modern_nft(utxo_ref: OutputReference) {
         let utxo_consumed = list.any(self.inputs, fn(input) {
           input.output_reference == utxo_ref
         })
-        
+
         // Modern quantity validation without policy_id access
         let minted_value = assets.without_lovelace(self.mint)
         let policy_dict = assets.to_dict(minted_value)
         let total_minted = policy_dict
           |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
-              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
-                sum + quantity 
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) {
+                sum + quantity
               })
             })
-        
+
         and {
           utxo_consumed,
           total_minted == 1,
@@ -179,14 +179,14 @@ pub fn admin_signed(signatories: List<ByteArray>, admin_pkh: ByteArray) -> Bool 
 test admin_authorization_success() {
   let valid_signatories = [#"admin_key", #"other_key"]
   let admin_key = #"admin_key"
-  
+
   admin_signed(valid_signatories, admin_key)  // Should pass
 }
 
 test admin_authorization_failure() fail {
   let invalid_signatories = [#"wrong_key", #"other_key"]
   let admin_key = #"admin_key"
-  
+
   admin_signed(invalid_signatories, admin_key)  // Should fail
 }
 ```

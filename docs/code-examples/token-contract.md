@@ -46,8 +46,8 @@ validator one_shot_nft(utxo_ref: OutputReference) {
         let policy_dict = assets.to_dict(minted_value)
         let total_minted = policy_dict
           |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
-              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
-                sum + quantity 
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) {
+                sum + quantity
               })
             })
 
@@ -60,18 +60,18 @@ validator one_shot_nft(utxo_ref: OutputReference) {
           valid_token_name,     // Valid token name
         }
       }
-      
+
       Burn { token_name } -> {
         // SECURITY: Burning is allowed - ledger ensures user owns the tokens
         let minted_value = assets.without_lovelace(self.mint)
         let policy_dict = assets.to_dict(minted_value)
         let total_burned = policy_dict
           |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
-              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
-                sum + quantity 
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) {
+                sum + quantity
               })
             })
-        
+
         and {
           total_burned < 0,     // Must be negative for burning
           token_name != "",     // Valid token name

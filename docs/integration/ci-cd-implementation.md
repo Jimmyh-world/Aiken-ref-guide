@@ -432,18 +432,20 @@ fi
 Based on systematic monitoring using GitHub CLI (`gh run list`, `gh run watch`), here are validated performance metrics:
 
 #### **Workflow Execution Times**
-| Workflow | Duration | Jobs | Success Rate |
-|----------|----------|------|--------------|
-| **CI – Examples** | 25s | 6 parallel jobs | 100% |
-| **CI – Core** | 7s | 1 job | 100% |
-| **Docs** | ~1m | 1 job | 100% |
+
+| Workflow          | Duration | Jobs            | Success Rate |
+| ----------------- | -------- | --------------- | ------------ |
+| **CI – Examples** | 25s      | 6 parallel jobs | 100%         |
+| **CI – Core**     | 7s       | 1 job           | 100%         |
+| **Docs**          | ~1m      | 1 job           | 100%         |
 
 #### **Example Validation Performance**
-| Example | Aiken 1.1.15 | Aiken 1.1.19 | Test Coverage |
-|---------|--------------|--------------|---------------|
-| **hello-world** | 14s | 14s | 16 tests |
-| **nft-one-shot** | 9s | 9s | 9 tests |
-| **escrow-contract** | 9s | 14s | 11 tests |
+
+| Example             | Aiken 1.1.15 | Aiken 1.1.19 | Test Coverage |
+| ------------------- | ------------ | ------------ | ------------- |
+| **hello-world**     | 14s          | 14s          | 16 tests      |
+| **nft-one-shot**    | 9s           | 9s           | 9 tests       |
+| **escrow-contract** | 9s           | 14s          | 11 tests      |
 
 ### **Monitoring Commands**
 
@@ -456,7 +458,7 @@ gh run list --limit 5
 # Watch specific workflow run
 gh run watch <run_id>
 
-# View specific job details  
+# View specific job details
 gh run view --log --job=<job_id>
 
 # Check workflow status for current branch
@@ -473,11 +475,13 @@ gh run list --branch=main --limit 3
 ### **Common Pipeline Insights**
 
 #### **Expected Warnings (Non-Critical)**
+
 - **Dependency Check Issues**: Appear as warnings, don't fail builds
 - **Release Workflow Failures**: Expected when no git tag present
 - **Format Differences**: Slight variations between Aiken versions
 
 #### **Performance Optimization Opportunities**
+
 - **Caching**: Effective Rust/Aiken caching reduces build times
 - **Matrix Strategy**: Parallel execution scales well
 - **Selective Triggers**: Path-based triggers reduce unnecessary runs
@@ -487,6 +491,7 @@ gh run list --branch=main --limit 3
 Based on actual pipeline failures and resolutions:
 
 #### **Format Check Failures**
+
 ```bash
 # Resolution: Local formatting
 aiken fmt
@@ -496,11 +501,13 @@ git diff --check
 ```
 
 #### **Compilation Errors**
+
 - **Root Cause**: Often import/dependency issues
 - **Resolution**: Verify `aiken.toml` includes `aiken-lang/stdlib`
 - **Prevention**: Use modern syntax patterns documented in patterns/
 
-#### **Test Failures**  
+#### **Test Failures**
+
 - **Root Cause**: Placeholder security logic
 - **Resolution**: Implement real validation or circuit breakers
 - **Prevention**: Write negative test cases that should fail

@@ -10,13 +10,13 @@ This is a **production-grade NFT one-shot minting policy** that implements prope
 
 ### 🛡️ **Core Security Implementations**
 
-| Security Feature | Implementation | Purpose |
-|-----------------|----------------|---------|
+| Security Feature       | Implementation                        | Purpose                             |
+| ---------------------- | ------------------------------------- | ----------------------------------- |
 | **One-Shot Guarantee** | UTxO reference consumption validation | Ensures NFT can only be minted once |
-| **Quantity Control** | Total minted tokens = 1 validation | Prevents multiple token minting |
-| **Type Safety** | Custom types for all parameters | Prevents deserialization attacks |
-| **Burn Protection** | Negative mint value validation | Secure token burning |
-| **Modern Aiken** | `self: Transaction` signature | Current best practices |
+| **Quantity Control**   | Total minted tokens = 1 validation    | Prevents multiple token minting     |
+| **Type Safety**        | Custom types for all parameters       | Prevents deserialization attacks    |
+| **Burn Protection**    | Negative mint value validation        | Secure token burning                |
+| **Modern Aiken**       | `self: Transaction` signature         | Current best practices              |
 
 ### 🔒 **Security Validations**
 
@@ -50,12 +50,12 @@ validator one_shot_nft(utxo_ref: OutputReference) {
 
 ### **Preventing Common Attacks**
 
-| Attack Vector | Prevention Method |
-|--------------|------------------|
-| **Replay Attacks** | UTxO can only be consumed once |
-| **Multiple Minting** | Total quantity validation across all policies |
-| **Quantity Manipulation** | Explicit 1-token validation |
-| **Parameter Injection** | Type-safe custom redeemer types |
+| Attack Vector             | Prevention Method                             |
+| ------------------------- | --------------------------------------------- |
+| **Replay Attacks**        | UTxO can only be consumed once                |
+| **Multiple Minting**      | Total quantity validation across all policies |
+| **Quantity Manipulation** | Explicit 1-token validation                   |
+| **Parameter Injection**   | Type-safe custom redeemer types               |
 
 ## Usage
 
@@ -98,7 +98,7 @@ NftAction { Burn { token_name: "YourNFT" } }
 
 - ✅ **9 test scenarios** covering all security features
 - ✅ **UTxO validation** tests
-- ✅ **Quantity calculation** tests  
+- ✅ **Quantity calculation** tests
 - ✅ **Edge case security** tests
 - ✅ **Parameter validation** tests
 
@@ -109,23 +109,23 @@ aiken test
 
 ### **Test Coverage**
 
-| Test Category | Tests | Coverage |
-|---------------|-------|----------|
-| **UTxO Validation** | 2 tests | Reference matching, different UTxOs |
-| **Quantity Control** | 3 tests | Valid (1), invalid (multiple), zero |
+| Test Category           | Tests   | Coverage                               |
+| ----------------------- | ------- | -------------------------------------- |
+| **UTxO Validation**     | 2 tests | Reference matching, different UTxOs    |
+| **Quantity Control**    | 3 tests | Valid (1), invalid (multiple), zero    |
 | **Security Edge Cases** | 4 tests | Parameter validation, attack scenarios |
 
 ## Security Audit Status
 
 ### **✅ PASSED: Production Security Review**
 
-| Category | Status | Notes |
-|----------|--------|-------|
-| **UTxO Uniqueness** | ✅ **SECURE** | Proper reference validation |
-| **Quantity Control** | ✅ **SECURE** | Total minted = 1 enforced |
-| **Type Safety** | ✅ **SECURE** | Custom types prevent attacks |
-| **Modern Patterns** | ✅ **SECURE** | Current Aiken best practices |
-| **Test Coverage** | ✅ **COMPLETE** | All security scenarios tested |
+| Category             | Status          | Notes                         |
+| -------------------- | --------------- | ----------------------------- |
+| **UTxO Uniqueness**  | ✅ **SECURE**   | Proper reference validation   |
+| **Quantity Control** | ✅ **SECURE**   | Total minted = 1 enforced     |
+| **Type Safety**      | ✅ **SECURE**   | Custom types prevent attacks  |
+| **Modern Patterns**  | ✅ **SECURE**   | Current Aiken best practices  |
+| **Test Coverage**    | ✅ **COMPLETE** | All security scenarios tested |
 
 ### **Security Considerations**
 

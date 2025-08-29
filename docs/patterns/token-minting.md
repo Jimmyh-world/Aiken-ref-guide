@@ -46,8 +46,8 @@ validator one_shot_policy(utxo_ref: OutputReference) {
         let policy_dict = assets.to_dict(minted_value)
         let total_minted = policy_dict
           |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
-              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
-                sum + quantity 
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) {
+                sum + quantity
               })
             })
 
@@ -60,18 +60,18 @@ validator one_shot_policy(utxo_ref: OutputReference) {
           valid_token_name,     // Non-empty name
         }
       }
-      
+
       Burn { token_name } -> {
         // Burning logic with proper validation
         let minted_value = assets.without_lovelace(self.mint)
         let policy_dict = assets.to_dict(minted_value)
         let total_burned = policy_dict
           |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
-              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
-                sum + quantity 
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) {
+                sum + quantity
               })
             })
-        
+
         and {
           total_burned < 0,     // Must be negative for burning
           token_name != "",     // Valid token name
@@ -109,24 +109,24 @@ validator controlled_minting(admin: ByteArray) {
       Mint { token_name, amount } -> {
         // 1. SECURITY: Verify admin signature
         let admin_signed = list.has(self.extra_signatories, admin)
-        
+
         // 2. SECURITY: Validate positive amount
         let positive_amount = amount > 0
-        
+
         // 3. SECURITY: Validate token name
         let valid_token_name = token_name != ""
-        
+
         // 4. SECURITY: Validate mint value (requires manual calculation)
         // Note: Without access to policy_id, use total quantity validation
         let minted_value = assets.without_lovelace(self.mint)
         let policy_dict = assets.to_dict(minted_value)
         let total_minted = policy_dict
           |> dict.foldl(0, fn(_policy_id, asset_dict, acc) {
-              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) { 
-                sum + quantity 
+              acc + dict.foldl(asset_dict, 0, fn(_asset_name, quantity, sum) {
+                sum + quantity
               })
             })
-        
+
         and {
           admin_signed,         // Admin must sign
           positive_amount,      // Positive amount required
@@ -134,13 +134,13 @@ validator controlled_minting(admin: ByteArray) {
           total_minted == amount, // Mint amount matches expectation
         }
       }
-      
+
       Burn { token_name, amount } -> {
         // Anyone can burn their own tokens. The ledger ensures they own them.
         // The amount must be negative for burning.
         let valid_token_name = token_name != ""
         let negative_amount = amount < 0
-        
+
         and {
           valid_token_name,
           negative_amount,

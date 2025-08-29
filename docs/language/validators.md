@@ -29,7 +29,7 @@ validator my_script {
     True
   }
 
-  // A spending handler  
+  // A spending handler
   spend(datum: Option<Data>, redeemer: Data, _own_ref: OutputReference, self: Transaction) -> Bool {
     // Spending logic - can access self.extra_signatories, self.outputs, etc.
     True
@@ -41,13 +41,13 @@ validator my_script {
 
 Aiken supports handlers for all Plutus script purposes.
 
-| Handler    | Description                            | Arguments (Modern Syntax)                           |
-| ---------- | -------------------------------------- | --------------------------------------------------- |
-| `spend`    | Validates spending a UTxO.             | `(datum, redeemer, own_ref, self: Transaction)`     |
-| `mint`     | Validates minting or burning tokens.   | `(redeemer, self: Transaction)`                     |
-| `withdraw` | Validates withdrawing staking rewards. | `(redeemer, self: Transaction)`                     |
-| `publish`  | Validates publishing a certificate.    | `(redeemer, self: Transaction)`                     |
-| `else`     | A fallback for unsupported purposes.   | `(self: Transaction)`                               |
+| Handler    | Description                            | Arguments (Modern Syntax)                       |
+| ---------- | -------------------------------------- | ----------------------------------------------- |
+| `spend`    | Validates spending a UTxO.             | `(datum, redeemer, own_ref, self: Transaction)` |
+| `mint`     | Validates minting or burning tokens.   | `(redeemer, self: Transaction)`                 |
+| `withdraw` | Validates withdrawing staking rewards. | `(redeemer, self: Transaction)`                 |
+| `publish`  | Validates publishing a certificate.    | `(redeemer, self: Transaction)`                 |
+| `else`     | A fallback for unsupported purposes.   | `(self: Transaction)`                           |
 
 ## Parameterized Validators
 
@@ -80,6 +80,7 @@ validator one_shot_policy(utxo_ref: OutputReference) {
 ## Practical Transaction Validation Examples
 
 ### Signature Verification
+
 ```aiken
 use aiken/collection/list
 use cardano/transaction.{Transaction, OutputReference}
@@ -98,6 +99,7 @@ validator secure_contract {
 ```
 
 ### Payment Validation
+
 ```aiken
 use aiken/collection/list
 use cardano/transaction.{Transaction, OutputReference, Output}
@@ -118,9 +120,11 @@ fn check_payment(outputs: List<Output>, recipient: ByteArray, min_amount: Int) -
 ```
 
 ### Required Project Setup
+
 Every Aiken project using modern transaction validation must include the standard library:
 
 **aiken.toml:**
+
 ```toml
 [[dependencies]]
 name = "aiken-lang/stdlib"
