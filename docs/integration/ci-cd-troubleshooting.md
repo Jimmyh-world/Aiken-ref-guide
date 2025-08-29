@@ -10,7 +10,7 @@ This guide provides solutions for common issues encountered with the CI/CD syste
 
 #### **Issue: Aiken Installation Fails**
 
-**Error**: `error: could not find 'aiken' in registry 'crates-io' with version '=1.1.15'`
+**Error**: `error: could not find 'aiken' in registry 'crates-io' with version '=1.1.19'`
 
 **Solution**:
 

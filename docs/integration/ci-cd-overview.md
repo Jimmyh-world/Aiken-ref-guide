@@ -58,7 +58,7 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 
 - **Trigger**: Example directory changes
 - **Execution**: 1-2 minutes
-- **Matrix**: 2 examples × 2 Aiken versions = 4 parallel jobs
+- **Matrix**: 3 examples × 2 Aiken versions (v1.1.15, v1.1.19) = 6 parallel jobs
 - **Coverage**: Cross-version compatibility validation
 
 ### **3. Docs**
@@ -83,13 +83,13 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 
 ```bash
 # Test specific example
-./scripts/ci/local-check.sh examples/hello-world 1.1.15
+./scripts/ci/local-check.sh examples/hello-world 1.1.19
 
 # Test with benchmarks
-./scripts/ci/local-check.sh . 1.1.15 true
+./scripts/ci/local-check.sh . 1.1.19 true
 
 # Test NFT example
-./scripts/ci/local-check.sh examples/token-contracts/nft-one-shot 1.1.15
+./scripts/ci/local-check.sh examples/token-contracts/nft-one-shot 1.1.19
 ```
 
 ### **Validation Steps**
@@ -103,8 +103,8 @@ Our CI/CD system follows a modular architecture with clear separation of concern
 
 ### **Supported Aiken Versions**
 
-- **Aiken 1.1.14**: Older version compatibility
-- **Aiken 1.1.15**: Latest stable version
+- **Aiken 1.1.15**: Stable version compatibility
+- **Aiken 1.1.19**: Latest stable version
 
 ### **Matrix Testing Strategy**
 

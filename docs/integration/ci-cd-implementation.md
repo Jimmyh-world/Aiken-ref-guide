@@ -80,7 +80,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        aiken: ['1.1.14', '1.1.15']
+        aiken: ['1.1.15', '1.1.19']
         example:
           - { name: 'hello-world', path: 'examples/hello-world' }
           - {
@@ -145,7 +145,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - name: Install Aiken
-        run: cargo install aiken --version 1.1.15 --locked
+        run: cargo install aiken --version 1.1.19 --locked
       - name: Validate All Examples
         run: |
           for example_dir in examples/hello-world examples/token-contracts/nft-one-shot; do
@@ -166,7 +166,7 @@ set -Eeuo pipefail
 
 # Usage: ./scripts/ci/local-check.sh [directory] [aiken-version] [run-benchmarks]
 DIR="${1:-.}"
-AIKEN_VERSION="${2:-1.1.15}"
+AIKEN_VERSION="${2:-1.1.19}"
 RUN_BENCHMARKS="${3:-false}"
 
 echo "🚀 Local CI/CD Check"
@@ -238,8 +238,8 @@ echo "Benchmarks: $RUN_BENCHMARKS"
 
 **Supported Aiken Versions**:
 
-- **1.1.14**: Older version for backward compatibility
-- **1.1.15**: Latest stable version
+- **1.1.15**: Stable version for backward compatibility
+- **1.1.19**: Latest stable version
 
 **Fallback Strategy**:
 
