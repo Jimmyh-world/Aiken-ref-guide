@@ -1,3 +1,13 @@
+---
+title: 'Aiken Quick Start Guide'
+description: 'Get up and running with Aiken smart contract development in 5 minutes'
+tags: [aiken, quickstart, cardano, smart-contracts, installation, setup]
+estimated_time: '5 minutes'
+difficulty: 'beginner'
+prerequisites: ['Rust toolchain', 'Git', 'Basic terminal knowledge']
+version_compatibility: 'v1.1.15+'
+---
+
 # Quick Start Guide - Aiken in 5 Minutes
 
 ## 🚀 **Get Started with Aiken Smart Contracts**

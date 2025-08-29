@@ -1,3 +1,10 @@
+---
+title: 'Repository Navigation Guide'
+description: 'Find exactly what you need in the Aiken Developer Reference Guide'
+tags: [navigation, guide, structure, aiken, reference, ai-optimized]
+user_types: ['developers', 'ai-assistants', 'beginners', 'advanced']
+---
+
 # Repository Navigation Guide
 
 [![CI Core](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Core/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![CI Examples](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/CI%20%E2%80%93%20Examples/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions) [![Docs](https://github.com/Jimmyh-world/Aiken-ref-guide/workflows/Docs/badge.svg)](https://github.com/Jimmyh-world/Aiken-ref-guide/actions)

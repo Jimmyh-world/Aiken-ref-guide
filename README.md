@@ -41,6 +41,36 @@ Welcome to the AI-optimized knowledge base for the Aiken smart contract language
 
 This reference provides a comprehensive, structured, and easily searchable set of documents covering the Aiken language, from basic syntax to advanced security patterns. The content is optimized for Large Language Models (LLMs) to ensure accurate and efficient code generation and problem-solving.
 
+## 🚀 **Quick Deploy with Monitoring**
+
+### **Deploy Changes with Real-Time Validation**
+
+```bash
+# Deploy with real-time CI/CD monitoring
+git add .
+git commit -m "feat: update Aiken documentation"
+git push origin main
+
+# Monitor deployment status (requires gh CLI)
+gh run list --limit 5
+gh run watch  # Real-time workflow monitoring
+
+# Check specific workflow status
+gh run list --workflow="CI – Examples" --limit 3
+gh run list --workflow="CI – Core" --limit 3
+```
+
+### **Advanced Monitoring & Validation**
+
+```bash
+# Monitor all workflows simultaneously
+gh api repos/:owner/:repo/actions/runs --jq '.workflow_runs[] | select(.status=="in_progress") | {name: .name, status: .status}'
+
+# Check deployment health across all examples
+gh workflow list
+gh run view --log  # View detailed logs for troubleshooting
+```
+
 ## How to Use This Guide
 
 ### **Quick Start**
