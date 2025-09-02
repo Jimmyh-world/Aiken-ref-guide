@@ -5,9 +5,72 @@
     "plutusVersion": "v3",
     "compiler": {
       "name": "Aiken",
-      "version": "v1.1.7+c3b07df"
+      "version": "v1.1.19+unknown"
     },
     "license": "Apache-2.0"
   },
-  "validators": []
+  "validators": [
+    {
+      "title": "hello_world.hello_world.spend",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/hello_world~1types~1HelloWorldDatum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/hello_world~1types~1HelloWorldRedeemer"
+        }
+      },
+      "compiledCode": "59012601010029800aba2aba1aab9faab9eaab9dab9a48888896600264646644b30013370e900118031baa00189919912cc004cdc3a400060126ea801626464b3001300f0028acc004cdc3a400060166ea800e264b30013371e6eb8c03cc034dd50042450d48656c6c6f2c20576f726c6421008acc004c8cc88cc008008004896600200314a115980099b8f375c602400200714a3133002002301300140388088dd618081808980898089808980898089808980898071baa301000b375c601e601a6ea8006330013371e6eb8c03cc034dd5000a44100a50a51402d14a0805a294100b180718061baa0038a5040291640346eb8c034004c028dd5002c5900818050009805180580098039baa0018b200a30070013007300800130070013003375400f149a26cac80081",
+      "hash": "f32a01f2c3b61a14a781d586a0f0e591db1b289e8562faf263babc58"
+    },
+    {
+      "title": "hello_world.hello_world.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "compiledCode": "59012601010029800aba2aba1aab9faab9eaab9dab9a48888896600264646644b30013370e900118031baa00189919912cc004cdc3a400060126ea801626464b3001300f0028acc004cdc3a400060166ea800e264b30013371e6eb8c03cc034dd50042450d48656c6c6f2c20576f726c6421008acc004c8cc88cc008008004896600200314a115980099b8f375c602400200714a3133002002301300140388088dd618081808980898089808980898089808980898071baa301000b375c601e601a6ea8006330013371e6eb8c03cc034dd5000a44100a50a51402d14a0805a294100b180718061baa0038a5040291640346eb8c034004c028dd5002c5900818050009805180580098039baa0018b200a30070013007300800130070013003375400f149a26cac80081",
+      "hash": "f32a01f2c3b61a14a781d586a0f0e591db1b289e8562faf263babc58"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "hello_world/types/HelloWorldDatum": {
+      "title": "HelloWorldDatum",
+      "anyOf": [
+        {
+          "title": "HelloWorldDatum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "owner",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    },
+    "hello_world/types/HelloWorldRedeemer": {
+      "title": "HelloWorldRedeemer",
+      "anyOf": [
+        {
+          "title": "HelloWorldRedeemer",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "message",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    }
+  }
 }

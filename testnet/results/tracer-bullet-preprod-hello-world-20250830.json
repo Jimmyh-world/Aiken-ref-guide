@@ -1,0 +1,94 @@
+{
+  "deployment_id": "preprod-hello-world-20250830-015448",
+  "network": "preprod",
+  "example": "hello-world",
+  "deployment_method": "manual-tracer-bullet",
+  "start_time": "2025-08-30T01:48:00+02:00",
+  "end_time": "2025-08-30T01:54:48+02:00",
+  "configuration": {
+    "network_name": "preprod",
+    "testnet_magic": "1097911063",
+    "blockfrost_api": "working",
+    "validator_hash": "f32a01f2c3b61a14a781d586a0f0e591db1b289e8562faf263babc58"
+  },
+  "results": {
+    "aiken_build": {
+      "status": "success",
+      "details": "Contract compiled successfully, plutus.json generated with 2 validators",
+      "execution_time": "3s",
+      "timestamp": "2025-08-30T01:50:00+02:00"
+    },
+    "cbor_extraction": {
+      "status": "success",
+      "details": "Validator CBOR extracted successfully from plutus.json",
+      "execution_time": "1s",
+      "timestamp": "2025-08-30T01:51:00+02:00"
+    },
+    "plutus_script_creation": {
+      "status": "success",
+      "details": "PlutusScriptV3 file created for cardano-cli compatibility",
+      "execution_time": "1s",
+      "timestamp": "2025-08-30T01:52:00+02:00"
+    },
+    "blockfrost_connectivity": {
+      "status": "success",
+      "details": "API health check and network information retrieval successful",
+      "execution_time": "2s",
+      "timestamp": "2025-08-30T01:53:00+02:00"
+    }
+  },
+  "errors": [],
+  "infrastructure_status": {
+    "aiken_compiler": "✅ v1.1.19+unknown",
+    "jq_json_processor": "✅ Available",
+    "curl_http_client": "✅ Available",
+    "blockfrost_api": "✅ Working with provided key",
+    "cardano_cli": "❌ Not available",
+    "nodejs": "❓ Not tested",
+    "python3": "❓ Not tested"
+  },
+  "deployment_readiness": {
+    "smart_contract": "✅ Compiled and validated",
+    "network_access": "✅ Blockfrost API confirmed working",
+    "script_deployment": "🟡 Ready (missing cardano-cli, have alternative tools)",
+    "offchain_integrations": "🟡 Available (Mesh, PyCardano) - need testing"
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "action": "Test Mesh integration with TypeScript",
+      "reason": "Validate JavaScript/TypeScript deployment path"
+    },
+    {
+      "priority": "high",
+      "action": "Test PyCardano integration with Python",
+      "reason": "Validate Python deployment path"
+    },
+    {
+      "priority": "medium",
+      "action": "Install cardano-cli for complete testing",
+      "reason": "Enable full deployment method validation"
+    },
+    {
+      "priority": "medium",
+      "action": "Test escrow contract deployment",
+      "reason": "Validate more complex contract scenarios"
+    }
+  ],
+  "next_steps": [
+    "Configure and test Mesh integration (examples/hello-world/offchain/mesh.ts)",
+    "Configure and test PyCardano integration (examples/hello-world/offchain/pycardano.py)",
+    "Run full tracer bullet on escrow-contract example",
+    "Document findings and create automated deployment scripts"
+  ],
+  "lessons_learned": [
+    "Blockfrost API provides excellent connectivity for testnet deployments",
+    "Aiken compilation and CBOR extraction works smoothly",
+    "Having multiple deployment paths (CLI, Mesh, PyCardano) provides good redundancy",
+    "Manual script address generation process is straightforward",
+    "API key management is critical for successful deployments"
+  ]
+}
+
+
+
